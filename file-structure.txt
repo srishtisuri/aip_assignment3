@@ -1,0 +1,63 @@
+app
+	core
+		components
+			nav
+		services
+			post
+				react
+				comment
+				delete
+				edit
+				create
+			account
+				login
+				logout
+				register
+				edit
+			admin
+				post -> delete
+				account -> ban
+			leaderboard
+				// Need to figure out how to do websocket + live updates
+	features
+		discussion-board
+			sort-widget ** shared **
+			leaderboard-widget
+			new-post-widget
+			post-feed
+			post-feed-item
+			discussion-board.component/module.ts
+		post-thread
+			post-item
+			post-comments
+			post-comment-item
+			new-comment
+			post-thread.component/module.ts
+		leaderboard
+			sort-widget ** shared **
+			post-leaderboard
+			post-leaderboard-item
+			user-leaderboard
+			user-leaderboard-item
+			leaderboard.component/module.ts
+		settings
+			account-settings
+			application-settings
+			settings.component/module.ts
+		account
+			login
+			register
+			account.component/module.ts
+		admin
+			sort-widget	 ** shared **
+			reported-posts
+			reported-post-item
+			flagged-users
+			sock-puppet-item
+			admin.component/module.ts
+
+	shared
+		sort-widget
+
+
+
