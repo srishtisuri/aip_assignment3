@@ -1,7 +1,17 @@
-<p>discussion-board works!</p>
-
-<app-leaderboard-widget></app-leaderboard-widget>
-<app-new-post-widget></app-new-post-widget>
-<app-post-feed></app-post-feed>
-<app-post-feed-item></app-post-feed-item>
-<app-sort-widget></app-sort-widget>
+<div fxLayout="row" fxLayoutWrap>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column">
+      <app-new-post-widget></app-new-post-widget>
+      <app-sort-widget></app-sort-widget>
+    </div>
+  </div>
+  <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
+    <app-post-feed></app-post-feed>
+  </div>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column">
+      <app-leaderboard-widget></app-leaderboard-widget>
+      <app-leaderboard-widget></app-leaderboard-widget>
+    </div>
+  </div>
+</div>

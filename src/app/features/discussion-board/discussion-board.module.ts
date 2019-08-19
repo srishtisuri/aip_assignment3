@@ -5,6 +5,7 @@ import { NewPostWidgetComponent } from "./components/new-post-widget/new-post-wi
 import { PostFeedComponent } from "./components/post-feed/post-feed.component";
 import { PostFeedItemComponent } from "./components/post-feed-item/post-feed-item.component";
 import { SharedModule } from "src/app/shared/shared.module";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [
@@ -14,6 +15,6 @@ import { SharedModule } from "src/app/shared/shared.module";
     PostFeedComponent,
     PostFeedItemComponent
   ],
-  imports: [SharedModule]
+  imports: [SharedModule, FlexLayoutModule]
 })
 export class DiscussionBoardModule {}

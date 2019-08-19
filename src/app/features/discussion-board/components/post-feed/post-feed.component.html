@@ -1,1 +1,3 @@
-<p>post-feed works!</p>
+<div *ngFor="let post of posts">
+  <img [src]="[post.imageUrl]" alt="" height="500" width="500" />
+</div>
