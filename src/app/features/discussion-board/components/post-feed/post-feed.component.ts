@@ -27,6 +27,13 @@ export class PostFeedComponent implements OnInit {
         "https://i.kym-cdn.com/photos/images/newsfeed/001/504/739/5c0.jpg",
       comments: [],
       reactions: []
+    },
+    {
+      id: 4,
+      imageUrl:
+        "https://stickershop.line-scdn.net/stickershop/v1/product/3194922/LINEStorePC/main.png;compress=true",
+      comments: [],
+      reactions: []
     }
   ];
   constructor() {}
