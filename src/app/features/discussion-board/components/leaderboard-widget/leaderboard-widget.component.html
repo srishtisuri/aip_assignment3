@@ -1,1 +1,44 @@
-<p>leaderboard-widget works!</p>
+<div>
+  <!-- User Leaderboard -->
+  <mat-card class="card">
+    <div style="text-align: center; margin-bottom:20px">
+      <mat-card-title>Top Users</mat-card-title>
+    </div>
+    <div style="margin-bottom:30px">
+      <mat-divider></mat-divider>
+    </div>
+    <div *ngFor="let user of users" style="display:flex;">
+      <img mat-card-avatar [src]="[user.profile]" />
+      <div style="font-size:18px;margin-left:15px;">
+        {{ user.name }}
+        <mat-card-subtitle>@{{ user.username }}</mat-card-subtitle>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-actions class="card-action">
+      <button mat-button>View All</button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- Post Leaderboard -->
+
+  <mat-card class="card">
+    <div style="text-align: center; margin-bottom:20px">
+      <mat-card-title>Top Posts</mat-card-title>
+    </div>
+    <div style="margin-bottom:30px">
+      <mat-divider></mat-divider>
+    </div>
+    <div *ngFor="let post of posts" style="display:flex;">
+      <img mat-card-avatar [src]="[post.imageUrl]" />
+      <div style="font-size:18px;margin-left:15px;">
+        {{ post.author }}
+        <mat-card-subtitle>@{{ post.username }}</mat-card-subtitle>
+      </div>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-card-actions class="card-action">
+      <button mat-button>View All</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
