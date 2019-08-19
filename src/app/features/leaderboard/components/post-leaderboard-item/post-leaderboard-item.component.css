@@ -1,0 +1,13 @@
+#table {
+  /* border: 1px solid red; */
+  border-collapse: collapse;
+  background-color: white;
+  margin: 10px;
+  width: 99%;
+}
+
+#table td,
+tr {
+  /* border: 1px solid red; */
+  padding: 10px;
+}
