@@ -53,7 +53,7 @@ app
 			reported-posts
 			reported-post-item
 			flagged-users
-			sock-puppet-item
+			flagged-user-item
 			admin.component/module.ts
 
 	shared

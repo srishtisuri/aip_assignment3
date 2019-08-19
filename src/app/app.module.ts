@@ -5,15 +5,15 @@ import { AppRoutingModule } from "./app-routing.module";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { CoreModule } from "./core/core.module";
-import { DiscussionBoardModule } from './features/discussion-board/discussion-board.module';
-import { PostThreadModule } from './features/post-thread/post-thread.module';
-import { LeaderboardModule } from './features/leaderboard/leaderboard.module';
-import { SettingsModule } from './features/settings/settings.module';
-import { AccountModule } from './features/account/account.module';
-import { AdminModule } from './features/admin/admin.module';
+import { DiscussionBoardModule } from "./features/discussion-board/discussion-board.module";
+import { PostThreadModule } from "./features/post-thread/post-thread.module";
+import { LeaderboardModule } from "./features/leaderboard/leaderboard.module";
+import { SettingsModule } from "./features/settings/settings.module";
+import { AccountModule } from "./features/account/account.module";
+import { AdminModule } from "./features/admin/admin.module";
 
 @NgModule({
-  declarations: [AppComponent], // LeaderboardComponent, HomeComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

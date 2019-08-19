@@ -5,8 +5,13 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { SortWidgetComponent } from "./sort-widget/sort-widget.component";
 
 @NgModule({
-  declarations: [],
-  imports: [CommonModule, AngularMaterialModule, ReactiveFormsModule],
-  exports: [SortWidgetComponent]
+  declarations: [SortWidgetComponent],
+  imports: [AngularMaterialModule],
+  exports: [
+    SortWidgetComponent,
+    CommonModule,
+    ReactiveFormsModule,
+    AngularMaterialModule
+  ]
 })
 export class SharedModule {}
