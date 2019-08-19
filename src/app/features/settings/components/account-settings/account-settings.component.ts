@@ -6,10 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./account-settings.component.css']
 })
 export class AccountSettingsComponent implements OnInit {
-
   constructor() { }
 
   ngOnInit() {
   }
 
+  user = {
+    name: "Christian Damtoft",
+    username: "cdamtoft",
+    email: "ctdamtoft@gmail.com"
+  }
 }
