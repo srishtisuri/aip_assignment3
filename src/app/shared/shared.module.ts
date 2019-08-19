@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { AngularMaterialModule } from "./angular-material.module";
 import { ReactiveFormsModule } from "@angular/forms";
 import { SortWidgetComponent } from "./sort-widget/sort-widget.component";
+import { FlexLayoutModule } from "@angular/flex-layout";
 
 @NgModule({
   declarations: [SortWidgetComponent],
@@ -11,7 +12,8 @@ import { SortWidgetComponent } from "./sort-widget/sort-widget.component";
     SortWidgetComponent,
     CommonModule,
     ReactiveFormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
+    FlexLayoutModule
   ]
 })
 export class SharedModule {}
