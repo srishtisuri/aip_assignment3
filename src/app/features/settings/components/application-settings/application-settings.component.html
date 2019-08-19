@@ -1,1 +1,14 @@
-<p>application-settings works!</p>
+<div class="field">
+    <b>Language</b>:<select matNativeControl required [value]="[setting.language]">
+        <option value="english">English</option>
+        <option value="french">French</option>
+        <option value="spanish">Spanish</option>
+      </select>
+</div>
+<div class="field">
+    <b>Show Notifications</b>:<input type="checkbox" value="[setting.notifications]">
+</div>
+<div class="field">
+    <b>Location Tracking</b>:<input type="checkbox" value="[setting.locationTracking]">
+</div>
+<button>Update</button>
