@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-flagged-user-item',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./flagged-user-item.component.css']
 })
 export class FlaggedUserItemComponent implements OnInit {
+  @Input() user: {};
 
   constructor() { }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-reported-post-item',
@@ -6,6 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./reported-post-item.component.css']
 })
 export class ReportedPostItemComponent implements OnInit {
+  @Input() post: {};
 
   constructor() { }
 

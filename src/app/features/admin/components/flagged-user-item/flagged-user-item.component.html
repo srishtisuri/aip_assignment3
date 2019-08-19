@@ -1,1 +1,11 @@
-<p>flagged-user-item works!</p>
+<div>
+    <img [src]="[user.profile]" width="90px" height="90px">
+    <div class="user-info">
+        <div><b>Name:</b> {{user.name}}</div>
+        <div><b>Member Since:</b> {{user.createdDate}}</div>
+        <div><b>Flagged Reason:</b> {{user.reason}}</div>
+        <mat-icon class="icon">delete</mat-icon>
+        <mat-icon class="icon">textsms</mat-icon>
+        <mat-icon class="icon">remove_circle_outline</mat-icon>
+    </div>
+</div>
