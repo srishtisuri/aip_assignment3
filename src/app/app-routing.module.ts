@@ -9,7 +9,7 @@ import { PostThreadComponent } from "./features/post-thread/post-thread.componen
 
 const routes: Routes = [
   { path: "discussion-board", component: DiscussionBoardComponent },
-  { path: "post-thread/:id", component: PostThreadComponent },
+  { path: "post-thread", component: PostThreadComponent },
   { path: "leaderboard", component: LeaderboardComponent },
   { path: "settings", component: SettingsComponent },
   { path: "account", component: AccountComponent },

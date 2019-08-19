@@ -1,1 +1,17 @@
-<p>post-item works!</p>
+<div>
+  <mat-card class="card">
+    <mat-card-header>
+      <img mat-card-avatar [src]="[post.profile]" />
+      <mat-card-title>{{ post.author }}</mat-card-title>
+      <mat-card-subtitle>@{{ post.username }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content id="image-container">
+      <img mat-card-image [src]="[post.imageUrl]" />
+    </mat-card-content>
+    <mat-card-actions class="card-actions">
+      <button mat-button>REACT</button>
+      <button mat-button>COMMENT</button>
+      <button mat-button>REPORT</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

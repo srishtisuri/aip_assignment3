@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-post-feed-item",
@@ -7,7 +8,12 @@ import { Component, OnInit, Input } from "@angular/core";
 })
 export class PostFeedItemComponent implements OnInit {
   @Input() post: Object;
-  constructor() {}
+  constructor(private router: Router) {}
 
   ngOnInit() {}
+
+  handleClick(id) {
+    console.log(id);
+    this.router.navigate(["/post-thread/"]);
+  }
 }

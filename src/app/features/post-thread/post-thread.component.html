@@ -1,6 +1,14 @@
-<p>post-thread works!</p>
-
-<app-post-item></app-post-item>
-<app-post-comments></app-post-comments>
-<app-post-comment-item></app-post-comment-item>
-<app-new-comment></app-new-comment>
+<div fxLayout="row" fxLayoutWrap>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column"></div>
+  </div>
+  <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
+    <div>
+      <app-post-item></app-post-item>
+      <app-post-comments></app-post-comments>
+    </div>
+  </div>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column"></div>
+  </div>
+</div>
