@@ -1,0 +1,9 @@
+.user-info {
+    display: inline-block;
+    padding-left: 10px;
+    vertical-align: top;
+}
+.icon {
+    cursor: pointer;
+    padding-right: 5px;
+}

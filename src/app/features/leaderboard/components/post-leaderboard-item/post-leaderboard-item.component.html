@@ -1,0 +1,23 @@
+<table id="table" class="mat-elevation-z1">
+  <tr>
+    <td align="center" style="width: 10%" mat-card-title>{{ post.id }}</td>
+    <td style="width: 15%">
+      <img
+        mat-card-avatar
+        src="{{ post.profile }}"
+        height="150px"
+        width="150px"
+        style="border-radius: 100px"
+      />
+    </td>
+    <td style="width: 30%">
+      <div>
+        <div mat-card-title>{{ post.author }}</div>
+        <div mat-card-subtitle>1000 reactions, 140 comments</div>
+      </div>
+    </td>
+    <td style="width: 35%">
+      <img src="{{ post.imageUrl }}" height="100px" width="100px" />
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,32 @@
+<!-- <mat-card class="leaderboardTile" style="width: 100%; display: table;">
+  <div class="table-cell" style="display: table-cell; align-items: center">
+    <h2>#</h2>
+  </div>
+  <div class="table-cell" style="display: table-cell; align-items: center">
+    <img mat-card-avatar src="{{ user.profile }}" height="100px" />
+  </div>
+  <div class="table-cell" style="display: table-cell; align-items: center">
+    <h2>{{ user.name }}</h2>
+  </div>
+</mat-card> -->
+
+<table id="table" class="mat-elevation-z1">
+  <tr>
+    <td align="center" style="width: 10%" mat-card-title>{{ user.id }}</td>
+    <td align="center" style="width: 15%">
+      <img
+        mat-card-avatar
+        src="{{ user.profile }}"
+        height="150px"
+        width="150px"
+        style="border-radius: 100px"
+      />
+    </td>
+    <td style="width: 75%">
+      <div>
+        <div mat-card-title>{{ user.name }}</div>
+        <div mat-card-subtitle>1000 likes, 28 posts, 140 comments</div>
+      </div>
+    </td>
+  </tr>
+</table>

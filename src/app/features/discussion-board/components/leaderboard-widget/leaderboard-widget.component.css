@@ -1,0 +1,19 @@
+.card {
+  width: 280px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+}
+
+.mat-card-header {
+  text-align: center;
+}
+
+.card-action {
+  text-align: center;
+}
+
+.header-image {
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+  background-size: cover;
+}
