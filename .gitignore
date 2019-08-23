@@ -9,7 +9,7 @@
 /client/bazel-out
 
 # config
-/config
+/config/key.js
 
 # dependencies
 /node_modules
