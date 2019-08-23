@@ -4,8 +4,12 @@
 /client/dist
 /client/tmp
 /client/out-tsc
+
 # Only exists if Bazel was run
 /client/bazel-out
+
+# config
+/config
 
 # dependencies
 /node_modules

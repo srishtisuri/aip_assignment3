@@ -1,0 +1,28 @@
+{
+  "name": "aip_assignment3",
+  "version": "1.0.0",
+  "description": "This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.0.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rishyahluwalia/aip_assignment3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rishyahluwalia/aip_assignment3/issues"
+  },
+  "homepage": "https://github.com/rishyahluwalia/aip_assignment3#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.10",
+    "nodemon": "^1.19.1"
+  }
+}
