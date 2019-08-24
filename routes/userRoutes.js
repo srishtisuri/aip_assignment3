@@ -3,24 +3,21 @@ const User = require("../models/User");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  // Get all users
   router.get("/", async (req, res) => {
     let response = {};
     try {
       response = await User.find();
-      res.json({
-        outcome: "Users successfully fetched",
-        data: response,
-        sessID: req.sessionID
-      });
+      res.json({ outcome: "Users successfully fetched", data: response });
     } catch (err) {
       console.log("An error occurred: " + err);
       res.json({ outcome: "An error occurred", error: err });
     }
   });
 
-  //Create user
+  // Create user
   router.post("/", async (req, res) => {
-    //   TODO: Error checking
+    // TODO: Error checking
     const newUser = new User({
       name: req.body.name,
       username: req.body.username,
@@ -29,6 +26,7 @@ module.exports = (express, passport) => {
       dateCreated: req.body.dateCreated,
       lastLoggedIn: req.body.lastLoggedIn,
       avatar: req.body.avatar,
+      sessionID: req.sessionID,
       cookie: req.body.cookie,
       posts: req.body.posts,
       role: req.body.role,
@@ -44,7 +42,7 @@ module.exports = (express, passport) => {
     }
   });
 
-  //Delete user
+  // Delete user
   router.delete("/", async (req, res) => {
     let response = {};
     try {
@@ -56,7 +54,7 @@ module.exports = (express, passport) => {
     }
   });
 
-  //Login
+  // Login
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user) => {
       if (err) {
@@ -75,6 +73,24 @@ module.exports = (express, passport) => {
         });
       });
     })(req, res, next);
+  });
+
+  // Logout
+  router.get("/logout", (req, res) => {
+    try {
+      req.logout();
+      res.json({ outcome: "User successfully logged out" });
+    } catch (e) {
+      res.json({ outcome: "An error occurred", error: err });
+    }
+  });
+
+  router.get("/session", (req, res) => {
+    res.json({
+      sessionID: req.sessionID,
+      user: req.user,
+      cookies: req.cookies
+    });
   });
 
   return router;

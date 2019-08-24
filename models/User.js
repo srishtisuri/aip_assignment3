@@ -10,6 +10,7 @@ const userSchema = new Schema({
   lastLoggedIn: { type: Date, required: true },
   avatar: { type: String, required: true },
   cookie: { type: String, required: true },
+  sessionID: { type: String, required: true },
   posts: { type: Array, required: true },
   role: { type: String, required: true },
   accountStatus: { type: String, required: true }
