@@ -79,6 +79,7 @@ module.exports = (express, passport) => {
   router.get("/logout", (req, res) => {
     try {
       req.logout();
+      req.session.destroy();
       res.json({ outcome: "User successfully logged out" });
     } catch (e) {
       res.json({ outcome: "An error occurred", error: err });
