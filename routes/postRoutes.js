@@ -126,9 +126,13 @@ module.exports = (express, passport) => {
 
     for (let i = 0; i < parseInt(req.params.amount); i++) {
       let randImage = images[Math.floor(Math.random() * images.length)];
-      await createPost({ image: randImage, author });
+      try {
+        await createPost({ image: randImage, author });
+        res.json({ status: "SUCCESS" });
+      } catch(err){
+        res.json({ status: "FAIL", error: err });
+      }
     }
-    res.json({ success: true });
   });
   return router;
 };
