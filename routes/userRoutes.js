@@ -18,7 +18,7 @@ module.exports = (express, passport) => {
 
   // Create user
   router.post("/", async (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
     const hash = await bcrypt.hash(req.body.user.password, 10);
     console.log(hash);
     const newUser = new User({

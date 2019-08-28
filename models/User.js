@@ -18,7 +18,6 @@ const userSchema = new Schema({
   },
   ips: { type: Array, required: true },
   avatar: { type: String, required: false },
-  posts: { type: Array, required: true, default: [] },
   role: { type: String, required: true, default: "member" },
   accountStatus: { type: String, required: true, default: "activated" }
 });
