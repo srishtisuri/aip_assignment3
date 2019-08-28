@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "install-dependencies": "npm install && cd client && npm install",
-    "client": "cd client && ng serve" ,
+    "client": "cd client && ng serve",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others \"npm run client\" \"npm run server\""
   },
@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/rishyahluwalia/aip_assignment3#readme",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "concurrently": "^4.1.2",
     "ejs": "^2.6.2",
