@@ -17,21 +17,35 @@ module.exports = (express, passport) => {
 
   // Create user
   router.post("/", async (req, res) => {
-    // TODO: Error checking
-    const newUser = new User({
-      name: req.body.name,
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      dateCreated: req.body.dateCreated,
-      lastLoggedIn: req.body.lastLoggedIn,
-      avatar: req.body.avatar,
-      sessionID: req.sessionID,
-      cookie: req.body.cookie,
-      posts: req.body.posts,
-      role: req.body.role,
-      accountStatus: req.body.accountStatus
+    const users = await User.find();
+    let newUser;
+    let exists = false;
+    users.forEach(user => {
+      if (user.username === req.body.user.username) {
+        exists = true;
+      }
     });
+    // TODO: Error checking
+    if (exists) {
+      newUser = new User({
+        name: req.body.name,
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        dateCreated: req.body.dateCreated,
+        lastLoggedIn: req.body.lastLoggedIn,
+        avatar: req.body.avatar,
+        sessionID: req.sessionID,
+        cookie: req.body.cookie,
+        ipAddress: req.body.ipAddress,
+        posts: req.body.posts,
+        role: req.body.role,
+        accountStatus: req.body.accountStatus
+      });
+    } else {
+      return res.json({ status: "FAIL", error: "Username already exists" });
+    }
+
     let response = {};
     try {
       response = await newUser.save();
@@ -54,6 +68,29 @@ module.exports = (express, passport) => {
     }
   });
 
+  // Update user
+  router.put("/", async (req, res) => {
+    console.log(req.body);
+    let response = {};
+    try {
+      response = await User.findByIdAndUpdate(
+        req.body._id,
+        {
+          $set: {
+            ...req.body.items
+          }
+        },
+        {
+          new: true
+        }
+      );
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   // Login
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user) => {
@@ -61,7 +98,10 @@ module.exports = (express, passport) => {
         return res.json({ status: "FAIL", error: err });
       }
       if (!user) {
-        return res.json({ status: "Incorrect username or password" });
+        return res.json({
+          status: "FAIL",
+          error: "Incorrect username or password"
+        });
       }
       req.logIn(user, err => {
         if (err) {
