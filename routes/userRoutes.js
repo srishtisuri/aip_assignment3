@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 module.exports = (express, passport) => {
   const router = express.Router();
@@ -17,20 +18,12 @@ module.exports = (express, passport) => {
 
   // Create user
   router.post("/", async (req, res) => {
-    // TODO: Error checking
+    const hash = await bcrypt.hash(req.body.user.password, 10);
+
     const newUser = new User({
-      name: req.body.name,
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-      dateCreated: req.body.dateCreated,
-      lastLoggedIn: req.body.lastLoggedIn,
-      avatar: req.body.avatar,
-      sessionID: req.sessionID,
-      cookie: req.body.cookie,
-      posts: req.body.posts,
-      role: req.body.role,
-      accountStatus: req.body.accountStatus
+      ...req.body.user,
+      password: hash,
+      ips: req.ip
     });
     let response = {};
     try {

@@ -1,4 +1,5 @@
 const LocalStrategy = require("passport-local").Strategy;
+const bcrypt = require("bcrypt");
 
 module.exports = passport => {
   passport.serializeUser((user, done) => {
@@ -11,13 +12,13 @@ module.exports = passport => {
     });
   });
 
-  checkPassword = (userPassword, password) => {
-    return userPassword === password;
+  checkPassword = async (hash, clearTextPassword) => {
+    return await bcrypt.compare(clearTextPassword, hash);
   };
 
   passport.use(
     new LocalStrategy((username, password, done) => {
-      User.findOne({ username: username }, (err, user) => {
+      User.findOne({ username: username }, async (err, user) => {
         if (err) {
           return done(err);
         }
