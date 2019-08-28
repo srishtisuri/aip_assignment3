@@ -8,10 +8,10 @@ module.exports = (express, passport) => {
     let response = {};
     try {
       response = await User.find();
-      res.json({ outcome: "Users successfully fetched", data: response });
+      res.json({ status: "SUCCESS", data: response });
     } catch (err) {
-      console.log("An error occurred: " + err);
-      res.json({ outcome: "An error occurred", error: err });
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
     }
   });
 
@@ -35,10 +35,10 @@ module.exports = (express, passport) => {
     let response = {};
     try {
       response = await newUser.save();
-      res.json({ outcome: "User successfully added", data: response });
+      res.json({ status: "SUCCESS", data: response });
     } catch (err) {
-      console.log("An error occurred: " + err);
-      res.json({ outcome: "An error occurred", error: err });
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
     }
   });
 
@@ -47,10 +47,10 @@ module.exports = (express, passport) => {
     let response = {};
     try {
       response = await User.findByIdAndRemove(req.body._id);
-      res.json({ outcome: "User successfully removed", data: response });
+      res.json({ status: "SUCCESS", data: response });
     } catch (err) {
-      console.log("An error occurred: " + err);
-      res.json({ outcome: "An error occurred", error: err });
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
     }
   });
 
@@ -58,17 +58,17 @@ module.exports = (express, passport) => {
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user) => {
       if (err) {
-        return res.json({ outcome: "An error occurred", error: err });
+        return res.json({ status: "FAIL", error: err });
       }
       if (!user) {
-        return res.json({ outcome: "Incorrect username or password" });
+        return res.json({ status: "Incorrect username or password" });
       }
       req.logIn(user, err => {
         if (err) {
-          return res.json({ outcome: "An error occurred", error: err });
+          return res.json({ status: "FAIL", error: err });
         }
         return res.json({
-          outcome: "User successfully logged in",
+          status: "SUCCESS",
           user: user
         });
       });
@@ -80,9 +80,9 @@ module.exports = (express, passport) => {
     try {
       req.logout();
       req.session.destroy();
-      res.json({ outcome: "User successfully logged out" });
+      res.json({ status: "SUCCESS" });
     } catch (e) {
-      res.json({ outcome: "An error occurred", error: err });
+      res.json({ status: "FAIL", error: err });
     }
   });
 
