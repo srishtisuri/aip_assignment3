@@ -13,6 +13,9 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
+//Deprecation warning  
+mongoose.set("useFindAndModify", false);
+
 //Express Session Init
 app.use(
   session({
