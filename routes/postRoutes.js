@@ -13,7 +13,6 @@ module.exports = (express, passport) => {
     }
   });
 
-<<<<<<< HEAD
   router.get("/:id", async (req, res) => {
     try {
       let response = await Post.findById(req.params.id);
@@ -113,7 +112,6 @@ module.exports = (express, passport) => {
     return await newPost.save();
   };
 
-=======
   router.get("/generate/:amount", async (req, res) => {
     let images = [
       "https://imgflip.com/s/meme/Futurama-Fry.jpg",
@@ -132,6 +130,5 @@ module.exports = (express, passport) => {
     }
     res.json({ success: true });
   });
->>>>>>> 268865aa00063918cf1e8833fe30348fc263524f
   return router;
 };
