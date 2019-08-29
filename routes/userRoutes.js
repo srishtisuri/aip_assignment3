@@ -4,106 +4,96 @@ const bcrypt = require("bcrypt");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  // Local Functions
+  sendError = (res, error) => {
+    return res.json({ status: "FAIL", error });
+  };
+
+  sendSuccess = (res, data) => {
+    return res.json({ status: "SUCCESS", data });
+  };
+
+  updateLastLoggedIn = async user => {
+    return await User.findByIdAndUpdate(
+      user._id,
+      {
+        $set: { lastLoggedIn: new Date().toISOString() }
+      },
+      { new: true }
+    );
+  };
+
   // Get all users
   router.get("/", async (req, res) => {
-    let response = {};
     try {
-      response = await User.find();
-      res.json({ status: "SUCCESS", data: response });
+      let response = await User.find();
+      sendSuccess(res, response);
     } catch (err) {
-      console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
+      sendError(res, err);
     }
   });
 
   // Create user
   router.post("/", async (req, res) => {
-    const users = await User.find();
-    let newUser;
-    let exists = false;
-    users.forEach(user => {
-      if (user.username === req.body.user.username) {
-        exists = true;
-      }
-    });
-
-    // TODO: Error checking
-    if (exists) {
-      const hash = await bcrypt.hash(req.body.user.password, 10);
-      newUser = new User({
-        ...req.body.user,
-        password: hash,
-        ips: req.ip
-      });
-    } else {
-      return res.json({ status: "FAIL", error: "Username already exists" });
-    }
-
-    let response = {};
     try {
-      response = await newUser.save();
-      res.json({ status: "SUCCESS", data: response });
+      // Check if username is unique
+      let userExists =
+        (await User.findOne({ username: req.body.user.username })) || false;
+
+      if (!userExists) {
+        let newUser = new User({
+          ...req.body.user,
+          password: await bcrypt.hash(req.body.user.password, 10),
+          ips: req.ip
+        });
+
+        let response = await newUser.save();
+        sendSuccess(res, response);
+      } else {
+        return sendError(res, "Username already exists");
+      }
     } catch (err) {
-      console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
+      sendError(res, err);
     }
   });
 
   // Delete user
   router.delete("/", async (req, res) => {
-    let response = {};
     try {
-      response = await User.findByIdAndRemove(req.body._id);
-      res.json({ status: "SUCCESS", data: response });
+      let response = await User.findByIdAndRemove(req.body._id);
+      sendSuccess(res, response);
     } catch (err) {
-      console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
+      sendError(res, err);
     }
   });
 
   // Update user
   router.put("/", async (req, res) => {
-    console.log(req.body);
-    let response = {};
     try {
-      response = await User.findByIdAndUpdate(
+      let response = await User.findByIdAndUpdate(
         req.body._id,
         {
           $set: {
             ...req.body.items
           }
         },
-        {
-          new: true
-        }
+        { new: true }
       );
-      res.json({ status: "SUCCESS", data: response });
+      sendSuccess(res, response);
     } catch (err) {
-      console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
+      sendError(res, err);
     }
   });
 
   // Login
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user) => {
-      if (err) {
-        return res.json({ status: "FAIL", error: err });
-      }
-      if (!user) {
-        return res.json({
-          status: "FAIL",
-          error: "Incorrect username or password"
-        });
-      }
-      req.logIn(user, err => {
-        if (err) {
-          return res.json({ status: "FAIL", error: err });
-        }
-        return res.json({
-          status: "SUCCESS",
-          user: user
-        });
+      if (err) return sendError(res, err);
+      if (!user) return sendError(res, "Incorrect username or password");
+      req.logIn(user, async err => {
+        if (err) return sendError(res, err);
+        let updatedUser = await updateLastLoggedIn(req.user);
+        return sendSuccess(res, updatedUser);
       });
     })(req, res, next);
   });
@@ -113,12 +103,13 @@ module.exports = (express, passport) => {
     try {
       req.logout();
       req.session.destroy();
-      res.json({ status: "SUCCESS" });
+      sendSuccess(res);
     } catch (e) {
-      res.json({ status: "FAIL", error: err });
+      sendError(res, err);
     }
   });
 
+  // Get session information - DEV ONLY
   router.get("/session", (req, res) => {
     res.json({
       sessionID: req.sessionID,
