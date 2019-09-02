@@ -11,7 +11,14 @@ const postSchema = new Schema({
     reasons: { type: Array, required: false },
     moderated: { type: Boolean, required: true, default: false }
   },
-  author: { type: String, required: true }
+  reactions: {
+    heart: { type: Number, required: true, default: 0 },
+    laughing: { type: Number, required: true, default: 0 },
+    wow: { type: Number, required: true, default: 0 },
+    sad: { type: Number, required: true, default: 0 },
+    angry: { type: Number, required: true, default: 0 }
+  },
+  author: { type: String, required: false }
 });
 
 module.exports = Post = mongoose.model("post", postSchema);

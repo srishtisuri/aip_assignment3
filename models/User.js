@@ -19,7 +19,13 @@ const userSchema = new Schema({
   ips: { type: Array, required: true },
   avatar: { type: String, required: false },
   role: { type: String, required: true, default: "member" },
-  accountStatus: { type: String, required: true, default: "activated" }
+  accountStatus: { type: String, required: true, default: "activated" },
+  myReactions: [
+    {
+      postId: { type: String, required: false },
+      reaction: { type: String, required: false }
+    }
+  ]
 });
 
 module.exports = User = mongoose.model("user", userSchema);
