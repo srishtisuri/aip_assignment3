@@ -1,10 +1,10 @@
-import { Component, OnInit, Input } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit, Input } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-post-feed-item",
-  templateUrl: "./post-feed-item.component.html",
-  styleUrls: ["./post-feed-item.component.css"]
+  selector: 'app-post-feed-item',
+  templateUrl: './post-feed-item.component.html',
+  styleUrls: ['./post-feed-item.component.css']
 })
 export class PostFeedItemComponent implements OnInit {
   @Input() post: Object;
@@ -14,6 +14,6 @@ export class PostFeedItemComponent implements OnInit {
 
   handleClick(id) {
     console.log(id);
-    this.router.navigate(["/post-thread/"]);
+    this.router.navigate(['/post-thread/']);
   }
 }
