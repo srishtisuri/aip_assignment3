@@ -9,12 +9,12 @@ export class ApplicationSettingsComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  }
-
   settings: {
-    language: "English",
+    language: 'English',
     notifications: true,
     locationTracking: true
+  };
+
+  ngOnInit() {
   }
 }

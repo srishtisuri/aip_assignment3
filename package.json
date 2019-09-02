@@ -5,9 +5,10 @@
   "main": "server.js",
   "scripts": {
     "install-dependencies": "npm install && cd client && npm install",
+    "client-proxy": "cd client && ng serve --proxy-config proxy.conf.json",
     "client": "cd client && ng serve",
     "server": "nodemon server.js",
-    "dev": "concurrently --kill-others \"npm run client\" \"npm run server\""
+    "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\""
   },
   "repository": {
     "type": "git",

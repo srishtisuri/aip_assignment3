@@ -15,10 +15,10 @@ import { AdminModule } from "./features/admin/admin.module";
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    CoreModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    CoreModule,
     DiscussionBoardModule,
     PostThreadModule,
     LeaderboardModule,

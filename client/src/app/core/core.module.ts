@@ -3,10 +3,13 @@ import { CommonModule } from "@angular/common";
 import { RouterModule } from "@angular/router";
 import { AngularMaterialModule } from "../shared/angular-material.module";
 import { NavComponent } from "./components/nav/nav.component";
+import { PostService } from "./services/post.service";
+import { HttpClientModule } from "@angular/common/http";
 
 @NgModule({
+  imports: [CommonModule, AngularMaterialModule, RouterModule, HttpClientModule],
+  providers: [PostService],
   declarations: [NavComponent],
-  imports: [CommonModule, AngularMaterialModule, RouterModule],
   exports: [NavComponent]
 })
 export class CoreModule {}

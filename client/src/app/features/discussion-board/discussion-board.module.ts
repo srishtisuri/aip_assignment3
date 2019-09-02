@@ -7,13 +7,7 @@ import { PostFeedItemComponent } from "./components/post-feed-item/post-feed-ite
 import { SharedModule } from "src/app/shared/shared.module";
 
 @NgModule({
-  declarations: [
-    DiscussionBoardComponent,
-    LeaderboardWidgetComponent,
-    NewPostWidgetComponent,
-    PostFeedComponent,
-    PostFeedItemComponent
-  ],
+  declarations: [DiscussionBoardComponent, LeaderboardWidgetComponent, NewPostWidgetComponent, PostFeedComponent, PostFeedItemComponent],
   imports: [SharedModule]
 })
 export class DiscussionBoardModule {}

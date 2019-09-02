@@ -29,3 +29,13 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Important Links
 
 https://aip-brogrammers.postman.co/collections/6225947-f75ba329-2a8a-4122-b005-19c0a82db7b6?version=latest&workspace=1b74ded5-d3dc-4958-8984-37c5dda38b40
+
+## Coding Styles and Principles
+
+- Names of local variables are written using camel casing (eg. myReactions).
+- Angular components are always created using "ng generate component", with names written in kebab casing (eg. discussion-board).
+- Names of public static final fields are written in all upper-case, and use underscores to separate each word in the name (eg. PORT_NUMBER).
+- Each line should have no more than 140 characters.
+- Indents should be 2 spaces long. Use the IDE's auto-formatting tools where possible.
+- Every feature should be a separate module in it's own folder inside src/features. Each feature should be split into smaller components within that module.
+- All css should be inside a .css file. Avoid inline styling.
