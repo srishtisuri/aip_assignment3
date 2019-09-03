@@ -19,4 +19,12 @@ export class PostService {
   getPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint);
   }
+
+  generatePosts(amount: number): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/generate/" + amount);
+  }
+
+  dropPosts(): Observable<any> {
+    return this.http.get(this.endpoint + "/test/");
+  }
 }

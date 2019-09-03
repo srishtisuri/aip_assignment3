@@ -3,6 +3,15 @@ const Post = require("../models/Post");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  router.get("/test", async (req, res) => {
+    try {
+      await Post.deleteMany({});
+      res.json({ status: "SUCCESS" });
+    } catch (err) {
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.get("/", async (req, res) => {
     try {
       let response = await Post.find();
@@ -138,5 +147,6 @@ module.exports = (express, passport) => {
     }
     res.json({ status: "SUCCESS" });
   });
+
   return router;
 };
