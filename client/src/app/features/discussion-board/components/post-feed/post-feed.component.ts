@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { UserService } from "src/app/core/services/user.service";
-import { unwatchFile } from "fs";
 
 @Component({
   selector: "app-post-feed",
