@@ -93,6 +93,29 @@ module.exports = (express, passport) => {
     }
   });
 
+  router.put("/react", async (req, res) => {
+    try {
+      console.log(req);
+      let response = await Post.findOneAndUpdate(
+        { _id: req.body.thread },
+        {
+          $inc: {
+            "reactions.heart": req.body.reaction == "heart" ? 1 : 0,
+            "reactions.laughing": req.body.reaction == "laughing" ? 1 : 0,
+            "reactions.wow": req.body.reaction == "wow" ? 1 : 0,
+            "reactions.sad": req.body.reaction == "sad" ? 1 : 0,
+            "reactions.angry": req.body.reaction == "angry" ? 1 : 0
+          }
+        },
+        { new: true }
+      );
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.put("/report", async (req, res) => {
     try {
       let response = await Post.findOneAndUpdate(

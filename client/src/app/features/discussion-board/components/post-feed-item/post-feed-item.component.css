@@ -32,3 +32,21 @@
 .card-actions {
   text-align: center;
 }
+
+.user-reactions {
+  position: absolute;
+  margin-left: 120px;
+  top: 530px;
+  background-color: white;
+  font-size: 2em;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.user-reactions > span:hover {
+  color: black;
+}
+
+.post-reactions {
+  text-align: right;
+}

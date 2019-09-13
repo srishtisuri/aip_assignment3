@@ -14,7 +14,7 @@ const httpOptions = {
 export class PostService {
   endpoint: string = "/api/posts";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -26,5 +26,9 @@ export class PostService {
 
   dropPosts(): Observable<any> {
     return this.http.get(this.endpoint + "/test/");
+  }
+
+  react(thread: string, reaction: string): Observable<any> {
+    return this.http.put(this.endpoint + "/react", { thread, reaction });
   }
 }
