@@ -85,6 +85,43 @@ module.exports = (express, passport) => {
     }
   });
 
+  // add user reaction
+  router.put("/addReaction", async (req, res) => {
+    try {
+      let user = await User.findById(req.body._id);
+      console.log(
+        user.myReactions
+          .map(reaction => reaction.postId)
+          .includes(req.body.myReaction.postId)
+      );
+      if (
+        user.myReactions
+          .map(reaction => reaction.postId)
+          .includes(req.body.myReaction.postId)
+      ) {
+        response = await user.updateOne(
+          {
+            $set: {
+              "myReactions.$[reaction]": req.body.myReaction
+            }
+          },
+          {
+            arrayFilters: [{ "reaction.postId": req.body.myReaction.postId }]
+          }
+        );
+      } else {
+        response = await user.updateOne({
+          $push: {
+            myReactions: req.body.myReaction
+          }
+        });
+      }
+      sendSuccess(res, response);
+    } catch (err) {
+      sendError(res, err);
+    }
+  });
+
   // Login
   router.post("/login", (req, res, next) => {
     passport.authenticate("local", (err, user) => {

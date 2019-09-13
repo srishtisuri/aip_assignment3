@@ -95,7 +95,6 @@ module.exports = (express, passport) => {
 
   router.put("/react", async (req, res) => {
     try {
-      console.log(req);
       let response = await Post.findOneAndUpdate(
         { _id: req.body.thread },
         {
