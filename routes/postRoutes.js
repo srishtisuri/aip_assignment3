@@ -95,15 +95,43 @@ module.exports = (express, passport) => {
 
   router.put("/react", async (req, res) => {
     try {
+      if (req.body.reaction == req.body.oldReaction) {
+        req.body.reaction = null;
+      }
       let response = await Post.findOneAndUpdate(
         { _id: req.body.thread },
         {
           $inc: {
-            "reactions.heart": req.body.reaction == "heart" ? 1 : 0,
-            "reactions.laughing": req.body.reaction == "laughing" ? 1 : 0,
-            "reactions.wow": req.body.reaction == "wow" ? 1 : 0,
-            "reactions.sad": req.body.reaction == "sad" ? 1 : 0,
-            "reactions.angry": req.body.reaction == "angry" ? 1 : 0
+            "reactions.heart":
+              req.body.reaction == "heart"
+                ? 1
+                : req.body.oldReaction == "heart"
+                ? -1
+                : 0,
+            "reactions.laughing":
+              req.body.reaction == "laughing"
+                ? 1
+                : req.body.oldReaction == "laughing"
+                ? -1
+                : 0,
+            "reactions.wow":
+              req.body.reaction == "wow"
+                ? 1
+                : req.body.oldReaction == "wow"
+                ? -1
+                : 0,
+            "reactions.sad":
+              req.body.reaction == "sad"
+                ? 1
+                : req.body.oldReaction == "sad"
+                ? -1
+                : 0,
+            "reactions.angry":
+              req.body.reaction == "angry"
+                ? 1
+                : req.body.oldReaction == "angry"
+                ? -1
+                : 0
           }
         },
         { new: true }
