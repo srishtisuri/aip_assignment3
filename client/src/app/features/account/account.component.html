@@ -1,4 +1,13 @@
-<p>account works!</p>
-
-<app-login></app-login>
-<app-register></app-register>
+<div fxLayout="row" fxLayoutWrap>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column"></div>
+  </div>
+  <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
+    <div style="text-align: center; height: 90vh">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column"></div>
+  </div>
+</div>
