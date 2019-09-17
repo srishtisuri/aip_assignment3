@@ -3,7 +3,11 @@ const Schema = mongoose.Schema;
 
 const postSchema = new Schema({
   image: { type: String, required: true },
-  dateCreated: { type: Date, required: true, default: new Date().toISOString() },
+  dateCreated: {
+    type: Date,
+    required: true,
+    default: new Date().toISOString()
+  },
   history: { type: Array, required: true },
   comments: { type: Array, required: true },
   report: {

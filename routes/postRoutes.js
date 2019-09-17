@@ -3,6 +3,15 @@ const Post = require("../models/Post");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  router.get("/test", async (req, res) => {
+    try {
+      await Post.deleteMany({});
+      res.json({ status: "SUCCESS" });
+    } catch (err) {
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.get("/", async (req, res) => {
     try {
       let response = await Post.find();
@@ -84,6 +93,56 @@ module.exports = (express, passport) => {
     }
   });
 
+  router.put("/react", async (req, res) => {
+    try {
+      if (req.body.reaction == req.body.oldReaction) {
+        req.body.reaction = null;
+      }
+      let response = await Post.findOneAndUpdate(
+        { _id: req.body.thread },
+        {
+          $inc: {
+            "reactions.heart":
+              req.body.reaction == "heart"
+                ? 1
+                : req.body.oldReaction == "heart"
+                ? -1
+                : 0,
+            "reactions.laughing":
+              req.body.reaction == "laughing"
+                ? 1
+                : req.body.oldReaction == "laughing"
+                ? -1
+                : 0,
+            "reactions.wow":
+              req.body.reaction == "wow"
+                ? 1
+                : req.body.oldReaction == "wow"
+                ? -1
+                : 0,
+            "reactions.sad":
+              req.body.reaction == "sad"
+                ? 1
+                : req.body.oldReaction == "sad"
+                ? -1
+                : 0,
+            "reactions.angry":
+              req.body.reaction == "angry"
+                ? 1
+                : req.body.oldReaction == "angry"
+                ? -1
+                : 0
+          }
+        },
+        { new: true }
+      );
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.put("/report", async (req, res) => {
     try {
       let response = await Post.findOneAndUpdate(
@@ -138,5 +197,6 @@ module.exports = (express, passport) => {
     }
     res.json({ status: "SUCCESS" });
   });
+
   return router;
 };
