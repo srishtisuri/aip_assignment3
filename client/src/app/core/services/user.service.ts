@@ -10,7 +10,7 @@ export class UserService {
   endpoint: string = "/api/users";
   user: User = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -35,5 +35,9 @@ export class UserService {
   }
   register(registrationDetails): Observable<any> {
     return this.http.post<any>(this.endpoint, { user: registrationDetails });
+  }
+
+  addReaction(userId, thread, reaction): Observable<any> {
+    return this.http.put("/api/users/addReaction", { "_id": userId, "myReaction": { "postId": thread, reaction } });
   }
 }

@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errors;
 
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private _snackBar: MatSnackBar) {}
+  constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private _snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
         this.userService.setUser(res.data);
         this.openSnackBar("You have successfully logged in!", "Ok");
         window.location.href = "/";
+        this.router.navigate(['/discussion-board'])
       } else {
         this.errors.push(res.error);
       }

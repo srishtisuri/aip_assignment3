@@ -15,7 +15,7 @@
       <span>😢{{post.reactions.sad}}</span>️
       <span>😠{{post.reactions.angry}}</span>️
     </div>
-    <div class="user-reactions" *ngIf="showReactions" (mouseover)="toggleReactions(true)">
+    <div class="user-reactions" *ngIf="showReactions && isLoggedIn" (mouseover)="toggleReactions(true)">
       <div [ngClass]="{'selected': userHasReacted && currentReaction == 'heart'}" (click)="react('heart')">❤️</div>️
       <div [ngClass]="{'selected': userHasReacted && currentReaction == 'laughing'}" (click)="react('laughing')">😂
       </div>️
@@ -24,7 +24,7 @@
       <div [ngClass]="{'selected': userHasReacted && currentReaction == 'angry'}" (click)="react('angry')">😠</div>️
     </div>
     <mat-card-actions class="card-actions">
-      <button [ngClass]="{'reacted': userHasReacted}" (mouseover)="toggleReactions(true)"
+      <button [disabled]="!isLoggedIn" [ngClass]="{'reacted': userHasReacted}" (mouseover)="toggleReactions(true)"
         (mouseleave)="toggleReactions(false)" mat-button>{{reactButtonText}}</button>
       <button mat-button>COMMENT</button>
       <button mat-button>REPORT</button>

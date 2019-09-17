@@ -18,7 +18,7 @@ export class NavComponent {
     share()
   );
 
-  constructor(private breakpointObserver: BreakpointObserver, private userService: UserService, private _snackBar: MatSnackBar) {}
+  constructor(private breakpointObserver: BreakpointObserver, private userService: UserService, private _snackBar: MatSnackBar) { }
 
   openSnackBar(message: string, action: string) {
     this._snackBar.open(message, action, {

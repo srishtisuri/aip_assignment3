@@ -110,12 +110,13 @@ module.exports = (express, passport) => {
           }
         );
       } else {
-        response = await user.updateOne({
+        await user.updateOne({
           $push: {
             myReactions: req.body.myReaction
           }
         });
       }
+      response = await User.findById(req.body._id);
       sendSuccess(res, response);
     } catch (err) {
       sendError(res, err);

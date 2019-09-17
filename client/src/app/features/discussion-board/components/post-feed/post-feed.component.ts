@@ -9,12 +9,21 @@ import { UserService } from "src/app/core/services/user.service";
 })
 export class PostFeedComponent implements OnInit {
   posts;
+  user;
   isLoggedIn = false;
 
-  constructor(private postService: PostService, private userService: UserService) {}
+  constructor(private postService: PostService, private userService: UserService) { }
 
   ngOnInit() {
     this.getPosts();
+
+    this.userService.checkSession().subscribe(res => {
+      console.log(res);
+      if (res.user) {
+        this.isLoggedIn = true;
+        this.user = res.user;
+      }
+    });
   }
 
   getPosts() {
