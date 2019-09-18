@@ -28,7 +28,7 @@ export class PostService {
     return this.http.get(this.endpoint + "/test/");
   }
 
-  react(userId: string, thread: string, reaction: string, oldReaction: string): Observable<any> {
+  react(thread: string, reaction: string, oldReaction: string): Observable<any> {
     return this.http.put(this.endpoint + "/react", { thread, reaction, oldReaction });
   }
 }

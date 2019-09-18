@@ -36,8 +36,4 @@ export class UserService {
   register(registrationDetails): Observable<any> {
     return this.http.post<any>(this.endpoint, { user: registrationDetails });
   }
-
-  addReaction(userId, thread, reaction): Observable<any> {
-    return this.http.put("/api/users/addReaction", { "_id": userId, "myReaction": { "postId": thread, reaction } });
-  }
 }

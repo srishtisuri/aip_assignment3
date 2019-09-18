@@ -15,8 +15,6 @@ export class PostFeedComponent implements OnInit {
   constructor(private postService: PostService, private userService: UserService) { }
 
   ngOnInit() {
-    this.getPosts();
-
     this.userService.checkSession().subscribe(res => {
       console.log(res);
       if (res.user) {
@@ -24,6 +22,8 @@ export class PostFeedComponent implements OnInit {
         this.user = res.user;
       }
     });
+
+    this.getPosts();
   }
 
   getPosts() {

@@ -22,17 +22,21 @@ export class PostFeedItemComponent implements OnInit {
   ngOnInit() {
     if (this.user != null) {
       this.isLoggedIn = true;
-      this.getMyReaction();
+      this.getUserReaction();
     }
   }
 
-  getMyReaction() {
-    if (this.user.myReactions.map(reaction => reaction.postId).includes(this.post._id)) {
-      this.userHasReacted = true;
-      this.reactButtonText = "REACTED";
-      this.currentReaction = this.user.myReactions.find(reaction => reaction.postId == this.post._id).reaction;
+  getUserReaction() {
+    this.userHasReacted = false;
+    for (let reaction in this.post.reactions) {
+      if (this.post.reactions[reaction].includes(this.user._id)) {
+        this.userHasReacted = true;
+        this.reactButtonText = "REACTED";
+        this.currentReaction = reaction;
+        break;
+      }
     }
-    else {
+    if (!this.userHasReacted) {
       this.userHasReacted = false;
       this.reactButtonText = "REACT";
       this.currentReaction = null;
@@ -51,12 +55,9 @@ export class PostFeedItemComponent implements OnInit {
   }
 
   react(reaction) {
-    this.postService.react(this.user._id, this.post._id, reaction, this.currentReaction).subscribe(response => {
+    this.postService.react(this.post._id, reaction, this.currentReaction).subscribe(response => {
       this.post = response.data;
-      this.userService.addReaction(this.user._id, this.post._id, reaction).subscribe(userResponse => {
-        this.user = userResponse.data;
-        this.getMyReaction();
-      });
+      this.getUserReaction();
     });
   }
 }

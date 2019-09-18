@@ -95,47 +95,61 @@ module.exports = (express, passport) => {
 
   router.put("/react", async (req, res) => {
     try {
-      if (req.body.reaction == req.body.oldReaction) {
-        req.body.reaction = null;
+      let response = null;
+      if (req.body.reaction) {
+        let push = null;
+        switch (req.body.reaction) {
+          case "heart":
+            push = { "reactions.heart": req.user._id };
+            break;
+          case "laughing":
+            push = { "reactions.laughing": req.user._id };
+            break;
+          case "wow":
+            push = { "reactions.wow": req.user._id };
+            break;
+          case "sad":
+            push = { "reactions.sad": req.user._id };
+            break;
+          case "angry":
+            push = { "reactions.angry": req.user._id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $push: push
+          },
+          { new: true }
+        );
       }
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $inc: {
-            "reactions.heart":
-              req.body.reaction == "heart"
-                ? 1
-                : req.body.oldReaction == "heart"
-                ? -1
-                : 0,
-            "reactions.laughing":
-              req.body.reaction == "laughing"
-                ? 1
-                : req.body.oldReaction == "laughing"
-                ? -1
-                : 0,
-            "reactions.wow":
-              req.body.reaction == "wow"
-                ? 1
-                : req.body.oldReaction == "wow"
-                ? -1
-                : 0,
-            "reactions.sad":
-              req.body.reaction == "sad"
-                ? 1
-                : req.body.oldReaction == "sad"
-                ? -1
-                : 0,
-            "reactions.angry":
-              req.body.reaction == "angry"
-                ? 1
-                : req.body.oldReaction == "angry"
-                ? -1
-                : 0
-          }
-        },
-        { new: true }
-      );
+      if (req.body.oldReaction) {
+        let pull = null;
+        switch (req.body.oldReaction) {
+          case "heart":
+            pull = { "reactions.heart": req.user._id };
+            break;
+          case "laughing":
+            pull = { "reactions.laughing": req.user._id };
+            break;
+          case "wow":
+            pull = { "reactions.wow": req.user._id };
+            break;
+          case "sad":
+            pull = { "reactions.sad": req.user._id };
+            break;
+          case "angry":
+            pull = { "reactions.angry": req.user._id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $pull: pull
+          },
+          { new: true }
+        );
+      }
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
