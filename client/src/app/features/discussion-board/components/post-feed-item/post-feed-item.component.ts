@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostService } from "src/app/core/services/post.service";
+import { UserService } from "src/app/core/services/user.service";
 
 @Component({
   selector: 'app-post-feed-item',
@@ -9,37 +10,33 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class PostFeedItemComponent implements OnInit {
   @Input() post: any;
-  constructor(private router: Router, private postService: PostService) { }
+  @Input() user: any;
+  constructor(private router: Router, private postService: PostService, private userService: UserService) { }
 
-  //temp user till getUser service created
-  user = {
-    myReactions: [
-      {
-        postId: "5d6dcbdd8e139044b3cf1877",
-        reaction: "heart"
-      },
-      {
-        postId: "5d6dcbde8e139044b3cf1879",
-        reaction: "sad"
-      }
-    ]
-  }
   showReactions = false;
   userHasReacted = false;
   reactButtonText = "REACT";
   currentReaction = null;
+  isLoggedIn = false;
 
   ngOnInit() {
-    this.getMyReaction();
+    if (this.user != null) {
+      this.isLoggedIn = true;
+      this.getUserReaction();
+    }
   }
 
-  getMyReaction() {
-    if (this.user.myReactions.map(reaction => reaction.postId).includes(this.post._id)) {
-      this.userHasReacted = true;
-      this.reactButtonText = "REACTED";
-      this.currentReaction = this.user.myReactions.find(reaction => reaction.postId == this.post._id).reaction;
+  getUserReaction() {
+    this.userHasReacted = false;
+    for (let reaction in this.post.reactions) {
+      if (this.post.reactions[reaction].includes(this.user._id)) {
+        this.userHasReacted = true;
+        this.reactButtonText = "REACTED";
+        this.currentReaction = reaction;
+        break;
+      }
     }
-    else {
+    if (!this.userHasReacted) {
       this.userHasReacted = false;
       this.reactButtonText = "REACT";
       this.currentReaction = null;
@@ -60,17 +57,7 @@ export class PostFeedItemComponent implements OnInit {
   react(reaction) {
     this.postService.react(this.post._id, reaction, this.currentReaction).subscribe(response => {
       this.post = response.data;
+      this.getUserReaction();
     });
-
-    //TODO: change this to push reaction to user in db
-    if (reaction == this.currentReaction) {
-      this.user.myReactions = this.user.myReactions.filter(reaction => reaction.postId != this.post._id)
-    } else {
-      try { this.user.myReactions.find(reaction => reaction.postId = this.post._id).reaction = reaction }
-      catch {
-        this.user.myReactions.push({ postId: this.post._id, reaction: reaction });
-      }
-    }
-    this.getMyReaction();
   }
 }

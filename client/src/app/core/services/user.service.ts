@@ -10,7 +10,7 @@ export class UserService {
   endpoint: string = "/api/users";
   user: User = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint);
