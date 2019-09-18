@@ -3,6 +3,7 @@ const app = express();
 const port = 5000;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
 require("./config/passport.js")(passport);
@@ -13,13 +14,13 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-//Deprecation warning  
+//Deprecation warning
 mongoose.set("useFindAndModify", false);
 
 //Express Session Init
 app.use(
   session({
-    secret: "area51",
+    secret: "brogrammers",
     resave: false,
     saveUninitialized: false
   })
@@ -28,6 +29,7 @@ app.use(
 //Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 //Passport Init
 app.use(passport.initialize());

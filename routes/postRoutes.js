@@ -3,6 +3,26 @@ const Post = require("../models/Post");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  router.get("/postsByUserTest", async (req, res) => {
+    try {
+      let responsePosts = await Post.find();
+      responsePosts.map(async post => {
+        let responseUser = await User.findById(post.author);
+        console.log(post.author);
+        return {
+          ...post,
+          name: responseUser.name,
+          username: responseUser.username,
+          avatar: responseUser.avatar
+        };
+      });
+      res.json({ status: "SUCCESS", data: responsePosts });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.get("/test", async (req, res) => {
     try {
       await Post.deleteMany({});
@@ -212,6 +232,31 @@ module.exports = (express, passport) => {
     }
     res.json({ status: "SUCCESS" });
   });
+
+  // router.get("/postsByUser", async (req, res) => {
+  //   try {
+  //     let response = await Post.find();
+  //     res.json({ status: "SUCCESS", data: response });
+  //   } catch (err) {
+  //     console.log("FAIL: " + err);
+  //     res.json({ status: "FAIL", error: err });
+  //   }
+  // });
+
+  // router.get("/postsByUser/test2", (req, res) => {
+  //   Post.aggregate([
+  //     {
+  //       $lookup: {
+  //         from: "user", // collection name in db
+  //         localField: "_id",
+  //         foreignField: "student",
+  //         as: "worksnapsTimeEntries"
+  //       }
+  //     }
+  //   ]).exec(function(err, students) {
+  //     // students contain WorksnapsTimeEntries
+  //   });
+  // });
 
   return router;
 };
