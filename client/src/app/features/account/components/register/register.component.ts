@@ -1,8 +1,8 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { UserService } from "src/app/core/services/user.service";
 import { Router } from "@angular/router";
-import { MatSnackBar } from "@angular/material";
+import { AuthService } from "src/app/core/services/auth.service";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "app-register",
@@ -13,7 +13,12 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
   errors;
 
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private _snackBar: MatSnackBar) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -26,18 +31,12 @@ export class RegisterComponent implements OnInit {
     this.errors = [];
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
-
   onSubmit() {
-    this.userService.register(this.registerForm.value).subscribe(res => {
-      console.log(res);
-      if (res.data) {
-        this.openSnackBar("You have successfully registered!", "Ok");
-        this.router.navigate(["/account/login"]);
+    this.authService.register(this.registerForm.value).subscribe(res => {
+      if (res.status == "SUCCESS") {
+        this.authService.isLoggedIn = true;
+        this.notificationService.notify("You have successfully registered!");
+        this.router.navigate(["/discussion-board"]);
       } else {
         this.errors.push(res.error);
       }

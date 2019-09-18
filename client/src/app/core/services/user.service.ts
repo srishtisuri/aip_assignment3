@@ -16,24 +16,10 @@ export class UserService {
     return this.http.get<any>(this.endpoint);
   }
 
-  login(username, password): Observable<any> {
-    return this.http.post<any>(this.endpoint + "/login", { username, password });
-  }
-
   setUser(user): void {
     this.user = user;
   }
   getUser(): Observable<any> {
     return of(this.user);
-  }
-  checkSession(): Observable<any> {
-    return this.http.get<any>(this.endpoint + "/session");
-  }
-  logout(): Observable<any> {
-    this.user = null;
-    return this.http.get<any>(this.endpoint + "/logout");
-  }
-  register(registrationDetails): Observable<any> {
-    return this.http.post<any>(this.endpoint, { user: registrationDetails });
   }
 }

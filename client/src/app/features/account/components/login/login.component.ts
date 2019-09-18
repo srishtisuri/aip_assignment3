@@ -1,8 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { FormGroup, Validators, FormBuilder } from "@angular/forms";
-import { UserService } from "src/app/core/services/user.service";
 import { Router } from "@angular/router";
 import { MatSnackBar } from "@angular/material";
+import { AuthService } from "src/app/core/services/auth.service";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "app-login",
@@ -13,7 +14,12 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   errors;
 
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router, private _snackBar: MatSnackBar) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -23,18 +29,12 @@ export class LoginComponent implements OnInit {
     this.errors = [];
   }
 
-  openSnackBar(message: string, action: string) {
-    this._snackBar.open(message, action, {
-      duration: 5000
-    });
-  }
-
   onSubmit() {
-    this.userService.login(this.loginForm.value.username, this.loginForm.value.password).subscribe(res => {
-      if (res.data) {
-        this.userService.setUser(res.data);
-        this.openSnackBar("You have successfully logged in!", "Ok");
-        window.location.href = "/";
+    this.authService.login(this.loginForm.value.username, this.loginForm.value.password).subscribe(res => {
+      if (res.status == "SUCCESS") {
+        this.authService.isLoggedIn = true;
+        this.notificationService.notify("You have successfully logged in!");
+        this.router.navigate(["/discussion-board"]);
       } else {
         this.errors.push(res.error);
       }

@@ -44,13 +44,4 @@ export class PostFeedComponent implements OnInit {
       alert("You need to be logged in to do that!");
     }
   }
-
-  devLogin() {
-    this.userService.login(prompt("Enter a username"), prompt("Enter a password")).subscribe(response => {
-      console.log(response);
-      if (response.status === "SUCCESS") {
-        this.isLoggedIn = true;
-      }
-    });
-  }
 }

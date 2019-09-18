@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 module.exports = (express, passport) => {
   const router = express.Router();
@@ -47,8 +48,12 @@ module.exports = (express, passport) => {
           ips: req.ip
         });
 
-        let response = await newUser.save();
-        sendSuccess(res, response);
+        let responseUser = await newUser.save();
+        let token = await jwt.sign({ id: responseUser._id }, "brogrammers", {
+          expiresIn: 604800
+        });
+        res.cookie("token", token);
+        sendSuccess(res);
       } else {
         return sendError(res, "Username already exists");
       }
@@ -130,7 +135,11 @@ module.exports = (express, passport) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
-        return sendSuccess(res, updatedUser);
+        let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
+          expiresIn: 604800
+        });
+        res.cookie("token", token, { httpOnly: true });
+        return sendSuccess(res);
       });
     })(req, res, next);
   });
@@ -140,6 +149,7 @@ module.exports = (express, passport) => {
     try {
       req.logout();
       req.session.destroy();
+      res.clearCookie("token");
       sendSuccess(res);
     } catch (e) {
       sendError(res, err);
@@ -153,6 +163,56 @@ module.exports = (express, passport) => {
       user: req.user,
       cookies: req.cookies
     });
+  });
+
+  const setHeader = (req, res, next) => {
+    if (req.cookies && req.cookies.hasOwnProperty("token")) {
+      // Copy the token without the quotes
+      req.headers.authorization =
+        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
+    }
+    next();
+  };
+  //Check to make sure header is not undefined, if so, return Forbidden (403)
+  const checkToken = (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+
+      req.token = token;
+      next();
+    } else {
+      sendError(res);
+    }
+  };
+
+  // Verify the token
+  const validToken = async (req, res, next) => {
+    try {
+      let token = await jwt.verify(req.token, "brogrammers");
+      next();
+    } catch (e) {
+      res.sendStatus(403);
+    }
+  };
+
+  // Check authentication
+  router.get("/auth", setHeader, checkToken, validToken, async (req, res) => {
+    const encodedPayload = new Buffer.from(req.token.split(".")[1], "base64");
+    const decodedPayload = JSON.parse(encodedPayload.toString("ascii"));
+
+    try {
+      let response = await User.findById(decodedPayload.id);
+      if (response) {
+        sendSuccess(res);
+      } else {
+        sendError(res);
+      }
+    } catch (err) {
+      sendError(res, err);
+    }
   });
 
   return router;
