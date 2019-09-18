@@ -80,7 +80,7 @@ module.exports = (express, passport) => {
       try {
         let response = await User.findById(decodedPayload.id);
         if (response) {
-          delete response["password"];
+          response.password = undefined;
           sendSuccess(res, response);
         } else {
           sendError(res);
