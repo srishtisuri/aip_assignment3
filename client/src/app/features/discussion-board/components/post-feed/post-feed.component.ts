@@ -12,12 +12,12 @@ export class PostFeedComponent implements OnInit {
   user;
   isLoggedIn = false;
 
-  constructor(private postService: PostService, private userService: UserService) { }
+  constructor(private postService: PostService, private userService: UserService) {}
 
   ngOnInit() {
-    this.userService.checkSession().subscribe(res => {
+    this.userService.getCurrentUser().subscribe(res => {
       console.log(res);
-      if (res.user) {
+      if (res.data) {
         this.isLoggedIn = true;
         this.user = res.user;
       }

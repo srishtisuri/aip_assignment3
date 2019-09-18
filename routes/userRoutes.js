@@ -14,6 +14,39 @@ module.exports = (express, passport) => {
     return res.json({ status: "SUCCESS", data });
   };
 
+  const setHeader = (req, res, next) => {
+    if (req.cookies && req.cookies.hasOwnProperty("token")) {
+      // Copy the token without the quotes
+      req.headers.authorization =
+        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
+    }
+    next();
+  };
+  //Check to make sure header is not undefined, if so, return Forbidden (403)
+  const checkToken = (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+
+      req.token = token;
+      next();
+    } else {
+      sendError(res);
+    }
+  };
+
+  // Verify the token
+  const validToken = async (req, res, next) => {
+    try {
+      let token = await jwt.verify(req.token, "brogrammers");
+      next();
+    } catch (e) {
+      res.sendStatus(403);
+    }
+  };
+
   updateLastLoggedIn = async user => {
     return await User.findByIdAndUpdate(
       user._id,
@@ -33,6 +66,30 @@ module.exports = (express, passport) => {
       sendError(res, err);
     }
   });
+
+  // Get current user
+  router.get(
+    "/current",
+    setHeader,
+    checkToken,
+    validToken,
+    async (req, res) => {
+      const encodedPayload = new Buffer.from(req.token.split(".")[1], "base64");
+      const decodedPayload = JSON.parse(encodedPayload.toString("ascii"));
+
+      try {
+        let response = await User.findById(decodedPayload.id);
+        if (response) {
+          delete response["password"];
+          sendSuccess(res, response);
+        } else {
+          sendError(res);
+        }
+      } catch (err) {
+        sendError(res, err);
+      }
+    }
+  );
 
   // Create user
   router.post("/", async (req, res) => {
@@ -127,39 +184,6 @@ module.exports = (express, passport) => {
       cookies: req.cookies
     });
   });
-
-  const setHeader = (req, res, next) => {
-    if (req.cookies && req.cookies.hasOwnProperty("token")) {
-      // Copy the token without the quotes
-      req.headers.authorization =
-        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
-    }
-    next();
-  };
-  //Check to make sure header is not undefined, if so, return Forbidden (403)
-  const checkToken = (req, res, next) => {
-    const header = req.headers["authorization"];
-
-    if (typeof header !== "undefined") {
-      const bearer = header.split(" ");
-      const token = bearer[1];
-
-      req.token = token;
-      next();
-    } else {
-      sendError(res);
-    }
-  };
-
-  // Verify the token
-  const validToken = async (req, res, next) => {
-    try {
-      let token = await jwt.verify(req.token, "brogrammers");
-      next();
-    } catch (e) {
-      res.sendStatus(403);
-    }
-  };
 
   // Check authentication
   router.get("/auth", setHeader, checkToken, validToken, async (req, res) => {
