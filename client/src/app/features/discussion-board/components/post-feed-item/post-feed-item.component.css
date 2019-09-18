@@ -60,9 +60,19 @@
 }
 
 .post-reactions {
+  flex: 1 0 250px;
   text-align: right;
 }
 
 .reacted {
   color: lightskyblue;
+}
+
+.details {
+  display: flex;
+}
+
+.commentTotal {
+  display: inline-block;
+  flex: 0 0 100px;
 }

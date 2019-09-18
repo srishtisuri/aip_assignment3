@@ -1,0 +1,12 @@
+.card {
+  width: 500px;
+  height: 100;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.mat-card-image {
+  margin: 0;
+  height: 450px;
+  width: 450px;
+}

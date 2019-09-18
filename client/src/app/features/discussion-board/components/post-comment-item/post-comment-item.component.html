@@ -1,0 +1,16 @@
+<mat-card class="card">
+  <div>
+    <mat-card-title>{{ user.name }}</mat-card-title>
+    <mat-card-subtitle>@{{ user.username }}</mat-card-subtitle>
+  </div>
+  <mat-card-content>
+    <img mat-card-image [src]="[comment.image]" />
+  </mat-card-content>
+  <mat-list>
+    <div>
+      <a mat-stroked-button style="margin-left:10px">React</a>
+      <a mat-stroked-button style="margin-left:10px">Reply</a>
+      <a mat-stroked-button style="margin-left:10px">Report</a>
+    </div>
+  </mat-list>
+</mat-card>
