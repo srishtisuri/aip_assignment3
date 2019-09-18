@@ -3,6 +3,35 @@ const Post = require("../models/Post");
 module.exports = (express, passport) => {
   const router = express.Router();
 
+  router.get("/postsByUserTest", async (req, res) => {
+    try {
+      let responsePosts = await Post.find();
+      responsePosts.map(async post => {
+        let responseUser = await User.findById(post.author);
+        console.log(post.author);
+        return {
+          ...post,
+          name: responseUser.name,
+          username: responseUser.username,
+          avatar: responseUser.avatar
+        };
+      });
+      res.json({ status: "SUCCESS", data: responsePosts });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/test", async (req, res) => {
+    try {
+      await Post.deleteMany({});
+      res.json({ status: "SUCCESS" });
+    } catch (err) {
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.get("/", async (req, res) => {
     try {
       let response = await Post.find();
@@ -84,6 +113,70 @@ module.exports = (express, passport) => {
     }
   });
 
+  router.put("/react", async (req, res) => {
+    try {
+      let response = null;
+      if (req.body.reaction) {
+        let push = null;
+        switch (req.body.reaction) {
+          case "heart":
+            push = { "reactions.heart": req.user._id };
+            break;
+          case "laughing":
+            push = { "reactions.laughing": req.user._id };
+            break;
+          case "wow":
+            push = { "reactions.wow": req.user._id };
+            break;
+          case "sad":
+            push = { "reactions.sad": req.user._id };
+            break;
+          case "angry":
+            push = { "reactions.angry": req.user._id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $push: push
+          },
+          { new: true }
+        );
+      }
+      if (req.body.oldReaction) {
+        let pull = null;
+        switch (req.body.oldReaction) {
+          case "heart":
+            pull = { "reactions.heart": req.user._id };
+            break;
+          case "laughing":
+            pull = { "reactions.laughing": req.user._id };
+            break;
+          case "wow":
+            pull = { "reactions.wow": req.user._id };
+            break;
+          case "sad":
+            pull = { "reactions.sad": req.user._id };
+            break;
+          case "angry":
+            pull = { "reactions.angry": req.user._id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $pull: pull
+          },
+          { new: true }
+        );
+      }
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.put("/report", async (req, res) => {
     try {
       let response = await Post.findOneAndUpdate(
@@ -138,5 +231,31 @@ module.exports = (express, passport) => {
     }
     res.json({ status: "SUCCESS" });
   });
+
+  // router.get("/postsByUser", async (req, res) => {
+  //   try {
+  //     let response = await Post.find();
+  //     res.json({ status: "SUCCESS", data: response });
+  //   } catch (err) {
+  //     console.log("FAIL: " + err);
+  //     res.json({ status: "FAIL", error: err });
+  //   }
+  // });
+
+  // router.get("/postsByUser/test2", (req, res) => {
+  //   Post.aggregate([
+  //     {
+  //       $lookup: {
+  //         from: "user", // collection name in db
+  //         localField: "_id",
+  //         foreignField: "student",
+  //         as: "worksnapsTimeEntries"
+  //       }
+  //     }
+  //   ]).exec(function(err, students) {
+  //     // students contain WorksnapsTimeEntries
+  //   });
+  // });
+
   return router;
 };

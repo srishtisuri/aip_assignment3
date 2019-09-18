@@ -32,3 +32,37 @@
 .card-actions {
   text-align: center;
 }
+
+.user-reactions {
+  position: absolute;
+  margin-left: 120px;
+  top: 530px;
+  background-color: white;
+  font-size: 2em;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.user-reactions > div {
+  display: inline-block;
+  width: 32px;
+  height: 36px;
+}
+
+.user-reactions > div.selected {
+  background-color: lightskyblue;
+  border-radius: 35%;
+  line-height: 135%;
+}
+
+.user-reactions > div:hover {
+  color: black;
+}
+
+.post-reactions {
+  text-align: right;
+}
+
+.reacted {
+  color: lightskyblue;
+}

@@ -25,7 +25,7 @@ module.exports = passport => {
         if (!user) {
           return done(null, false, { message: "Incorrect username." });
         }
-        if (!checkPassword(user.password, password)) {
+        if ((await checkPassword(user.password, password)) == false) {
           return done(null, false, { message: "Incorrect password." });
         }
         return done(null, user);

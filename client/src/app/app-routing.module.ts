@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'post-thread', component: PostThreadComponent },
   { path: 'leaderboard', component: LeaderboardComponent },
   { path: 'settings', component: SettingsComponent },
-  { path: 'account', component: AccountComponent },
+  { path: 'account', redirectTo: '/account/login', pathMatch: 'full'},
   { path: 'admin', component: AdminComponent },
   { path: '', redirectTo: '/discussion-board', pathMatch: 'full' }
 ];
