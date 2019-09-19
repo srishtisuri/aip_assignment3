@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostService } from "src/app/core/services/post.service";
-import { UserService } from "src/app/core/services/user.service";
 
 @Component({
   selector: 'app-post-feed-item',
@@ -11,7 +10,7 @@ import { UserService } from "src/app/core/services/user.service";
 export class PostFeedItemComponent implements OnInit {
   @Input() post: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService, private userService: UserService) { }
+  constructor(private router: Router, private postService: PostService) { }
 
   showReactions = false;
   userHasReacted = false;
