@@ -42,11 +42,6 @@ export class PostFeedItemComponent implements OnInit {
     }
   }
 
-  handleClick(id) {
-    console.log(id);
-    this.router.navigate(['/post-thread/']);
-  }
-
   toggleReactions(showReactions) {
     setTimeout(() => {
       this.showReactions = showReactions;

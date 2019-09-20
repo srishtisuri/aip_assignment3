@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { PostService } from "src/app/core/services/post.service";
 
 @Component({
@@ -8,17 +8,56 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class PostCommentItemComponent implements OnInit {
   @Input() id: string;
+  @Input() user: any;
   constructor(private postService: PostService) { }
 
   comment = null;
-  user = { username: "ctdamtoft", name: "Christian" };
+  author = { username: "ctdamtoft", name: "Christian" };
+  showReactions = false;
+  userHasReacted = false;
+  reactButtonText = "REACT";
+  currentReaction = null;
+  isLoggedIn = false;
 
   ngOnInit() {
     this.postService.getPost(this.id).subscribe(response => {
       if (response.status == "SUCCESS") {
         this.comment = response.data;
       }
+      if (this.user != null) {
+        this.isLoggedIn = true;
+        this.getUserReaction();
+      }
+    });
+  }
 
+  getUserReaction() {
+    this.userHasReacted = false;
+    for (let reaction in this.comment.reactions) {
+      if (this.comment.reactions[reaction].includes(this.user._id)) {
+        this.userHasReacted = true;
+        this.reactButtonText = "REACTED";
+        this.currentReaction = reaction;
+        break;
+      }
+    }
+    if (!this.userHasReacted) {
+      this.userHasReacted = false;
+      this.reactButtonText = "REACT";
+      this.currentReaction = null;
+    }
+  }
+
+  toggleReactions(showReactions) {
+    setTimeout(() => {
+      this.showReactions = showReactions;
+    }, 500);
+  }
+
+  react(reaction) {
+    this.postService.react(this.comment._id, reaction, this.currentReaction).subscribe(response => {
+      this.comment = response.data;
+      this.getUserReaction();
     });
   }
 }

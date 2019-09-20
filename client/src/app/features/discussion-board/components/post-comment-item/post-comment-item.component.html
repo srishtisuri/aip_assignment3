@@ -1,16 +1,36 @@
-<mat-card class="card">
-  <div>
-    <mat-card-title>{{ user.name }}</mat-card-title>
-    <mat-card-subtitle>@{{ user.username }}</mat-card-subtitle>
-  </div>
-  <mat-card-content>
-    <img mat-card-image [src]="[comment.image]" />
-  </mat-card-content>
-  <mat-list>
+<div *ngIf="comment != null">
+  <mat-card class="card">
     <div>
-      <a mat-stroked-button style="margin-left:10px">React</a>
-      <a mat-stroked-button style="margin-left:10px">Reply</a>
-      <a mat-stroked-button style="margin-left:10px">Report</a>
+      <mat-card-title>{{ author.name }}</mat-card-title>
+      <mat-card-subtitle>@{{ author.username }}</mat-card-subtitle>
     </div>
-  </mat-list>
-</mat-card>
+    <mat-card-content>
+      <div class="user-reactions" *ngIf="showReactions && isLoggedIn" (mouseover)="toggleReactions(true)"
+        (mouseleave)="toggleReactions(false)">
+        <div [ngClass]="{'selected': userHasReacted && currentReaction == 'heart'}" (click)="react('heart')">❤️</div>️
+        <div [ngClass]="{'selected': userHasReacted && currentReaction == 'laughing'}" (click)="react('laughing')">😂
+        </div>️
+        <div [ngClass]="{'selected': userHasReacted && currentReaction == 'wow'}" (click)="react('wow')">😮</div>️
+        <div [ngClass]="{'selected': userHasReacted && currentReaction == 'sad'}" (click)="react('sad')">😢</div>️
+        <div [ngClass]="{'selected': userHasReacted && currentReaction == 'angry'}" (click)="react('angry')">😠</div>️
+      </div>
+      <mat-list class="actions">
+        <a mat-stroked-button class="actionButton" [disabled]="!isLoggedIn" [ngClass]="{'reacted': userHasReacted}"
+          (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)">React</a>
+        <a mat-stroked-button class="actionButton" [routerLink]="['/discussion-board', comment._id]">Reply</a>
+        <a mat-stroked-button class="actionButton">Report</a>
+      </mat-list>
+      <img mat-card-image [src]="[comment.image]" />
+      <div class="details">
+        <div class="replyTotal">replies: {{comment.comments.length}}</div>
+        <div class="post-reactions">
+          <span>❤️{{comment.reactions.heart.length}}</span>️
+          <span>😂{{comment.reactions.laughing.length}}</span>️
+          <span>😮{{comment.reactions.wow.length}}</span>️
+          <span>😢{{comment.reactions.sad.length}}</span>️
+          <span>😠{{comment.reactions.angry.length}}</span>️
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

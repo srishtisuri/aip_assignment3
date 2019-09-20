@@ -1,12 +1,73 @@
 .card {
   width: 500px;
-  height: 100;
-  padding: 10px;
+  padding: 20px;
   margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .mat-card-image {
   margin: 0;
-  height: 450px;
-  width: 450px;
+  width: 250px;
+  height: 250px;
+  margin-left: 75px;
+}
+
+.user-reactions {
+  position: absolute;
+  top: 65px;
+  right: -5px;
+  font-size: 2em;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.user-reactions > div {
+  display: inline-block;
+  width: 32px;
+  height: 36px;
+  cursor: pointer;
+}
+
+.user-reactions > div.selected {
+  background-color: lightskyblue;
+  border-radius: 35%;
+  line-height: 135%;
+}
+
+.user-reactions > div:hover {
+  color: black;
+}
+
+.post-reactions {
+  flex: 1 0 250px;
+  text-align: right;
+}
+
+.reacted {
+  color: lightskyblue;
+}
+
+.details {
+  display: inline-block;
+  text-align: right;
+  padding-left: 60px;
+  width: 100px;
+}
+
+.replyTotal {
+  display: inline-block;
+  flex: 0 0 100px;
+}
+
+.actions {
+  position: absolute;
+  width: 100px;
+  right: 10px;
+  top: 100px;
+}
+
+.actionButton {
+  margin: 5px 0px;
+  width: 75px;
 }
