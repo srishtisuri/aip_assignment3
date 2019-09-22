@@ -36,6 +36,7 @@ export class PostService {
   }
 
   react(thread: string, reaction: string, oldReaction: string): Observable<any> {
+    console.log(thread, reaction, oldReaction);
     return this.http.put(this.endpoint + "/react", { thread, reaction, oldReaction });
   }
 }

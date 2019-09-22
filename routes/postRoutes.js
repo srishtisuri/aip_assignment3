@@ -185,26 +185,27 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  router.put("/react", async (req, res) => {
+  router.put("/react", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
     try {
       let response = null;
       if (req.body.reaction) {
         let push = null;
         switch (req.body.reaction) {
           case "heart":
-            push = { "reactions.heart": req.user._id };
+            push = { "reactions.heart": decodedToken.id };
             break;
           case "laughing":
-            push = { "reactions.laughing": req.user._id };
+            push = { "reactions.laughing": decodedToken.id };
             break;
           case "wow":
-            push = { "reactions.wow": req.user._id };
+            push = { "reactions.wow": decodedToken.id };
             break;
           case "sad":
-            push = { "reactions.sad": req.user._id };
+            push = { "reactions.sad": decodedToken.id };
             break;
           case "angry":
-            push = { "reactions.angry": req.user._id };
+            push = { "reactions.angry": decodedToken.id };
             break;
         }
         response = await Post.findByIdAndUpdate(
@@ -219,19 +220,19 @@ module.exports = (express, passport, AWS) => {
         let pull = null;
         switch (req.body.oldReaction) {
           case "heart":
-            pull = { "reactions.heart": req.user._id };
+            pull = { "reactions.heart": decodedToken.id };
             break;
           case "laughing":
-            pull = { "reactions.laughing": req.user._id };
+            pull = { "reactions.laughing": decodedToken.id };
             break;
           case "wow":
-            pull = { "reactions.wow": req.user._id };
+            pull = { "reactions.wow": decodedToken.id };
             break;
           case "sad":
-            pull = { "reactions.sad": req.user._id };
+            pull = { "reactions.sad": decodedToken.id };
             break;
           case "angry":
-            pull = { "reactions.angry": req.user._id };
+            pull = { "reactions.angry": decodedToken.id };
             break;
         }
         response = await Post.findByIdAndUpdate(

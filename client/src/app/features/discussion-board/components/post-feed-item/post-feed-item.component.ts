@@ -1,16 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, Input } from "@angular/core";
+import { Router } from "@angular/router";
 import { PostService } from "src/app/core/services/post.service";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
-  selector: 'app-post-feed-item',
-  templateUrl: './post-feed-item.component.html',
-  styleUrls: ['./post-feed-item.component.css']
+  selector: "app-post-feed-item",
+  templateUrl: "./post-feed-item.component.html",
+  styleUrls: ["./post-feed-item.component.css"]
 })
 export class PostFeedItemComponent implements OnInit {
   @Input() post: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService) { }
+  constructor(private router: Router, private postService: PostService, private authService: AuthService) {}
 
   showReactions = false;
   userHasReacted = false;
@@ -18,9 +19,11 @@ export class PostFeedItemComponent implements OnInit {
   currentReaction = null;
   isLoggedIn = false;
 
+  // TODO: Figure out why the reactions only load sometimes.
+
   ngOnInit() {
     if (this.user != null) {
-      this.isLoggedIn = true;
+      console.log(this.user);
       this.getUserReaction();
     }
   }
