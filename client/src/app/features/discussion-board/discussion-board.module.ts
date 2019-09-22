@@ -4,10 +4,13 @@ import { LeaderboardWidgetComponent } from "./components/leaderboard-widget/lead
 import { NewPostWidgetComponent } from "./components/new-post-widget/new-post-widget.component";
 import { PostFeedComponent } from "./components/post-feed/post-feed.component";
 import { PostFeedItemComponent } from "./components/post-feed-item/post-feed-item.component";
+import { PostCommentItemComponent } from "./components/post-comment-item/post-comment-item.component";
+import { PostThreadComponent } from './components/post-thread/post-thread.component';
 import { SharedModule } from "src/app/shared/shared.module";
+import { RouterModule } from "@angular/router";
 
 @NgModule({
-  declarations: [DiscussionBoardComponent, LeaderboardWidgetComponent, NewPostWidgetComponent, PostFeedComponent, PostFeedItemComponent],
-  imports: [SharedModule]
+  declarations: [DiscussionBoardComponent, LeaderboardWidgetComponent, NewPostWidgetComponent, PostFeedComponent, PostFeedItemComponent, PostCommentItemComponent, PostThreadComponent],
+  imports: [SharedModule, RouterModule]
 })
-export class DiscussionBoardModule {}
+export class DiscussionBoardModule { }

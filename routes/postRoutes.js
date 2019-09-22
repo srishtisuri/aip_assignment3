@@ -34,7 +34,7 @@ module.exports = (express, passport) => {
 
   router.get("/", async (req, res) => {
     try {
-      let response = await Post.find();
+      let response = await Post.find({ isComment: { $ne: true } });
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
@@ -96,6 +96,7 @@ module.exports = (express, passport) => {
 
   router.post("/comment", async (req, res) => {
     try {
+      req.body.isComment = true;
       let commentPost = await createPost(req.body);
       let response = await Post.findOneAndUpdate(
         { _id: req.body.thread },

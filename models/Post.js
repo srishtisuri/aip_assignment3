@@ -22,7 +22,8 @@ const postSchema = new Schema({
     sad: { type: Array, required: true, default: [] },
     angry: { type: Array, required: true, default: [] }
   },
-  author: { type: String, required: false }
+  author: { type: String, required: false },
+  isComment: { type: Boolean, required: true, default: false }
 });
 
 module.exports = Post = mongoose.model("post", postSchema);
