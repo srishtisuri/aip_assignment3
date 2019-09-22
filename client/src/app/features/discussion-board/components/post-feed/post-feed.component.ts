@@ -1,6 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { UserService } from "src/app/core/services/user.service";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-post-feed",
@@ -8,46 +9,34 @@ import { UserService } from "src/app/core/services/user.service";
   styleUrls: ["./post-feed.component.css"]
 })
 export class PostFeedComponent implements OnInit {
-  posts;
+  @Input() posts;
+  @Output() getPosts = new EventEmitter();
   user;
-  isLoggedIn = false;
 
-  constructor(private postService: PostService, private userService: UserService) {}
+  constructor(private postService: PostService, private userService: UserService, private authService: AuthService) {}
 
   ngOnInit() {
     this.userService.getCurrentUser().subscribe(res => {
-      console.log(res);
       if (res.data) {
-        this.isLoggedIn = true;
+        this.authService.isLoggedIn = true;
         this.user = res.user;
       }
-    });
-
-    this.getPosts();
-  }
-
-  getPosts() {
-    this.postService.getPosts().subscribe(response => {
-      console.log(response);
-      this.posts = response.data;
     });
   }
 
   generatePosts() {
-    if (this.isLoggedIn) {
+    if (this.authService.isLoggedIn) {
       this.postService.generatePosts(parseInt(prompt("Enter an amount"))).subscribe(response => {
-        console.log(response);
-        this.getPosts();
+        this.getPosts.emit();
       });
     } else {
       alert("You need to be logged in to do that!");
     }
   }
   dropPosts() {
-    if (this.isLoggedIn) {
+    if (this.authService.isLoggedIn) {
       this.postService.dropPosts().subscribe(response => {
-        console.log(response);
-        this.getPosts();
+        this.getPosts.emit();
       });
     } else {
       alert("You need to be logged in to do that!");

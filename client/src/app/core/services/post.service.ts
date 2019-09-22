@@ -14,10 +14,14 @@ const httpOptions = {
 export class PostService {
   endpoint: string = "/api/posts";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint);
+  }
+
+  uploadPost(image) {
+    return this.http.post<any>(this.endpoint, { image });
   }
 
   generatePosts(amount: number): Observable<any> {
@@ -25,7 +29,7 @@ export class PostService {
   }
 
   dropPosts(): Observable<any> {
-    return this.http.get(this.endpoint + "/test/");
+    return this.http.get(this.endpoint + "/deleteAll/");
   }
 
   react(thread: string, reaction: string, oldReaction: string): Observable<any> {

@@ -1,8 +1,18 @@
 <mat-card class="card">
   <div style="text-align: center; margin-bottom:20px">
     <mat-card-title>New Post</mat-card-title>
-    <mat-icon class="icon" style="font-size:140px; margin-left:-120px"
+    <!-- <input id="fileSelector" type="file" style="margin: 50px;display:none" (change)="handleChange($event)" /> -->
+    <!-- <input id="fileSelector" type="file" style="margin: 50px;display:none" />
+    <mat-icon class="icon" id="drop_zone" style="font-size:140px; margin-left:-120px; cursor: pointer;" (click)="handleFileSelect()"
       >cloud_upload</mat-icon
-    >
+    > -->
+    <ngx-dropzone (change)="onSelect($event)" [multiple]="false">
+      <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+      <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+        <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+      </ngx-dropzone-preview>
+    </ngx-dropzone>
+    <br />
+    <button mat-raised-button color="primary" class="btn" (click)="post()">Post</button>
   </div>
 </mat-card>
