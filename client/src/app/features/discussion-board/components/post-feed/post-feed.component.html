@@ -3,6 +3,6 @@
   <button mat-raised-button color="primary" class="btn" (click)="generatePosts()">Generate Posts</button>
   <button mat-raised-button color="primary" class="btn" (click)="dropPosts()">Delete All Posts</button>
 </div>
-<div *ngIf="user != null">
+<div>
   <app-post-feed-item *ngFor="let post of posts" [post]="post" [user]="user"></app-post-feed-item>
 </div>
