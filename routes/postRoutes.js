@@ -1,7 +1,50 @@
 const Post = require("../models/Post");
+const jwt = require("jsonwebtoken");
 
-module.exports = (express, passport) => {
+module.exports = (express, passport, AWS) => {
   const router = express.Router();
+  const s3 = new AWS.S3();
+
+  const setHeader = (req, res, next) => {
+    if (
+      req.cookies &&
+      Object.prototype.hasOwnProperty.call(req.cookies, "token")
+    ) {
+      // Copy the token without the quotes
+      req.headers.authorization =
+        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
+    }
+    next();
+  };
+
+  //Check to make sure header is not undefined, if so, return Forbidden (403)
+  const checkToken = async (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+      await jwt.verify(token, "brogrammers");
+      next();
+    } else {
+      sendError(res, "Invalid Token");
+    }
+  };
+
+  const decodeToken = async req => {
+    let token = req.headers["authorization"].split(" ")[1];
+    return await jwt.verify(token, "brogrammers");
+  };
+
+  router.get("/deleteAll", async (req, res) => {
+    try {
+      await Post.deleteMany({});
+      await emptyBucket("brogrammers-images");
+      res.json({ status: "SUCCESS" });
+    } catch (err) {
+      res.json({ status: "FAIL", error: err });
+    }
+  });
 
   router.get("/postsByUserTest", async (req, res) => {
     try {
@@ -19,15 +62,6 @@ module.exports = (express, passport) => {
       res.json({ status: "SUCCESS", data: responsePosts });
     } catch (err) {
       console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
-    }
-  });
-
-  router.get("/test", async (req, res) => {
-    try {
-      await Post.deleteMany({});
-      res.json({ status: "SUCCESS" });
-    } catch (err) {
       res.json({ status: "FAIL", error: err });
     }
   });
@@ -52,10 +86,47 @@ module.exports = (express, passport) => {
     }
   });
 
-  router.post("/", async (req, res) => {
+  // TODO: Clean this up
+  router.post("/", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
     try {
-      let response = await createPost(req.body);
-      res.json({ status: "SUCCESS", data: response });
+      let newPost = new Post();
+
+      await s3
+        .putObject({
+          Bucket: "brogrammers-images",
+          ContentEncoding: "base64",
+          ContentType: "image/jpeg",
+          Body: (buf = new Buffer(
+            req.body.image.replace(/^data:image\/\w+;base64,/, ""),
+            "base64"
+          )),
+          Key: `${newPost._id}.png`,
+          ACL: "public-read"
+        })
+        .promise();
+
+      let signedUrl = await s3.getSignedUrl("getObject", {
+        Bucket: "brogrammers-images",
+        Key: `${newPost._id}.png`
+      });
+
+      let awsImageUrl = signedUrl.split("?")[0];
+
+      newPost.history.push({
+        dateModified: new Date().toISOString(),
+        image: awsImageUrl
+      });
+      newPost.image = awsImageUrl;
+      newPost.author = decodedToken.id;
+
+      try {
+        let response = await newPost.save();
+        res.json({ status: "SUCCESS", data: response });
+      } catch (err) {
+        throw err;
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -232,6 +303,27 @@ module.exports = (express, passport) => {
     res.json({ status: "SUCCESS" });
   });
 
+  // DEV ONLY - Empty bucket
+  function emptyBucket(bucketName, callback) {
+    var params = {
+      Bucket: bucketName
+    };
+
+    s3.listObjects(params, function(err, data) {
+      if (err) return callback(err);
+
+      params = { Bucket: bucketName };
+      params.Delete = { Objects: [] };
+
+      data.Contents.forEach(function(content) {
+        params.Delete.Objects.push({ Key: content.Key });
+      });
+
+      s3.deleteObjects(params, function(err, data) {
+        if (err) sendError(res, err);
+      });
+    });
+  }
   // router.get("/postsByUser", async (req, res) => {
   //   try {
   //     let response = await Post.find();

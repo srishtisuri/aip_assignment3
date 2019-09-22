@@ -8,8 +8,8 @@ const postSchema = new Schema({
     required: true,
     default: new Date().toISOString()
   },
-  history: { type: Array, required: true },
-  comments: { type: Array, required: true },
+  history: { type: Array, required: true, default: [] },
+  comments: { type: Array, required: true, default: [] },
   report: {
     status: { type: Boolean, required: true, default: false },
     reasons: { type: Array, required: false },

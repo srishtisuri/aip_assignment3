@@ -2,8 +2,9 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-module.exports = (express, passport) => {
+module.exports = (express, passport, AWS) => {
   const router = express.Router();
+  const s3 = new AWS.S3();
 
   // Local Functions
   sendError = (res, error) => {
@@ -15,39 +16,32 @@ module.exports = (express, passport) => {
   };
 
   const setHeader = (req, res, next) => {
-    if (req.cookies && req.cookies.hasOwnProperty("token")) {
+    if (
+      req.cookies &&
+      Object.prototype.hasOwnProperty.call(req.cookies, "token")
+    ) {
       // Copy the token without the quotes
       req.headers.authorization =
         "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
     }
     next();
   };
+
   //Check to make sure header is not undefined, if so, return Forbidden (403)
-  const checkToken = (req, res, next) => {
+  const checkToken = async (req, res, next) => {
     const header = req.headers["authorization"];
 
     if (typeof header !== "undefined") {
       const bearer = header.split(" ");
       const token = bearer[1];
-
-      req.token = token;
+      // await jwt.verify(token, "brogrammers");
       next();
     } else {
-      sendError(res);
+      sendError(res, "Invalid Token");
     }
   };
 
-  // Verify the token
-  const validToken = async (req, res, next) => {
-    try {
-      let token = await jwt.verify(req.token, "brogrammers");
-      next();
-    } catch (e) {
-      res.sendStatus(403);
-    }
-  };
-
-  updateLastLoggedIn = async user => {
+  const updateLastLoggedIn = async user => {
     return await User.findByIdAndUpdate(
       user._id,
       {
@@ -55,6 +49,11 @@ module.exports = (express, passport) => {
       },
       { new: true }
     );
+  };
+
+  const decodeToken = async req => {
+    let token = req.headers["authorization"].split(" ")[1];
+    return await jwt.verify(token, "brogrammers");
   };
 
   // Get all users
@@ -68,28 +67,21 @@ module.exports = (express, passport) => {
   });
 
   // Get current user
-  router.get(
-    "/current",
-    setHeader,
-    checkToken,
-    validToken,
-    async (req, res) => {
-      const encodedPayload = new Buffer.from(req.token.split(".")[1], "base64");
-      const decodedPayload = JSON.parse(encodedPayload.toString("ascii"));
+  router.get("/current", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
 
-      try {
-        let response = await User.findById(decodedPayload.id);
-        if (response) {
-          response.password = undefined;
-          sendSuccess(res, response);
-        } else {
-          sendError(res);
-        }
-      } catch (err) {
-        sendError(res, err);
+    try {
+      let response = await User.findById(decodedToken.id);
+      if (response) {
+        response.password = undefined;
+        sendSuccess(res, response);
+      } else {
+        sendError(res);
       }
+    } catch (err) {
+      sendError(res, err);
     }
-  );
+  });
 
   // Create user
   router.post("/", async (req, res) => {
@@ -186,12 +178,11 @@ module.exports = (express, passport) => {
   });
 
   // Check authentication
-  router.get("/auth", setHeader, checkToken, validToken, async (req, res) => {
-    const encodedPayload = new Buffer.from(req.token.split(".")[1], "base64");
-    const decodedPayload = JSON.parse(encodedPayload.toString("ascii"));
+  router.get("/auth", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
 
     try {
-      let response = await User.findById(decodedPayload.id);
+      let response = await User.findById(decodedToken.id);
       if (response) {
         sendSuccess(res);
       } else {

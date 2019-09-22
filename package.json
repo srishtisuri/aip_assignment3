@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/rishyahluwalia/aip_assignment3#readme",
   "dependencies": {
+    "aws-sdk": "^2.533.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "concurrently": "^4.1.2",
