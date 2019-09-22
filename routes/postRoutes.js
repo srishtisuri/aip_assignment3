@@ -98,7 +98,7 @@ module.exports = (express, passport, AWS) => {
           Bucket: "brogrammers-images",
           ContentEncoding: "base64",
           ContentType: "image/jpeg",
-          Body: (buf = new Buffer(
+          Body: (buf = Buffer.from(
             req.body.image.replace(/^data:image\/\w+;base64,/, ""),
             "base64"
           )),
