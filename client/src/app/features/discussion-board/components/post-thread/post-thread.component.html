@@ -1,0 +1,16 @@
+<div fxLayout="row" fxLayoutWrap>
+    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+        <div fxLayout="column"></div>
+    </div>
+    <div *ngIf="post" fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
+        <div>
+            <app-post-feed-item [post]="post" [user]="user">
+            </app-post-feed-item>
+            <app-post-comment-item *ngFor="let comment of post.comments" [id]="comment" [user]="user">
+            </app-post-comment-item>
+        </div>
+    </div>
+    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+        <div fxLayout="column"></div>
+    </div>
+</div>

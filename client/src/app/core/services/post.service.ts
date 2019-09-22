@@ -23,6 +23,9 @@ export class PostService {
   uploadPost(image) {
     return this.http.post<any>(this.endpoint, { image });
   }
+  getPost(id: string): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/" + id);
+  }
 
   generatePosts(amount: number): Observable<any> {
     return this.http.get<any>(this.endpoint + "/generate/" + amount);
