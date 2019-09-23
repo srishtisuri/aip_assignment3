@@ -20,12 +20,15 @@ export class PostThreadComponent implements OnInit {
       }
     });
     this.activatedRoute.params.subscribe(params => {
-      this.postService.getPost(params.id).subscribe(response => {
-        if (response.status == "SUCCESS") {
-          this.post = response.data;
-        }
-      });
+      this.getPost(params.id);
     });
+  }
 
+  getPost(thread) {
+    this.postService.getPost(thread).subscribe(response => {
+      if (response.status == "SUCCESS") {
+        this.post = response.data;
+      }
+    });
   }
 }

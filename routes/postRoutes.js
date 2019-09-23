@@ -123,6 +123,16 @@ module.exports = (express, passport, AWS) => {
 
       try {
         let response = await newPost.save();
+        if (req.body.thread != null) {
+          await Post.findOneAndUpdate(
+            { _id: req.body.thread },
+            {
+              $push: {
+                comments: newPost._id
+              }
+            }
+          );
+        }
         res.json({ status: "SUCCESS", data: response });
       } catch (err) {
         throw err;

@@ -11,7 +11,7 @@ import { AuthService } from "src/app/core/services/auth.service";
 export class PostFeedItemComponent implements OnInit {
   @Input() post: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService, private authService: AuthService) {}
+  constructor(private router: Router, private postService: PostService, private authService: AuthService) { }
 
   showReactions = false;
   userHasReacted = false;
@@ -19,9 +19,9 @@ export class PostFeedItemComponent implements OnInit {
   currentReaction = null;
   isLoggedIn = false;
 
-  // TODO: Figure out why the reactions only load sometimes.
+  ngOnInit() { }
 
-  ngOnInit() {
+  ngOnChanges() {
     if (this.user != null) {
       console.log(this.user);
       this.getUserReaction();

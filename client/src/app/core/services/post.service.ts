@@ -14,7 +14,7 @@ const httpOptions = {
 export class PostService {
   endpoint: string = "/api/posts";
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -23,6 +23,11 @@ export class PostService {
   uploadPost(image) {
     return this.http.post<any>(this.endpoint, { image });
   }
+
+  uploadComment(image, thread) {
+    return this.http.post<any>(this.endpoint, { image, thread });
+  }
+
   getPost(id: string): Observable<any> {
     return this.http.get<any>(this.endpoint + "/" + id);
   }

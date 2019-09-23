@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Output } from "@angular/core";
+import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 
 @Component({
@@ -8,20 +8,32 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class NewPostWidgetComponent implements OnInit {
   @Output() getPosts = new EventEmitter();
+  @Input() thread = null;
 
   files: File[] = [];
   data;
-  constructor(private postService: PostService) {}
+  title = "";
+  constructor(private postService: PostService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.title = this.thread == null ? "New Post" : "Add Comment"
+  }
 
   post = async () => {
     if (this.data) {
-      this.postService.uploadPost(this.data).subscribe(res => {
-        this.getPosts.emit();
-        this.data = null;
-        this.files = [];
-      });
+      if (this.thread == null) {
+        this.postService.uploadPost(this.data).subscribe(res => {
+          this.getPosts.emit();
+          this.data = null;
+          this.files = [];
+        });
+      } else {
+        this.postService.uploadComment(this.data, this.thread).subscribe(res => {
+          this.getPosts.emit();
+          this.data = null;
+          this.files = [];
+        });
+      }
     }
   };
 

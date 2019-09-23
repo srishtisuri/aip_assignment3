@@ -7,7 +7,7 @@
 
 .card:hover {
   border: 1px solid #cecece;
-  cursor: pointer;
+  cursor: default;
 }
 
 #image-container {
@@ -57,6 +57,7 @@
 
 .user-reactions > div:hover {
   color: black;
+  cursor: pointer;
 }
 
 .post-reactions {
@@ -75,4 +76,5 @@
 .commentTotal {
   display: inline-block;
   flex: 0 0 100px;
+  cursor: pointer;
 }
