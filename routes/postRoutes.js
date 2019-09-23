@@ -175,26 +175,6 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  router.post("/comment", async (req, res) => {
-    try {
-      req.body.isComment = true;
-      let commentPost = await createPost(req.body);
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $push: {
-            comments: commentPost._id
-          }
-        },
-        { new: true }
-      );
-      res.json({ status: "SUCCESS", data: response });
-    } catch (err) {
-      console.log("FAIL: " + err);
-      res.json({ status: "FAIL", error: err });
-    }
-  });
-
   router.put("/react", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
     try {
