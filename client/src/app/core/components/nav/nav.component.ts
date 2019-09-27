@@ -18,9 +18,9 @@ export class NavComponent {
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private authService: AuthService,
+    public authService: AuthService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   logout() {
     this.authService.logout().subscribe(res => {

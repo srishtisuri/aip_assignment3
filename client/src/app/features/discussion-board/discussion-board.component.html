@@ -1,12 +1,12 @@
 <div fxLayout="row" fxLayoutWrap>
   <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
     <div fxLayout="column">
-      <app-new-post-widget (getPosts)="getPosts($event)"></app-new-post-widget>
+      <app-new-post-widget (getPosts)="getPosts()"></app-new-post-widget>
       <app-sort-widget></app-sort-widget>
     </div>
   </div>
   <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
-    <app-post-feed [posts]="posts" (getPosts)="getPosts($event)"></app-post-feed>
+    <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
   </div>
   <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
     <div fxLayout="column">

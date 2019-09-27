@@ -6,9 +6,9 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./user-leaderboard-item.component.css']
 })
 export class UserLeaderboardItemComponent implements OnInit {
-  @Input() user: Object;
+  @Input() user: any;
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

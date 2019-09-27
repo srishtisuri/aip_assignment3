@@ -6,7 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./flagged-user-item.component.css']
 })
 export class FlaggedUserItemComponent implements OnInit {
-  @Input() user: {};
+  @Input() user: any;
 
   constructor() { }
 
