@@ -24,9 +24,10 @@
   <br />
   <mat-form-field appearance="outline" style="width: 400px">
     <mat-label>Avatar</mat-label>
-    <input matInput placeholder="base64encodedavatar" formControlName="avatar" />
+    <input readonly style="display:none;" matInput placeholder="click to upload file" formControlName="avatar" />
+    <app-new-post-widget title="" (getImage)="setAvatar($event)">
+    </app-new-post-widget>
   </mat-form-field>
-
   <br />
 
   <button mat-flat-button color="warn" class="btn" routerLink="/account/login">Login</button>

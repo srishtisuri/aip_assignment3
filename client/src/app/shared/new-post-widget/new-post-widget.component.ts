@@ -8,16 +8,15 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class NewPostWidgetComponent implements OnInit {
   @Output() getPosts = new EventEmitter();
+  @Output() getImage = new EventEmitter();
   @Input() thread = null;
+  @Input() title = "New Post";
 
   files: File[] = [];
   data;
-  title = "";
   constructor(private postService: PostService) { }
 
-  ngOnInit() {
-    this.title = this.thread == null ? "New Post" : "Add Comment"
-  }
+  ngOnInit() { }
 
   post = async () => {
     if (this.data) {
@@ -44,6 +43,7 @@ export class NewPostWidgetComponent implements OnInit {
     let that = this;
     reader.onload = () => {
       that.data = reader.result;
+      this.getImage.emit(that.data);
     };
     //this.resize(this.files[0]);
     reader.readAsDataURL(this.files[0]);

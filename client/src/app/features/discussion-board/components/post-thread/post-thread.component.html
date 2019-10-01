@@ -1,7 +1,7 @@
 <div *ngIf="post" fxLayout="row" fxLayoutWrap>
     <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
         <div class="sticky" fxLayout="column">
-            <app-new-post-widget [thread]="post._id" (getPosts)="getPost(post._id)">
+            <app-new-post-widget [thread]="post._id" title="Add Comment" (getPosts)="getPost(post._id)">
             </app-new-post-widget>
         </div>
     </div>

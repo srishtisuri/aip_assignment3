@@ -89,7 +89,6 @@ module.exports = (express, passport, AWS) => {
       // Check if username is unique
       let userExists =
         (await User.findOne({ username: req.body.user.username })) || false;
-
       if (!userExists) {
         let newUser = new User({
           ...req.body.user,
