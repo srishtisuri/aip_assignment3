@@ -15,11 +15,20 @@
   <mat-form-field appearance="outline" style="width: 400px">
     <mat-label>Email</mat-label>
     <input matInput placeholder="johnsmith1@gmail.com" formControlName="email" />
+    <div class="error" *ngIf="registerForm.get('email').hasError('email')">
+      invalid email address
+    </div>
   </mat-form-field>
   <br />
   <mat-form-field appearance="outline" style="width: 400px">
     <mat-label>Password</mat-label>
-    <input type="password" matInput placeholder="supersecret123" formControlName="password" />
+    <input type="password" matInput placeholder="Password123" formControlName="password" />
+    <div class="error" *ngIf="registerForm.get('password').hasError('passwordStrength')">
+      {{registerForm.get('password').errors['passwordStrength']}}
+    </div>
+    <div class="error" *ngIf="registerForm.get('password').hasError('minlength')">
+      password must be at least 8 characters long
+    </div>
   </mat-form-field>
   <br />
   <mat-form-field appearance="outline" style="width: 400px">
@@ -31,7 +40,7 @@
   <br />
 
   <button mat-flat-button color="warn" class="btn" routerLink="/account/login">Login</button>
-  <button mat-flat-button color="primary" class="btn" type="submit" [disabled]="!registerForm.valid">Register</button>
+  <button mat-flat-button color="primary" class="btn" type="submit">Register</button>
 </form>
 
 <div *ngIf="errors.length > 0" class="alert alert-danger">
