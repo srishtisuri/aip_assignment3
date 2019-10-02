@@ -1,1 +1,11 @@
-<p>my-activity works!</p>
+<mat-tab-group>
+    <mat-tab label="My Posts">
+        <app-posts [posts]="posts" [user]="user" (getPosts)="getPosts()"></app-posts>
+    </mat-tab>
+    <mat-tab label=" My Comments">
+        <app-comments></app-comments>
+    </mat-tab>
+    <mat-tab label=" My Reactions">
+        <app-reactions></app-reactions>
+    </mat-tab>
+</mat-tab-group>

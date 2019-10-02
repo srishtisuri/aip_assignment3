@@ -8,7 +8,7 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class DiscussionBoardComponent implements OnInit {
   posts;
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService) { }
 
   ngOnInit() {
     this.getPosts();
@@ -17,6 +17,12 @@ export class DiscussionBoardComponent implements OnInit {
   getPosts() {
     this.postService.getPosts().subscribe(response => {
       this.posts = response.data;
+    });
+  }
+
+  uploadPost(image) {
+    this.postService.uploadPost(image).subscribe(res => {
+      this.getPosts();
     });
   }
 }

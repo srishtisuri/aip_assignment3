@@ -13,6 +13,6 @@
       </ngx-dropzone-preview>
     </ngx-dropzone>
     <br />
-    <button *ngIf="title!=''" mat-raised-button color="primary" class="btn" (click)="post()">Post</button>
+    <button *ngIf="buttonText" mat-raised-button color="primary" class="btn" (click)="post()">{{buttonText}}</button>
   </div>
 </mat-card>

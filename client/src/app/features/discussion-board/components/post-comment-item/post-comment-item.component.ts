@@ -15,7 +15,7 @@ export class PostCommentItemComponent implements OnInit {
   author = { username: "ctdamtoft", name: "Christian" };
   showReactions = false;
   userHasReacted = false;
-  reactButtonText = "REACT";
+  reactButtonText = "React";
   currentReaction = null;
   isLoggedIn = false;
 
@@ -36,14 +36,14 @@ export class PostCommentItemComponent implements OnInit {
     for (let reaction in this.comment.reactions) {
       if (this.comment.reactions[reaction].includes(this.user._id)) {
         this.userHasReacted = true;
-        this.reactButtonText = "REACTED";
+        this.reactButtonText = "Reacted";
         this.currentReaction = reaction;
         break;
       }
     }
     if (!this.userHasReacted) {
       this.userHasReacted = false;
-      this.reactButtonText = "REACT";
+      this.reactButtonText = "React";
       this.currentReaction = null;
     }
   }
