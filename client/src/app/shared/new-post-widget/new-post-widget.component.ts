@@ -1,5 +1,4 @@
 import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
-import { PostService } from "src/app/core/services/post.service";
 
 @Component({
   selector: "app-new-post-widget",
@@ -7,32 +6,28 @@ import { PostService } from "src/app/core/services/post.service";
   styleUrls: ["./new-post-widget.component.css"]
 })
 export class NewPostWidgetComponent implements OnInit {
-  @Output() getPosts = new EventEmitter();
+  @Output() uploadPost = new EventEmitter();
   @Output() getImage = new EventEmitter();
-  @Input() thread = null;
   @Input() title = "New Post";
 
+  buttonText = null;
   files: File[] = [];
   data;
-  constructor(private postService: PostService) { }
+  constructor() { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    if (this.title == "Change Post") {
+      this.buttonText = "Change";
+    } else if (this.title != "") {
+      this.buttonText = "Post";
+    }
+  }
 
   post = async () => {
     if (this.data) {
-      if (this.thread == null) {
-        this.postService.uploadPost(this.data).subscribe(res => {
-          this.getPosts.emit();
-          this.data = null;
-          this.files = [];
-        });
-      } else {
-        this.postService.uploadComment(this.data, this.thread).subscribe(res => {
-          this.getPosts.emit();
-          this.data = null;
-          this.files = [];
-        });
-      }
+      this.uploadPost.emit(this.data);
+      this.data = null;
+      this.files = [];
     }
   };
 
@@ -45,41 +40,7 @@ export class NewPostWidgetComponent implements OnInit {
       that.data = reader.result;
       this.getImage.emit(that.data);
     };
-    //this.resize(this.files[0]);
     reader.readAsDataURL(this.files[0]);
-  }
-
-  resize(file) {
-    var reader = new FileReader();
-    reader.onload = () => {
-
-      var image = new Image();
-      image.onload = () => {
-        var max_size = 300;
-        var w = image.width;
-        var h = image.height;
-
-        if (w > h) {
-          if (w > max_size) { h *= max_size / w; w = max_size; }
-        } else { if (h > max_size) { w *= max_size / h; h = max_size; } }
-
-        var canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(image, 0, 0, w, h);
-
-        if (file.type == "image/jpeg") {
-          var dataURL = canvas.toDataURL("image/jpeg", 1.0);
-          this.data = dataURL;
-        } else {
-          var dataURL = canvas.toDataURL(file.type);
-          this.data = dataURL;
-        }
-      }
-      image.src = reader.result.toString();
-
-    }
-    reader.readAsDataURL(file);
   }
 
   onRemove(event) {

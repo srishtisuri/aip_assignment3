@@ -36,6 +36,14 @@ export class PostService {
     return this.http.get<any>(this.endpoint + "/generate/" + amount);
   }
 
+  deletePost(id: string): Observable<any> {
+    return this.http.delete<any>(this.endpoint + "/" + id);
+  }
+
+  changePost(image: string, thread: string, increment: number): Observable<any> {
+    return this.http.put<any>(this.endpoint + "/", { image, thread, increment });
+  }
+
   dropPosts(): Observable<any> {
     return this.http.get(this.endpoint + "/deleteAll/");
   }

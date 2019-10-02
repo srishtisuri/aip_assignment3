@@ -16,7 +16,7 @@
       </div>
       <mat-list class="actions">
         <a mat-stroked-button class="actionButton" [disabled]="!isLoggedIn" [ngClass]="{'reacted': userHasReacted}"
-          (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)">React</a>
+          (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)">{{reactButtonText}}</a>
         <a mat-stroked-button class="actionButton" [routerLink]="['/discussion-board', comment._id]">Reply</a>
         <a mat-stroked-button class="actionButton">Report</a>
       </mat-list>

@@ -93,26 +93,7 @@ module.exports = (express, passport, AWS) => {
     try {
       let newPost = new Post();
 
-      await s3
-        .putObject({
-          Bucket: "brogrammers-images",
-          ContentEncoding: "base64",
-          ContentType: "image/jpeg",
-          Body: (buf = Buffer.from(
-            req.body.image.replace(/^data:image\/\w+;base64,/, ""),
-            "base64"
-          )),
-          Key: `${newPost._id}.png`,
-          ACL: "public-read"
-        })
-        .promise();
-
-      let signedUrl = await s3.getSignedUrl("getObject", {
-        Bucket: "brogrammers-images",
-        Key: `${newPost._id}.png`
-      });
-
-      let awsImageUrl = signedUrl.split("?")[0];
+      let awsImageUrl = await uploadToS3Bucket(req.body.image, newPost._id);
 
       newPost.history.push({
         dateModified: new Date().toISOString(),
@@ -120,7 +101,7 @@ module.exports = (express, passport, AWS) => {
       });
       newPost.image = awsImageUrl;
       newPost.author = decodedToken.id;
-
+      newPost.isComment = req.body.thread != null;
       try {
         let response = await newPost.save();
         if (req.body.thread != null) {
@@ -143,10 +124,33 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
+  const uploadToS3Bucket = async (image, id) => {
+    await s3
+      .putObject({
+        Bucket: "brogrammers-images",
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        Body: (buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        )),
+        Key: `${id}.png`,
+        ACL: "public-read"
+      })
+      .promise();
+
+    let signedUrl = await s3.getSignedUrl("getObject", {
+      Bucket: "brogrammers-images",
+      Key: `${id}.png`
+    });
+
+    return signedUrl.split("?")[0];
+  };
+
   router.delete("/:id", async (req, res) => {
     try {
       let response = await Post.findByIdAndDelete(req.params.id);
-      res.json({ status: "SUCCESS" });
+      res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -155,14 +159,24 @@ module.exports = (express, passport, AWS) => {
 
   router.put("/", async (req, res) => {
     try {
+      let imageURL = "";
+      if (req.body.image.search("base64") != -1) {
+        imageURL = await uploadToS3Bucket(
+          req.body.image,
+          req.body.thread.concat("_" + req.body.increment)
+        );
+      } else {
+        imageURL = req.body.image;
+      }
+
       let response = await Post.findOneAndUpdate(
-        { _id: req.body._id },
+        { _id: req.body.thread },
         {
-          $set: { image: req.body.image },
+          $set: { image: imageURL },
           $push: {
             history: {
               dateModified: new Date().toISOString(),
-              image: req.body.image
+              image: imageURL
             }
           }
         },

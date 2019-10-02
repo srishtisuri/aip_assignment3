@@ -5,6 +5,10 @@
       <mat-card-title>Super Shiba</mat-card-title>
       <mat-card-subtitle>@{{ post.author }}</mat-card-subtitle>
     </mat-card-header>
+    <div class="upload">
+      <app-new-post-widget *ngIf="changeClicked" title="Change Post" (uploadPost)="changePost($event)">
+      </app-new-post-widget>
+    </div>
     <mat-card-content id="image-container">
       <img mat-card-image [src]="[post.image]" />
     </mat-card-content>
@@ -37,7 +41,10 @@
         {{ reactButtonText }}
       </button>
       <button [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
-      <button mat-button>REPORT</button>
+      <button *ngIf="!isMyActivityPage" (click)="report()" mat-button>REPORT</button>
+      <button *ngIf="isMyActivityPage" [disabled]="!canChange" (click)="change()" mat-button>CHANGE</button>
+      <button *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
+      <button *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
     </mat-card-actions>
   </mat-card>
 </div>
