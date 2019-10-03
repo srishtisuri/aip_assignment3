@@ -9,7 +9,7 @@ const postSchema = new Schema({
     default: new Date().toISOString()
   },
   history: { type: Array, required: true, default: [] },
-  comments: { type: Array, required: true, default: [] },
+  comments: { type: [String], required: true, default: [] },
   report: {
     status: { type: Boolean, required: true, default: false },
     reasons: { type: Array, required: false },

@@ -1,7 +1,7 @@
 .card {
   width: 500px;
   padding: 20px;
-  margin-bottom: 20px;
+  margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -10,23 +10,25 @@
   margin: 0;
   width: 250px;
   height: 250px;
-  margin-left: 75px;
+  margin-left: 70px;
 }
 
 .user-reactions {
   position: absolute;
-  top: 65px;
-  right: -5px;
+  top: 70px;
+  height: 40px;
+  right: 0px;
   font-size: 2em;
   border-radius: 25px;
   padding: 5px;
+  background-color: white;
+  cursor: pointer;
 }
 
 .user-reactions > div {
   display: inline-block;
   width: 32px;
   height: 36px;
-  cursor: pointer;
 }
 
 .user-reactions > div.selected {
@@ -64,10 +66,33 @@
   position: absolute;
   width: 100px;
   right: 10px;
-  top: 100px;
+  top: 112px;
+  padding-top: 0px;
 }
 
 .actionButton {
   margin: 5px 0px;
   width: 75px;
+}
+
+.actionButton:first-child {
+  margin-top: 0px;
+}
+
+.title-container {
+  display: inline-block;
+}
+
+.replying-to {
+  display: inline-block;
+  position: absolute;
+  right: 35px;
+  cursor: pointer;
+}
+
+.parent-image {
+  height: 70px;
+  width: 70px;
+  margin-bottom: -15px;
+  margin-top: -10px;
 }

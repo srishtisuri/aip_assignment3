@@ -20,6 +20,18 @@ export class PostService {
     return this.http.get<any>(this.endpoint);
   }
 
+  getMyComments(): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/myComments");
+  }
+
+  getCommentParent(thread): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/" + thread + "/commentParent");
+  }
+
+  getPostComments(thread): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/" + thread + "/comments");
+  }
+
   uploadPost(image) {
     return this.http.post<any>(this.endpoint, { image });
   }
