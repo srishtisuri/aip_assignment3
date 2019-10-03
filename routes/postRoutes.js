@@ -1,11 +1,122 @@
 const Post = require("../models/Post");
+const jwt = require("jsonwebtoken");
 
-module.exports = (express, passport) => {
+module.exports = (express, passport, AWS) => {
   const router = express.Router();
+  const s3 = new AWS.S3();
+
+  const setHeader = (req, res, next) => {
+    if (
+      req.cookies &&
+      Object.prototype.hasOwnProperty.call(req.cookies, "token")
+    ) {
+      // Copy the token without the quotes
+      req.headers.authorization =
+        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
+    }
+    next();
+  };
+
+  //Check to make sure header is not undefined, if so, return Forbidden (403)
+  const checkToken = async (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+      await jwt.verify(token, "brogrammers");
+      next();
+    } else {
+      sendError(res, "Invalid Token");
+    }
+  };
+
+  const decodeToken = async req => {
+    let token = req.headers["authorization"].split(" ")[1];
+    return await jwt.verify(token, "brogrammers");
+  };
+
+  router.get("/deleteAll", async (req, res) => {
+    try {
+      await Post.deleteMany({});
+      await emptyBucket("brogrammers-images");
+      res.json({ status: "SUCCESS" });
+    } catch (err) {
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/postsByUserTest", async (req, res) => {
+    try {
+      let responsePosts = await Post.find();
+      responsePosts.map(async post => {
+        let responseUser = await User.findById(post.author);
+        console.log(post.author);
+        return {
+          ...post,
+          name: responseUser.name,
+          username: responseUser.username,
+          avatar: responseUser.avatar
+        };
+      });
+      res.json({ status: "SUCCESS", data: responsePosts });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
 
   router.get("/", async (req, res) => {
     try {
-      let response = await Post.find();
+      let response = await Post.find({ isComment: { $ne: true } });
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/myComments", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
+    try {
+      let response = await Post.find({
+        isComment: true,
+        author: decodedToken.id
+      });
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/:thread/comments", async (req, res) => {
+    try {
+      let post = await Post.findOne({
+        _id: req.params.thread
+      });
+      let response = [];
+      for (let comment of post.comments) {
+        response.push(
+          await Post.findOne({
+            _id: comment
+          })
+        );
+      }
+
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/:thread/commentParent", async (req, res) => {
+    try {
+      let response = await Post.findOne({
+        comments: req.params.thread
+      });
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
@@ -23,20 +134,71 @@ module.exports = (express, passport) => {
     }
   });
 
-  router.post("/", async (req, res) => {
+  // TODO: Clean this up
+  router.post("/", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
     try {
-      let response = await createPost(req.body);
-      res.json({ status: "SUCCESS", data: response });
+      let newPost = new Post();
+
+      let awsImageUrl = await uploadToS3Bucket(req.body.image, newPost._id);
+
+      newPost.history.push({
+        dateModified: new Date().toISOString(),
+        image: awsImageUrl
+      });
+      newPost.image = awsImageUrl;
+      newPost.author = decodedToken.id;
+      newPost.isComment = req.body.thread != null;
+      try {
+        let response = await newPost.save();
+        if (req.body.thread != null) {
+          await Post.findOneAndUpdate(
+            { _id: req.body.thread },
+            {
+              $push: {
+                comments: newPost._id
+              }
+            }
+          );
+        }
+        res.json({ status: "SUCCESS", data: response });
+      } catch (err) {
+        throw err;
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
     }
   });
 
+  const uploadToS3Bucket = async (image, id) => {
+    await s3
+      .putObject({
+        Bucket: "brogrammers-images",
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        Body: (buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        )),
+        Key: `${id}.png`,
+        ACL: "public-read"
+      })
+      .promise();
+
+    let signedUrl = await s3.getSignedUrl("getObject", {
+      Bucket: "brogrammers-images",
+      Key: `${id}.png`
+    });
+
+    return signedUrl.split("?")[0];
+  };
+
   router.delete("/:id", async (req, res) => {
     try {
       let response = await Post.findByIdAndDelete(req.params.id);
-      res.json({ status: "SUCCESS" });
+      res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -45,14 +207,24 @@ module.exports = (express, passport) => {
 
   router.put("/", async (req, res) => {
     try {
+      let imageURL = "";
+      if (req.body.image.search("base64") != -1) {
+        imageURL = await uploadToS3Bucket(
+          req.body.image,
+          req.body.thread.concat("_" + req.body.increment)
+        );
+      } else {
+        imageURL = req.body.image;
+      }
+
       let response = await Post.findOneAndUpdate(
-        { _id: req.body._id },
+        { _id: req.body.thread },
         {
-          $set: { image: req.body.image },
+          $set: { image: imageURL },
           $push: {
             history: {
               dateModified: new Date().toISOString(),
-              image: req.body.image
+              image: imageURL
             }
           }
         },
@@ -65,18 +237,64 @@ module.exports = (express, passport) => {
     }
   });
 
-  router.post("/comment", async (req, res) => {
+  router.put("/react", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
     try {
-      let commentPost = await createPost(req.body);
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $push: {
-            comments: commentPost._id
-          }
-        },
-        { new: true }
-      );
+      let response = null;
+      if (req.body.reaction) {
+        let push = null;
+        switch (req.body.reaction) {
+          case "heart":
+            push = { "reactions.heart": decodedToken.id };
+            break;
+          case "laughing":
+            push = { "reactions.laughing": decodedToken.id };
+            break;
+          case "wow":
+            push = { "reactions.wow": decodedToken.id };
+            break;
+          case "sad":
+            push = { "reactions.sad": decodedToken.id };
+            break;
+          case "angry":
+            push = { "reactions.angry": decodedToken.id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $push: push
+          },
+          { new: true }
+        );
+      }
+      if (req.body.oldReaction) {
+        let pull = null;
+        switch (req.body.oldReaction) {
+          case "heart":
+            pull = { "reactions.heart": decodedToken.id };
+            break;
+          case "laughing":
+            pull = { "reactions.laughing": decodedToken.id };
+            break;
+          case "wow":
+            pull = { "reactions.wow": decodedToken.id };
+            break;
+          case "sad":
+            pull = { "reactions.sad": decodedToken.id };
+            break;
+          case "angry":
+            pull = { "reactions.angry": decodedToken.id };
+            break;
+        }
+        response = await Post.findByIdAndUpdate(
+          req.body.thread,
+          {
+            $pull: pull
+          },
+          { new: true }
+        );
+      }
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
@@ -138,5 +356,52 @@ module.exports = (express, passport) => {
     }
     res.json({ status: "SUCCESS" });
   });
+
+  // DEV ONLY - Empty bucket
+  function emptyBucket(bucketName, callback) {
+    var params = {
+      Bucket: bucketName
+    };
+
+    s3.listObjects(params, function(err, data) {
+      if (err) return callback(err);
+
+      params = { Bucket: bucketName };
+      params.Delete = { Objects: [] };
+
+      data.Contents.forEach(function(content) {
+        params.Delete.Objects.push({ Key: content.Key });
+      });
+
+      s3.deleteObjects(params, function(err, data) {
+        if (err) sendError(res, err);
+      });
+    });
+  }
+  // router.get("/postsByUser", async (req, res) => {
+  //   try {
+  //     let response = await Post.find();
+  //     res.json({ status: "SUCCESS", data: response });
+  //   } catch (err) {
+  //     console.log("FAIL: " + err);
+  //     res.json({ status: "FAIL", error: err });
+  //   }
+  // });
+
+  // router.get("/postsByUser/test2", (req, res) => {
+  //   Post.aggregate([
+  //     {
+  //       $lookup: {
+  //         from: "user", // collection name in db
+  //         localField: "_id",
+  //         foreignField: "student",
+  //         as: "worksnapsTimeEntries"
+  //       }
+  //     }
+  //   ]).exec(function(err, students) {
+  //     // students contain WorksnapsTimeEntries
+  //   });
+  // });
+
   return router;
 };

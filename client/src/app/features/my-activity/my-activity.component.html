@@ -1,0 +1,8 @@
+<nav mat-tab-nav-bar>
+    <a mat-tab-link routerLink="posts" routerLinkActive #pa="routerLinkActive" [active]="pa.isActive">My Posts</a>
+    <a mat-tab-link routerLink="comments" routerLinkActive #ca="routerLinkActive" [active]="ca.isActive">My
+        Comments</a>
+    <a mat-tab-link routerLink="reactions" routerLinkActive #ra="routerLinkActive" [active]="ra.isActive">My
+        Reactions</a>
+</nav>
+<router-outlet></router-outlet>

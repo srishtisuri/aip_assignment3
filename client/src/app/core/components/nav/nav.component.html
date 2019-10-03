@@ -6,8 +6,11 @@
   <div class="button-row">
     <button mat-button routerLink="/discussion-board">Discussion Board</button>
     <button mat-button routerLink="/leaderboard">Leaderboard</button>
+    <button *ngIf="authService.isLoggedIn" mat-button routerLink="/my-activity">My Activity</button>
     <button mat-button routerLink="/settings">Settings</button>
-    <button mat-button routerLink="/account">Account</button>
+    <button *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/login">Login</button>
+    <button *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/register">Register</button>
+    <button *ngIf="authService.isLoggedIn" mat-button (click)="logout()">Logout</button>
     <button mat-button routerLink="/admin">Admin</button>
   </div>
 </mat-toolbar>

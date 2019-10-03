@@ -1,0 +1,50 @@
+<div>
+  <mat-card class="card">
+    <mat-card-header>
+      <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba1.jpg" />
+      <mat-card-title>Super Shiba</mat-card-title>
+      <mat-card-subtitle>@{{ post.author }}</mat-card-subtitle>
+    </mat-card-header>
+    <div class="upload">
+      <app-new-post-widget *ngIf="changeClicked" title="Change Post" (uploadPost)="changePost($event)">
+      </app-new-post-widget>
+    </div>
+    <mat-card-content id="image-container">
+      <img mat-card-image [src]="[post.image]" />
+    </mat-card-content>
+    <div class="details">
+      <div class="commentTotal" [routerLink]="['/discussion-board', post._id]">comments: {{ post.comments.length }}
+      </div>
+      <div class="post-reactions">
+        <span>❤️{{ post.reactions.heart.length }}</span>️ <span>😂{{ post.reactions.laughing.length }}</span>️
+        <span>😮{{ post.reactions.wow.length }}</span>️ <span>😢{{ post.reactions.sad.length }}</span>️
+        <span>😠{{ post.reactions.angry.length }}</span>️
+      </div>
+    </div>
+    <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
+      (mouseleave)="toggleReactions(false)">
+      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'heart' }" (click)="react('heart')">❤️</div>
+      ️
+      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'laughing' }" (click)="react('laughing')">😂
+      </div>
+      ️
+      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'wow' }" (click)="react('wow')">😮</div>
+      ️
+      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'sad' }" (click)="react('sad')">😢</div>
+      ️
+      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'angry' }" (click)="react('angry')">😠</div>
+      ️
+    </div>
+    <mat-card-actions class="card-actions">
+      <button [disabled]="!authService.isLoggedIn" [ngClass]="{ reacted: userHasReacted }"
+        (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)" mat-button>
+        {{ reactButtonText }}
+      </button>
+      <button [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
+      <button *ngIf="!isMyActivityPage" (click)="report()" mat-button>REPORT</button>
+      <button *ngIf="isMyActivityPage" [disabled]="!canChange" (click)="change()" mat-button>CHANGE</button>
+      <button *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
+      <button *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

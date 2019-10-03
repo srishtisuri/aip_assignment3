@@ -1,0 +1,87 @@
+.card {
+  width: 650px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid white;
+}
+
+.card:hover {
+  border: 1px solid #cecece;
+  cursor: default;
+}
+
+#image-container {
+  text-align: center;
+}
+
+.mat-card-image:first-child {
+  margin-top: 0px;
+}
+
+.mat-card-image {
+  margin: 0;
+  height: 450px;
+  width: 450px;
+}
+
+.header-image {
+  background-image: url("https://material.angular.io/assets/img/examples/shiba1.jpg");
+  background-size: cover;
+}
+
+.card-actions {
+  text-align: center;
+}
+
+.user-reactions {
+  position: absolute;
+  margin-left: 120px;
+  top: 530px;
+  background-color: white;
+  font-size: 2em;
+  border-radius: 25px;
+  padding: 5px;
+}
+
+.user-reactions > div {
+  display: inline-block;
+  width: 32px;
+  height: 36px;
+}
+
+.user-reactions > div.selected {
+  background-color: lightskyblue;
+  border-radius: 35%;
+  line-height: 135%;
+}
+
+.user-reactions > div:hover {
+  color: black;
+  cursor: pointer;
+}
+
+.post-reactions {
+  flex: 1 0 250px;
+  text-align: right;
+}
+
+.reacted {
+  color: lightskyblue;
+}
+
+.details {
+  display: flex;
+}
+
+.commentTotal {
+  display: inline-block;
+  flex: 0 0 100px;
+  cursor: pointer;
+}
+
+.upload {
+  position: absolute;
+  width: 100%;
+  margin-top: 170px;
+  margin-left: 30px;
+}

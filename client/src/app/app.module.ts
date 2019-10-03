@@ -6,11 +6,11 @@ import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { CoreModule } from "./core/core.module";
 import { DiscussionBoardModule } from "./features/discussion-board/discussion-board.module";
-import { PostThreadModule } from "./features/post-thread/post-thread.module";
 import { LeaderboardModule } from "./features/leaderboard/leaderboard.module";
 import { SettingsModule } from "./features/settings/settings.module";
 import { AccountModule } from "./features/account/account.module";
 import { AdminModule } from "./features/admin/admin.module";
+import { MyActivityModule } from './features/my-activity/my-activity.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,13 +20,13 @@ import { AdminModule } from "./features/admin/admin.module";
     AppRoutingModule,
     BrowserAnimationsModule,
     DiscussionBoardModule,
-    PostThreadModule,
     LeaderboardModule,
     SettingsModule,
     AccountModule,
-    AdminModule
+    AdminModule,
+    MyActivityModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,1 +1,50 @@
-<p>register works!</p>
+<h2>Register</h2>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="outline" style="width: 400px">
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="John Smith" formControlName="name" />
+  </mat-form-field>
+
+  <br />
+  <mat-form-field appearance="outline" style="width: 400px">
+    <mat-label>Username</mat-label>
+    <input matInput placeholder="johnsmith1" formControlName="username" />
+  </mat-form-field>
+  <br />
+  <mat-form-field appearance="outline" style="width: 400px">
+    <mat-label>Email</mat-label>
+    <input matInput placeholder="johnsmith1@gmail.com" formControlName="email" />
+    <div class="error" *ngIf="registerForm.get('email').hasError('email')">
+      invalid email address
+    </div>
+  </mat-form-field>
+  <br />
+  <mat-form-field appearance="outline" style="width: 400px">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput placeholder="Password123" formControlName="password" />
+    <div class="error" *ngIf="registerForm.get('password').hasError('passwordStrength')">
+      {{registerForm.get('password').errors['passwordStrength']}}
+    </div>
+    <div class="error" *ngIf="registerForm.get('password').hasError('minlength')">
+      password must be at least 8 characters long
+    </div>
+  </mat-form-field>
+  <br />
+  <mat-form-field appearance="outline" style="width: 400px">
+    <mat-label>Avatar</mat-label>
+    <input readonly style="display:none;" matInput placeholder="click to upload file" formControlName="avatar" />
+    <app-new-post-widget title="" (getImage)="setAvatar($event)">
+    </app-new-post-widget>
+  </mat-form-field>
+  <br />
+
+  <button mat-flat-button color="warn" class="btn" routerLink="/account/login">Login</button>
+  <button mat-flat-button color="primary" class="btn" type="submit">Register</button>
+</form>
+
+<div *ngIf="errors.length > 0" class="alert alert-danger">
+  <p *ngFor="let error of errors">
+    {{ error }}
+  </p>
+</div>

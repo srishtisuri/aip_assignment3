@@ -1,8 +1,10 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
-module.exports = (express, passport) => {
+module.exports = (express, passport, AWS) => {
   const router = express.Router();
+  const s3 = new AWS.S3();
 
   // Local Functions
   sendError = (res, error) => {
@@ -13,7 +15,33 @@ module.exports = (express, passport) => {
     return res.json({ status: "SUCCESS", data });
   };
 
-  updateLastLoggedIn = async user => {
+  const setHeader = (req, res, next) => {
+    if (
+      req.cookies &&
+      Object.prototype.hasOwnProperty.call(req.cookies, "token")
+    ) {
+      // Copy the token without the quotes
+      req.headers.authorization =
+        "Bearer " + req.cookies.token.slice(0, req.cookies.token.length);
+    }
+    next();
+  };
+
+  //Check to make sure header is not undefined, if so, return Forbidden (403)
+  const checkToken = async (req, res, next) => {
+    const header = req.headers["authorization"];
+
+    if (typeof header !== "undefined") {
+      const bearer = header.split(" ");
+      const token = bearer[1];
+      // await jwt.verify(token, "brogrammers");
+      next();
+    } else {
+      sendError(res, "Invalid Token");
+    }
+  };
+
+  const updateLastLoggedIn = async user => {
     return await User.findByIdAndUpdate(
       user._id,
       {
@@ -21,6 +49,11 @@ module.exports = (express, passport) => {
       },
       { new: true }
     );
+  };
+
+  const decodeToken = async req => {
+    let token = req.headers["authorization"].split(" ")[1];
+    return await jwt.verify(token, "brogrammers");
   };
 
   // Get all users
@@ -33,13 +66,29 @@ module.exports = (express, passport) => {
     }
   });
 
+  // Get current user
+  router.get("/current", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
+    try {
+      let response = await User.findById(decodedToken.id);
+      if (response) {
+        response.password = undefined;
+        sendSuccess(res, response);
+      } else {
+        sendError(res);
+      }
+    } catch (err) {
+      sendError(res, err);
+    }
+  });
+
   // Create user
   router.post("/", async (req, res) => {
     try {
       // Check if username is unique
       let userExists =
         (await User.findOne({ username: req.body.user.username })) || false;
-
       if (!userExists) {
         let newUser = new User({
           ...req.body.user,
@@ -47,8 +96,12 @@ module.exports = (express, passport) => {
           ips: req.ip
         });
 
-        let response = await newUser.save();
-        sendSuccess(res, response);
+        let responseUser = await newUser.save();
+        let token = await jwt.sign({ id: responseUser._id }, "brogrammers", {
+          expiresIn: 604800
+        });
+        res.cookie("token", token);
+        sendSuccess(res);
       } else {
         return sendError(res, "Username already exists");
       }
@@ -93,7 +146,11 @@ module.exports = (express, passport) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
-        return sendSuccess(res, updatedUser);
+        let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
+          expiresIn: 604800
+        });
+        res.cookie("token", token, { httpOnly: true });
+        return sendSuccess(res);
       });
     })(req, res, next);
   });
@@ -103,6 +160,7 @@ module.exports = (express, passport) => {
     try {
       req.logout();
       req.session.destroy();
+      res.clearCookie("token");
       sendSuccess(res);
     } catch (e) {
       sendError(res, err);
@@ -116,6 +174,22 @@ module.exports = (express, passport) => {
       user: req.user,
       cookies: req.cookies
     });
+  });
+
+  // Check authentication
+  router.get("/auth", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
+    try {
+      let response = await User.findById(decodedToken.id);
+      if (response) {
+        sendSuccess(res);
+      } else {
+        sendError(res);
+      }
+    } catch (err) {
+      sendError(res, err);
+    }
   });
 
   return router;

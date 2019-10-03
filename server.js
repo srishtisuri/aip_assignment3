@@ -3,39 +3,50 @@ const app = express();
 const port = 5000;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
+const AWS = require("aws-sdk");
+const awsCreds = require("./config/AWS");
 require("./config/passport.js")(passport);
 
 //Database connection
 mongoose
-  .connect(require("./config/key").dbUrl, { useNewUrlParser: true })
+  .connect(require("./config/mlabKey").dbUrl, { useNewUrlParser: true })
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-//Deprecation warning  
+//AWS setup
+AWS.config.update({
+  accessKeyId: awsCreds.accessKey,
+  secretAccessKey: awsCreds.secretKey,
+  region: awsCreds.region
+});
+
+//Deprecation warning
 mongoose.set("useFindAndModify", false);
 
 //Express Session Init
 app.use(
   session({
-    secret: "area51",
+    secret: "brogrammers",
     resave: false,
     saveUninitialized: false
   })
 );
 
 //Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb", extended: true }));
+app.use(cookieParser());
 
 //Passport Init
 app.use(passport.initialize());
 app.use(passport.session());
 
 //Routes
-app.use("/api/users", require("./routes/userRoutes")(express, passport));
-app.use("/api/posts", require("./routes/postRoutes")(express, passport));
+app.use("/api/users", require("./routes/userRoutes")(express, passport, AWS));
+app.use("/api/posts", require("./routes/postRoutes")(express, passport, AWS));
 
 //Initialise Server
 app.listen(port, () => {

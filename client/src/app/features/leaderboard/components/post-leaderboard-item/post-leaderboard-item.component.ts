@@ -6,8 +6,8 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./post-leaderboard-item.component.css']
 })
 export class PostLeaderboardItemComponent implements OnInit {
-  @Input() post: Object;
-  constructor() {}
+  @Input() post: any;
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }
