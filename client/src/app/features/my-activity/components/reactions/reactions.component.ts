@@ -19,15 +19,20 @@ export class ReactionsComponent implements OnInit {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+        this.getPosts();
       }
     });
-    this.getPosts();
   }
 
 
   getPosts() {
     this.postService.getPosts().subscribe(response => {
-      this.posts = response.data;
+      this.posts = response.data.filter(post => post.reactions.heart.includes(this.user._id)
+        || post.reactions.laughing.includes(this.user._id)
+        || post.reactions.sad.includes(this.user._id)
+        || post.reactions.wow.includes(this.user._id)
+        || post.reactions.angry.includes(this.user._id)
+      );
     });
   }
 }

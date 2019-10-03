@@ -19,10 +19,10 @@ export class CommentsComponent implements OnInit {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+        this.postService.getMyComments().subscribe(response => {
+          this.comments = response.data;
+        });
       }
-    });
-    this.postService.getMyComments().subscribe(response => {
-      this.comments = response.data;
     });
   }
 }

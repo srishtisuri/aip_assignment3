@@ -18,14 +18,14 @@ export class PostsComponent implements OnInit {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+        this.getPosts();
       }
     });
-    this.getPosts();
   }
 
   getPosts() {
     this.postService.getPosts().subscribe(response => {
-      this.posts = response.data;
+      this.posts = response.data.filter(post => post.author == this.user._id);
     });
   }
 }
