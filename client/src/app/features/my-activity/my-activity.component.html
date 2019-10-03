@@ -1,11 +1,8 @@
-<mat-tab-group>
-    <mat-tab label="My Posts">
-        <app-posts [posts]="posts" [user]="user" (getPosts)="getPosts()"></app-posts>
-    </mat-tab>
-    <mat-tab label=" My Comments">
-        <app-comments></app-comments>
-    </mat-tab>
-    <mat-tab label=" My Reactions">
-        <app-reactions></app-reactions>
-    </mat-tab>
-</mat-tab-group>
+<nav mat-tab-nav-bar>
+    <a mat-tab-link routerLink="posts" routerLinkActive #pa="routerLinkActive" [active]="pa.isActive">My Posts</a>
+    <a mat-tab-link routerLink="comments" routerLinkActive #ca="routerLinkActive" [active]="ca.isActive">My
+        Comments</a>
+    <a mat-tab-link routerLink="reactions" routerLinkActive #ra="routerLinkActive" [active]="ra.isActive">My
+        Reactions</a>
+</nav>
+<router-outlet></router-outlet>

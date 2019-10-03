@@ -6,7 +6,7 @@
     </div>
     <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
         <div fxLayout="column">
-            <app-post-feed-item *ngFor="let post of posts" [post]="post" [user]="user" (getPosts)="getPosts.emit()">
+            <app-post-feed-item *ngFor="let post of posts" [post]="post" [user]="user" (getPosts)="getPosts()">
             </app-post-feed-item>
         </div>
     </div>

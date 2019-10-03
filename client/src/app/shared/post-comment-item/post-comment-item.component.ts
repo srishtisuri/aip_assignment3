@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { PostService } from "src/app/core/services/post.service";
+import { AuthService } from "src/app/core/services/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-post-comment-item',
@@ -7,28 +9,31 @@ import { PostService } from "src/app/core/services/post.service";
   styleUrls: ['./post-comment-item.component.css']
 })
 export class PostCommentItemComponent implements OnInit {
-  @Input() id: string;
+  @Input() comment: any;
   @Input() user: any;
-  constructor(private postService: PostService) { }
+  constructor(private router: Router, private postService: PostService, private authService: AuthService) { }
 
-  comment = null;
   author = { username: "ctdamtoft", name: "Christian" };
   showReactions = false;
   userHasReacted = false;
   reactButtonText = "React";
   currentReaction = null;
-  isLoggedIn = false;
+  isMyActivityPage;
+  parent;
 
   ngOnInit() {
-    this.postService.getPost(this.id).subscribe(response => {
-      if (response.status == "SUCCESS") {
-        this.comment = response.data;
-      }
-      if (this.user != null) {
-        this.isLoggedIn = true;
-        this.getUserReaction();
-      }
-    });
+    this.isMyActivityPage = this.router.url == "/my-activity/comments";
+
+    if (this.user != null && this.comment != null) {
+      this.getUserReaction();
+    }
+    if (this.isMyActivityPage) {
+      this.postService.getCommentParent(this.comment._id).subscribe(response => {
+        if (response.status == "SUCCESS") {
+          this.parent = response.data;
+        }
+      });
+    }
   }
 
   getUserReaction() {
@@ -49,6 +54,7 @@ export class PostCommentItemComponent implements OnInit {
   }
 
   toggleReactions(showReactions) {
+    console.log("mouseover: " + showReactions);
     setTimeout(() => {
       this.showReactions = showReactions;
     }, 500);
@@ -59,5 +65,9 @@ export class PostCommentItemComponent implements OnInit {
       this.comment = response.data;
       this.getUserReaction();
     });
+  }
+
+  getParent() {
+
   }
 }

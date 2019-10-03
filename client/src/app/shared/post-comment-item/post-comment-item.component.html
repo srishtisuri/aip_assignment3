@@ -1,11 +1,14 @@
 <div *ngIf="comment != null">
   <mat-card class="card">
-    <div>
+    <div class="title-container">
       <mat-card-title>{{ author.name }}</mat-card-title>
       <mat-card-subtitle>@{{ author.username }}</mat-card-subtitle>
     </div>
+    <div class="replying-to" *ngIf="parent != null" [routerLink]="['/discussion-board', parent._id]">Replying to: <img
+        class="parent-image" [src]="[parent.image]" />
+    </div>
     <mat-card-content>
-      <div class="user-reactions" *ngIf="showReactions && isLoggedIn" (mouseover)="toggleReactions(true)"
+      <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
         (mouseleave)="toggleReactions(false)">
         <div [ngClass]="{'selected': userHasReacted && currentReaction == 'heart'}" (click)="react('heart')">❤️</div>️
         <div [ngClass]="{'selected': userHasReacted && currentReaction == 'laughing'}" (click)="react('laughing')">😂
@@ -15,8 +18,9 @@
         <div [ngClass]="{'selected': userHasReacted && currentReaction == 'angry'}" (click)="react('angry')">😠</div>️
       </div>
       <mat-list class="actions">
-        <a mat-stroked-button class="actionButton" [disabled]="!isLoggedIn" [ngClass]="{'reacted': userHasReacted}"
-          (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)">{{reactButtonText}}</a>
+        <a mat-stroked-button class="actionButton" [disabled]="!authService.isLoggedIn"
+          [ngClass]="{'reacted': userHasReacted}" (mouseover)="toggleReactions(true)"
+          (mouseleave)="toggleReactions(false)">{{reactButtonText}}</a>
         <a mat-stroked-button class="actionButton" [routerLink]="['/discussion-board', comment._id]">Reply</a>
         <a mat-stroked-button class="actionButton">Report</a>
       </mat-list>

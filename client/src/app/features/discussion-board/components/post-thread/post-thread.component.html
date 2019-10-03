@@ -9,7 +9,7 @@
         <div>
             <app-post-feed-item [post]="post" [user]="user">
             </app-post-feed-item>
-            <app-post-comment-item *ngFor="let comment of post.comments" [id]="comment" [user]="user">
+            <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user">
             </app-post-comment-item>
         </div>
     </div>

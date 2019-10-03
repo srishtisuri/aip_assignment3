@@ -12,7 +12,8 @@ export class PostThreadComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute, private postService: PostService, private userService: UserService) { }
   post = null;
   user = null;
-  thread = null;
+  comments = [];
+  thread;
 
   ngOnInit() {
     this.userService.getCurrentUser().subscribe(res => {
@@ -27,9 +28,18 @@ export class PostThreadComponent implements OnInit {
   }
 
   getPost() {
-    this.postService.getPost(this.thread).subscribe(response => {
+    return this.postService.getPost(this.thread).subscribe(response => {
       if (response.status == "SUCCESS") {
         this.post = response.data;
+        this.getComments();
+      }
+    });
+  }
+
+  getComments() {
+    this.postService.getPostComments(this.thread).subscribe(response => {
+      if (response.status == "SUCCESS") {
+        this.comments = response.data;
       }
     });
   }

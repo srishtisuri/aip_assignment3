@@ -34,7 +34,7 @@ export class PostFeedItemComponent implements OnInit {
     if (this.user != null) {
       this.getUserReaction();
     }
-    this.isMyActivityPage = this.router.url == "/my-activity";
+    this.isMyActivityPage = this.router.url == "/my-activity/posts";
     this.canDelete = this.isMyActivityPage && this.post.comments.length == 0;
     this.canRemove = this.isMyActivityPage && this.post.comments.length != 0 && !this.post.image.includes("removed");
     this.canChange = this.canDelete
@@ -84,7 +84,6 @@ export class PostFeedItemComponent implements OnInit {
 
   changePost(image) {
     this.postService.changePost(image, this.post._id, this.increment).subscribe(res => {
-      console.log(res);
       this.getPosts.emit();
     });
   }
@@ -92,7 +91,6 @@ export class PostFeedItemComponent implements OnInit {
   delete() {
     if (confirm("Are you sure you want to delete this post?")) {
       this.postService.deletePost(this.post._id).subscribe(response => {
-        console.log(response);
         this.getPosts.emit();
         this.onChanges();
       });
@@ -103,7 +101,6 @@ export class PostFeedItemComponent implements OnInit {
     if (confirm("Are you sure you want to remove this post?")) {
       this.increment = this.post.history.length;
       this.postService.changePost(window.location.origin + "/assets/removed_image.png", this.post._id, this.increment).subscribe(response => {
-        console.log(response);
         this.post = response.data;
         this.onChanges();
       });

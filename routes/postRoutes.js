@@ -76,6 +76,54 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
+  router.get("/myComments", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
+
+    try {
+      let response = await Post.find({
+        isComment: true,
+        author: decodedToken.id
+      });
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/:thread/comments", async (req, res) => {
+    try {
+      let post = await Post.findOne({
+        _id: req.params.thread
+      });
+      let response = [];
+      for (let comment of post.comments) {
+        response.push(
+          await Post.findOne({
+            _id: comment
+          })
+        );
+      }
+
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
+  router.get("/:thread/commentParent", async (req, res) => {
+    try {
+      let response = await Post.findOne({
+        comments: req.params.thread
+      });
+      res.json({ status: "SUCCESS", data: response });
+    } catch (err) {
+      console.log("FAIL: " + err);
+      res.json({ status: "FAIL", error: err });
+    }
+  });
+
   router.get("/:id", async (req, res) => {
     try {
       let response = await Post.findById(req.params.id);

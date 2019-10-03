@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { DiscussionBoardComponent } from './features/discussion-board/discussion-board.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { SettingsComponent } from './features/settings/settings.component';
-import { MyActivityComponent } from './features/my-activity/my-activity.component';
 import { AdminComponent } from './features/admin/admin.component';
 import { PostThreadComponent } from './features/discussion-board/components/post-thread/post-thread.component';
 
@@ -13,7 +12,6 @@ const routes: Routes = [
   { path: 'post-thread', component: PostThreadComponent },
   { path: 'leaderboard', component: LeaderboardComponent },
   { path: 'settings', component: SettingsComponent },
-  { path: 'my-activity', component: MyActivityComponent },
   { path: 'account', redirectTo: '/account/login', pathMatch: 'full' },
   { path: 'admin', component: AdminComponent },
   { path: '', redirectTo: '/discussion-board', pathMatch: 'full' }
