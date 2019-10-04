@@ -1,8 +1,45 @@
-<mat-tab-group>
-    <mat-tab label="Account Settings">
-        <app-account-settings></app-account-settings>
-    </mat-tab>
-    <mat-tab label="Application Settings">
-        <app-application-settings></app-application-settings>
-    </mat-tab>
-  </mat-tab-group>
+<div class="container">
+    <h2>Account Settings</h2>
+
+    <form *ngIf="accountSettingsForm != null" [formGroup]="accountSettingsForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+        </mat-form-field>
+
+        <br />
+        <mat-form-field appearance="outline">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" />
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+            <div class="error" *ngIf="accountSettingsForm.get('email').hasError('email')">
+                invalid email address
+            </div>
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+            <mat-label>Change Password</mat-label>
+            <input type="password" matInput placeholder="Enter new password to change" formControlName="password" />
+            <div class="error" *ngIf="accountSettingsForm.get('password').hasError('passwordStrength')">
+                {{accountSettingsForm.get('password').errors['passwordStrength']}}
+            </div>
+            <div class="error" *ngIf="accountSettingsForm.get('password').hasError('minlength')">
+                password must be at least 8 characters long
+            </div>
+        </mat-form-field>
+        <br />
+        <mat-form-field appearance="outline">
+            <mat-label>Avatar</mat-label>
+            <input readonly style="display:none;" matInput formControlName="avatar" />
+            <label class="avatarLabel">Click or drag to the image below to change</label>
+            <app-new-post-widget title="" [background]="user.avatar" (getImage)="setAvatar($event)">
+            </app-new-post-widget>
+        </mat-form-field>
+        <br />
+        <button mat-flat-button color="primary" class="btn" type="submit">Save</button>
+    </form>
+</div>

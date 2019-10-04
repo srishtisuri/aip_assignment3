@@ -10,7 +10,7 @@ export class UserService {
   endpoint: string = "/api/users";
   user: User = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -22,5 +22,9 @@ export class UserService {
 
   getCurrentUser() {
     return this.http.get<any>(this.endpoint + "/current");
+  }
+
+  updateUser(details) {
+    return this.http.put<any>(this.endpoint, { user: details });
   }
 }

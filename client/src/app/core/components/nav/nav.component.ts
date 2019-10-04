@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { map, share } from "rxjs/operators";
 import { AuthService } from "../../services/auth.service";
 import { NotificationService } from "../../services/notification.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-nav",
@@ -19,7 +20,8 @@ export class NavComponent {
   constructor(
     private breakpointObserver: BreakpointObserver,
     public authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private router: Router
   ) { }
 
   logout() {
@@ -27,6 +29,7 @@ export class NavComponent {
       if (res.status == "SUCCESS") {
         this.authService.isLoggedIn = false;
         this.notificationService.notify("You have successfully logged out!");
+        this.router.navigate(["/discussion-board"]);
       }
     });
   }

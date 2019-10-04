@@ -123,16 +123,33 @@ module.exports = (express, passport, AWS) => {
   // Update user
   router.put("/", async (req, res) => {
     try {
-      let response = await User.findByIdAndUpdate(
-        req.body._id,
-        {
-          $set: {
-            ...req.body.items
-          }
-        },
-        { new: true }
-      );
-      sendSuccess(res, response);
+      let existingUser = await User.findOne({
+        username: req.body.user.username
+      });
+      if (existingUser == null || existingUser._id == req.body.user._id) {
+        if (req.body.user.password) {
+          req.body.user.password = await bcrypt.hash(
+            req.body.user.password,
+            10
+          );
+        } else {
+          delete req.body.user.password;
+        }
+        console.log(req.body);
+
+        let response = await User.findByIdAndUpdate(
+          req.body.user._id,
+          {
+            $set: {
+              ...req.body.user
+            }
+          },
+          { new: true }
+        );
+        sendSuccess(res, response);
+      } else {
+        return sendError(res, "Username already exists");
+      }
     } catch (err) {
       sendError(res, err);
     }

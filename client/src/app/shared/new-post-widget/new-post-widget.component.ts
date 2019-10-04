@@ -1,14 +1,15 @@
-import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
+import { Component, OnInit, OnChanges, EventEmitter, Output, Input } from "@angular/core";
 
 @Component({
   selector: "app-new-post-widget",
   templateUrl: "./new-post-widget.component.html",
   styleUrls: ["./new-post-widget.component.css"]
 })
-export class NewPostWidgetComponent implements OnInit {
+export class NewPostWidgetComponent implements OnInit, OnChanges {
   @Output() uploadPost = new EventEmitter();
   @Output() getImage = new EventEmitter();
   @Input() title = "New Post";
+  @Input() background = null;
 
   buttonText = null;
   files: File[] = [];
@@ -20,6 +21,13 @@ export class NewPostWidgetComponent implements OnInit {
       this.buttonText = "Change";
     } else if (this.title != "") {
       this.buttonText = "Post";
+    }
+  }
+
+  ngOnChanges(change) {
+    if (change.background !== this.background) {
+      this.data = null;
+      this.files = [];
     }
   }
 
