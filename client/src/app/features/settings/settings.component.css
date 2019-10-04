@@ -1,0 +1,25 @@
+.field {
+  padding: 2px 10px;
+}
+
+mat-form-field {
+  width: 400px;
+}
+
+.btn {
+  margin: 0 10px;
+}
+
+.error {
+  font-size: small;
+  color: red;
+}
+
+.container {
+  text-align: center;
+  padding-bottom: 30px;
+}
+
+.avatarLabel {
+  color: rgba(0, 0, 0, 0.6);
+}

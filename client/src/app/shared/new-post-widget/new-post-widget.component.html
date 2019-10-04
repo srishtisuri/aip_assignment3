@@ -6,8 +6,9 @@
     <mat-icon class="icon" id="drop_zone" style="font-size:140px; margin-left:-120px; cursor: pointer;" (click)="handleFileSelect()"
       >cloud_upload</mat-icon
     > -->
-    <ngx-dropzone (change)="onSelect($event)" [multiple]="false">
-      <ngx-dropzone-label>Drop it, baby!</ngx-dropzone-label>
+    <ngx-dropzone [class.dropzone]="background" (change)="onSelect($event)" [multiple]="false"
+      [style.background]="'url(' + background + ')'">
+      <ngx-dropzone-label *ngIf="!background">Drop it, baby!</ngx-dropzone-label>
       <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
         <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
       </ngx-dropzone-preview>

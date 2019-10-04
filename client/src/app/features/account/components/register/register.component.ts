@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { FormGroup, FormBuilder, AbstractControl, Validators } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { Router } from "@angular/router";
 import { AuthService } from "src/app/core/services/auth.service";
 import { NotificationService } from "src/app/core/services/notification.service";
@@ -25,24 +25,10 @@ export class RegisterComponent implements OnInit {
       name: ["", Validators.required],
       username: ["", Validators.required],
       email: ["", [Validators.required, Validators.email]],
-      password: ["", [Validators.required, Validators.minLength(8), this.passwordValidator]],
+      password: ["", [Validators.required, Validators.minLength(8), Validators.maxLength(20), this.authService.passwordValidator]],
       avatar: ["", Validators.required]
     });
     this.errors = [];
-  }
-
-  // This code is based on an answer by "Krishna Rathore" on Stack Overflow
-  // See https://stackoverflow.com/a/52044817
-  passwordValidator = function (control: AbstractControl) {
-    let value: string = control.value || '';
-    let upperCaseCharacters = /[A-Z]+/g;
-    let lowerCaseCharacters = /[a-z]+/g;
-    let numberCharacters = /[0-9]+/g;
-    if (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false) {
-      return {
-        passwordStrength: 'Password must contain the following: numbers, lowercase letters, and uppercase letters.'
-      }
-    }
   }
 
   onSubmit() {

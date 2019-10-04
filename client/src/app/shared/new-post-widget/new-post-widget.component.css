@@ -2,3 +2,7 @@
   width: 280px;
   margin: 20px auto;
 }
+
+.dropzone {
+  background-size: cover !important;
+}
