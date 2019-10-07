@@ -200,6 +200,7 @@ module.exports = (express, passport, AWS) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
+        updatedUser = await updateLastLoggedInIP(req.user);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });

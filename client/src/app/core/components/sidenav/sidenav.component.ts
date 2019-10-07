@@ -13,7 +13,7 @@ export class SidenavComponent implements OnInit {
   @Output() sidenavClose = new EventEmitter();
   constructor(
     public authService: AuthService,
-    private userService: UserService,
+    public userService: UserService,
     private notificationService: NotificationService,
     private router: Router
   ) {}

@@ -23,7 +23,7 @@ export class NavComponent {
     private breakpointObserver: BreakpointObserver,
     public authService: AuthService,
     private notificationService: NotificationService,
-    private userService: UserService,
+    public userService: UserService,
     private router: Router
   ) {}
 
