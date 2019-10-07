@@ -246,5 +246,10 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
+  router.get("/checkIP", (req, res) => {
+    console.log(req.connection.remoteAddress);
+    res.send(req.connection.remoteAddress);
+  });
+
   return router;
 };
