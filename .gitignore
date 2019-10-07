@@ -9,8 +9,8 @@
 /client/bazel-out
 
 # config
-/config/mlabKey.js
-/config/AWS.js
+#/config/mlabKey.js
+#/config/AWS.js
 
 # dependencies
 /node_modules
