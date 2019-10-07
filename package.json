@@ -9,8 +9,8 @@
     "client": "cd client && ng serve",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\"",
-    "start": "nodemon server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install && ng build --aot --prod"
   },
   "repository": {
     "type": "git",
@@ -37,5 +37,9 @@
     "nodemon": "^1.19.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0"
+  },
+  "engines": {
+    "node": "v10.16.3",
+    "npm": "6.9.0"
   }
 }
