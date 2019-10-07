@@ -1,15 +1,21 @@
-<div fxLayout="row" fxLayoutWrap>
-  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-    <div fxLayout="column">
-      <app-new-post-widget (uploadPost)="uploadPost($event)"></app-new-post-widget>
-      <app-sort-widget></app-sort-widget>
+<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
+  <div fxFlex="25%" ngClass.gt-sm="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <div ngClass.lt-sm="small-widget">
+        <app-new-post-widget (uploadPost)="uploadPost($event)"></app-new-post-widget>
+      </div>
+      <div ngClass.lt-sm="small-widget">
+        <app-sort-widget></app-sort-widget>
+      </div>
     </div>
   </div>
-  <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
-    <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
+  <div fxFlex="50%" class="layout-tile" ngClass.lt-sm="layout-tile-small" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
+    </div>
   </div>
   <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-    <div fxLayout="column">
+    <div fxLayout="column" class="column">
       <app-leaderboard-widget></app-leaderboard-widget>
     </div>
   </div>

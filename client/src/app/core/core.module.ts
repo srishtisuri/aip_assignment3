@@ -5,11 +5,13 @@ import { AngularMaterialModule } from "../shared/angular-material.module";
 import { NavComponent } from "./components/nav/nav.component";
 import { PostService } from "./services/post.service";
 import { HttpClientModule } from "@angular/common/http";
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 @NgModule({
-  imports: [CommonModule, AngularMaterialModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, AngularMaterialModule, RouterModule, HttpClientModule, FlexLayoutModule],
   providers: [PostService],
-  declarations: [NavComponent],
-  exports: [NavComponent]
+  declarations: [NavComponent, SidenavComponent],
+  exports: [NavComponent, SidenavComponent]
 })
-export class CoreModule {}
+export class CoreModule { }

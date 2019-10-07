@@ -1,5 +1,4 @@
 .card {
-  width: 650px;
   margin-top: 20px;
   margin-bottom: 20px;
   border: 1px solid white;
@@ -20,8 +19,8 @@
 
 .mat-card-image {
   margin: 0;
-  height: 450px;
-  width: 450px;
+  /* height: 450px;
+  width: 450px; */
 }
 
 .header-image {
@@ -61,7 +60,7 @@
 }
 
 .post-reactions {
-  flex: 1 0 250px;
+  flex: 1 0 30;
   text-align: right;
 }
 
@@ -84,4 +83,8 @@
   width: 100%;
   margin-top: 170px;
   margin-left: 30px;
+}
+
+.image {
+  width: 100%;
 }

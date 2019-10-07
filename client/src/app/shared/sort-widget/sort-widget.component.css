@@ -1,5 +1,7 @@
 .card {
-  width: 280px;
-  height: 280px;
-  margin: 20px auto;
+  margin-top: 20px;
+}
+
+.mat-button {
+  padding: 0;
 }
