@@ -10,7 +10,7 @@
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\"",
     "start": "nodemon server.js",
-    "heroku-postbuild": "cd client && npm install && ng build"
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "repository": {
     "type": "git",
