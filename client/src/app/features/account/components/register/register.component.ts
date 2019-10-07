@@ -28,10 +28,11 @@ export class RegisterComponent implements OnInit {
       password: ["", [Validators.required, Validators.minLength(8), Validators.maxLength(20), this.authService.passwordValidator]],
       avatar: ["", Validators.required]
     });
-    this.errors = [];
+    // this.errors = [];
   }
 
   onSubmit() {
+    this.errors = [];
     this.registerForm.updateValueAndValidity();
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe(res => {
@@ -40,7 +41,8 @@ export class RegisterComponent implements OnInit {
           this.notificationService.notify("You have successfully registered!");
           this.router.navigate(["/discussion-board"]);
         } else {
-          this.errors.push(res.error);
+          this.notificationService.notify(res.error);
+          // this.errors.push(res.error);
         }
       });
     } else {

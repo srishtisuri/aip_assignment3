@@ -26,7 +26,7 @@ export class LoginComponent implements OnInit {
       username: ["", Validators.required],
       password: ["", Validators.required]
     });
-    this.errors = [];
+    // this.errors = [];
   }
 
   onSubmit() {
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
         this.notificationService.notify("You have successfully logged in!");
         this.router.navigate(["/discussion-board"]);
       } else {
-        this.errors.push(res.error);
+        this.notificationService.notify(res.error);
       }
     });
   }

@@ -8,7 +8,9 @@
     "client-proxy": "cd client && ng serve --proxy-config proxy.conf.json",
     "client": "cd client && ng serve",
     "server": "nodemon server.js",
-    "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\""
+    "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\"",
+    "start": "node server.js",
+    "heroku-postbuild": "cd client && npm install && ng build --prod && cd .."
   },
   "repository": {
     "type": "git",
@@ -22,6 +24,8 @@
   },
   "homepage": "https://github.com/rishyahluwalia/aip_assignment3#readme",
   "dependencies": {
+    "@angular/cli": "~8.2.0",
+    "@angular/compiler-cli": "~8.2.0",
     "aws-sdk": "^2.533.0",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
@@ -35,5 +39,9 @@
     "nodemon": "^1.19.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0"
+  },
+  "engines": {
+    "node": "v10.16.3",
+    "npm": "6.9.0"
   }
 }

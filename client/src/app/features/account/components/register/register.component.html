@@ -24,7 +24,7 @@
     <mat-label>Password</mat-label>
     <input type="password" matInput placeholder="Password123" formControlName="password" />
     <div class="error" *ngIf="registerForm.get('password').hasError('passwordStrength')">
-      {{registerForm.get('password').errors['passwordStrength']}}
+      {{ registerForm.get("password").errors["passwordStrength"] }}
     </div>
     <div class="error" *ngIf="registerForm.get('password').hasError('minlength')">
       password must be at least 8 characters long
@@ -34,8 +34,7 @@
   <mat-form-field appearance="outline" style="width: 400px">
     <mat-label>Avatar</mat-label>
     <input readonly style="display:none;" matInput placeholder="click to upload file" formControlName="avatar" />
-    <app-new-post-widget title="" (getImage)="setAvatar($event)">
-    </app-new-post-widget>
+    <app-new-post-widget title="" (getImage)="setAvatar($event)"> </app-new-post-widget>
   </mat-form-field>
   <br />
 
@@ -43,8 +42,8 @@
   <button mat-flat-button color="primary" class="btn" type="submit">Register</button>
 </form>
 
-<div *ngIf="errors.length > 0" class="alert alert-danger">
+<!-- <div *ngIf="errors.length > 0" class="alert alert-danger">
   <p *ngFor="let error of errors">
     {{ error }}
   </p>
-</div>
+</div> -->

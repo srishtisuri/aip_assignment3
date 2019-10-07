@@ -4,21 +4,14 @@ import { NotificationService } from "../../services/notification.service";
 import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-sidenav',
-  templateUrl: './sidenav.component.html',
-  styleUrls: ['./sidenav.component.css']
+  selector: "app-sidenav",
+  templateUrl: "./sidenav.component.html",
+  styleUrls: ["./sidenav.component.css"]
 })
 export class SidenavComponent implements OnInit {
   @Output() sidenavClose = new EventEmitter();
-
+  ngOnInit() { }
   constructor(public authService: AuthService, private notificationService: NotificationService, private router: Router) { }
-
-  ngOnInit() {
-  }
-
-  public onSidenavClose = () => {
-    this.sidenavClose.emit();
-  }
 
   logout() {
     this.authService.logout().subscribe(res => {
@@ -28,5 +21,9 @@ export class SidenavComponent implements OnInit {
         this.router.navigate(["/discussion-board"]);
       }
     });
+  }
+
+  public onSidenavClose = () => {
+    this.sidenavClose.emit();
   }
 }
