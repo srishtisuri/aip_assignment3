@@ -6,3 +6,8 @@
 .layout-tile {
   margin-bottom: 20px;
 }
+
+.column {
+  width: 100%;
+  padding: 0px 10px;
+}

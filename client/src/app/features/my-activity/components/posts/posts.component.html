@@ -1,11 +1,11 @@
-<div fxLayout="row" fxLayoutWrap>
+<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
     <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column">
+        <div fxLayout="column" class="column">
             <app-sort-widget></app-sort-widget>
         </div>
     </div>
     <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column">
+        <div fxLayout="column" class="column">
             <app-post-feed-item *ngFor="let post of posts" [post]="post" [user]="user" (getPosts)="getPosts()">
             </app-post-feed-item>
         </div>
