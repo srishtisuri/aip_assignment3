@@ -246,6 +246,16 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
+  // DEV DELETE ALl
+  router.get("/changeRole/:username/:role", async (req, res) => {
+    let user = await User.findOneAndUpdate(
+      { username: req.params.username },
+      { $set: { role: req.params.role } },
+      { returnNewDocument: true }
+    );
+    res.json({ status: "SUCCESS", data: user });
+  });
+
   router.get("/checkIP", (req, res) => {
     console.log(req.connection.remoteAddress);
     res.send(req.connection.remoteAddress);

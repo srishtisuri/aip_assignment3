@@ -41,7 +41,7 @@
     </div>
     <mat-card-actions class="card-actions">
       <button
-        [disabled]="!authService.isLoggedIn"
+        [disabled]="!authService.isLoggedIn || post.report.moderated"
         [ngClass]="{ reacted: userHasReacted }"
         (mouseover)="toggleReactions(true)"
         (mouseleave)="toggleReactions(false)"
@@ -49,11 +49,19 @@
       >
         {{ reactButtonText }}
       </button>
-      <button [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
-      <button *ngIf="!isMyActivityPage" (click)="report()" mat-button>REPORT</button>
-      <button *ngIf="isMyActivityPage" [disabled]="!canChange" (click)="change()" mat-button>CHANGE</button>
-      <button *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
-      <button *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
+      <button [disabled]="post.report.moderated" [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
+      <!-- <div *ngIf="!isMyActivityPage"> -->
+      <button [disabled]="post.report.moderated" mat-button [matMenuTriggerFor]="menu" *ngIf="!isMyActivityPage">REPORT</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="report('Inappropriate')">Inappropriate</button>
+        <button mat-menu-item (click)="report('Contains Text')">Contains Text</button>
+      </mat-menu>
+      <!-- </div> -->
+      <button [disabled]="post.report.moderated" *ngIf="isMyActivityPage" [disabled]="!canChange" (click)="change()" mat-button>
+        CHANGE
+      </button>
+      <button [disabled]="post.report.moderated" *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
+      <button [disabled]="post.report.moderated" *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
     </mat-card-actions>
   </mat-card>
 </div>

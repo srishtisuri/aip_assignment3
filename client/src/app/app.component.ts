@@ -12,19 +12,24 @@ import { NotificationService } from "./core/services/notification.service";
 export class AppComponent {
   title = "im-board";
 
-  constructor(private authService: AuthService, private notificationService: NotificationService) {}
+  constructor(private authService: AuthService, private notificationService: NotificationService, private userService: UserService) {}
 
   ngOnInit() {
+    this.initialSetup();
+  }
+  initialSetup = async () => {
     try {
-      this.authService.checkAuth().subscribe(res => {
+      await this.authService.checkAuth().subscribe(res => {
         if (res.status == "SUCCESS") {
           this.authService.isLoggedIn = true;
           this.notificationService.notify("[DEV] JWT Authentication successful!");
         } else {
         }
       });
+      this.userService.checkAdmin();
     } catch {
       this.authService.isLoggedIn = false;
+      this.userService.isAdmin = false;
     }
-  }
+  };
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 import { Router } from "@angular/router";
 import { PostService } from "src/app/core/services/post.service";
 import { AuthService } from "src/app/core/services/auth.service";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "app-post-feed-item",
@@ -12,7 +13,12 @@ export class PostFeedItemComponent implements OnInit {
   @Input() post: any;
   @Input() user: any;
   @Output() getPosts = new EventEmitter();
-  constructor(private router: Router, private postService: PostService, public authService: AuthService) { }
+  constructor(
+    private router: Router,
+    private postService: PostService,
+    public authService: AuthService,
+    private notificationService: NotificationService
+  ) {}
 
   showReactions = false;
   userHasReacted = false;
@@ -37,12 +43,13 @@ export class PostFeedItemComponent implements OnInit {
     this.isMyActivityPage = this.router.url == "/my-activity/posts";
     this.canDelete = this.isMyActivityPage && this.post.comments.length == 0;
     this.canRemove = this.isMyActivityPage && this.post.comments.length != 0 && !this.post.image.includes("removed");
-    this.canChange = this.canDelete
-      && this.post.reactions["heart"].length == 0
-      && this.post.reactions["wow"].length == 0
-      && this.post.reactions["laughing"].length == 0
-      && this.post.reactions["sad"].length == 0
-      && this.post.reactions["angry"].length == 0;
+    this.canChange =
+      this.canDelete &&
+      this.post.reactions["heart"].length == 0 &&
+      this.post.reactions["wow"].length == 0 &&
+      this.post.reactions["laughing"].length == 0 &&
+      this.post.reactions["sad"].length == 0 &&
+      this.post.reactions["angry"].length == 0;
   }
 
   getUserReaction() {
@@ -75,7 +82,16 @@ export class PostFeedItemComponent implements OnInit {
     });
   }
 
-  report() { }
+  report(reason) {
+    this.postService.report(this.post._id, reason).subscribe(response => {
+      if (response.data) {
+        this.notificationService.notify("Successfully reported!");
+      } else if (response.error) {
+        this.notificationService.notify(response.error);
+      }
+    });
+    console.log("Reported");
+  }
 
   change() {
     this.increment = this.post.history.length;
@@ -83,7 +99,7 @@ export class PostFeedItemComponent implements OnInit {
   }
 
   changePost(image) {
-    this.postService.changePost(image, this.post._id, this.increment).subscribe(res => {
+    this.postService.changePost(image, this.post._id).subscribe(res => {
       this.getPosts.emit();
     });
   }
@@ -100,7 +116,7 @@ export class PostFeedItemComponent implements OnInit {
   remove() {
     if (confirm("Are you sure you want to remove this post?")) {
       this.increment = this.post.history.length;
-      this.postService.changePost(window.location.origin + "/assets/removed_image.png", this.post._id, this.increment).subscribe(response => {
+      this.postService.changePost(window.location.origin + "/assets/removed_image.png", this.post._id).subscribe(response => {
         this.post = response.data;
         this.onChanges();
       });
