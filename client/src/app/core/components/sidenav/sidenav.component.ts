@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
 import { AuthService } from "../../services/auth.service";
 import { NotificationService } from "../../services/notification.service";
 import { Router } from "@angular/router";
@@ -10,6 +10,7 @@ import { UserService } from "../../services/user.service";
   styleUrls: ["./sidenav.component.css"]
 })
 export class SidenavComponent implements OnInit {
+  @Output() sidenavClose = new EventEmitter();
   constructor(
     public authService: AuthService,
     private userService: UserService,
@@ -29,4 +30,8 @@ export class SidenavComponent implements OnInit {
       }
     });
   }
+
+  public onSidenavClose = () => {
+    this.sidenavClose.emit();
+  };
 }

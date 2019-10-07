@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-discussion-board",
@@ -8,7 +9,7 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class DiscussionBoardComponent implements OnInit {
   posts;
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService, private authService: AuthService) { }
 
   ngOnInit() {
     this.getPosts();

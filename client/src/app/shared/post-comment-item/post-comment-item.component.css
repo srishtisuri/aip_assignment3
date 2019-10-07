@@ -5,16 +5,9 @@
   margin-right: auto;
 }
 
-.mat-card-image {
-  margin: 0;
-  width: 250px;
-  height: 250px;
-  margin-left: 70px;
-}
-
 .user-reactions {
   position: absolute;
-  top: 70px;
+  top: 60px;
   height: 40px;
   right: 0px;
   font-size: 2em;
@@ -27,7 +20,8 @@
 .user-reactions > div {
   display: inline-block;
   width: 32px;
-  height: 36px;
+  height: 32px;
+  text-align: center;
 }
 
 .user-reactions > div.selected {
@@ -50,22 +44,20 @@
 }
 
 .details {
-  display: inline-block;
   text-align: right;
-  padding-left: 60px;
-  width: 100px;
+  padding-top: 20%;
+  min-width: 90px;
 }
 
 .replyTotal {
   display: inline-block;
+  padding-bottom: 10px;
   flex: 0 0 100px;
 }
 
 .actions {
-  position: absolute;
+  display: inline-block;
   width: 100px;
-  right: 10px;
-  top: 112px;
   padding-top: 0px;
 }
 
@@ -86,7 +78,7 @@
 .replying-to {
   display: inline-block;
   position: absolute;
-  right: 35px;
+  right: 4%;
   cursor: pointer;
 }
 
@@ -95,4 +87,21 @@
   width: 70px;
   margin-bottom: -15px;
   margin-top: -10px;
+}
+
+.content {
+  width: 100%;
+}
+
+.content > img {
+  width: 60%;
+  display: inline-block;
+}
+
+.content > div {
+  width: 40%;
+  display: inline-block;
+  text-align: right;
+  vertical-align: top;
+  padding-top: 20px;
 }

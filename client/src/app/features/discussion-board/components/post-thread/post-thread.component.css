@@ -9,5 +9,6 @@
 
 .column {
   width: 100%;
+  max-width: 600px;
   padding: 0px 10px;
 }

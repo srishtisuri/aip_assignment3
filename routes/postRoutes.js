@@ -120,14 +120,14 @@ module.exports = (express, passport, AWS) => {
 
   router.get("/myComments", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
     try {
-      let response = await Post.find({
+      let posts = await Post.find({
         isComment: true,
         author: decodedToken.id
       });
-      response = await populatePostsWithUserInfo(response);
-      res.json({ status: "SUCCESS", data: response });
+      posts = await populatePostsWithUserInfo(posts);
+
+      res.json({ status: "SUCCESS", data: posts });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
