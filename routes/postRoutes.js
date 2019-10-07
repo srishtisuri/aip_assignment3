@@ -49,9 +49,11 @@ module.exports = (express, passport, AWS) => {
   populatePostsWithUserInfo = async posts => {
     for (let i = 0; i < posts.length; i++) {
       let responseUser = await User.findById(posts[i].author);
-      posts[i]._doc["name"] = responseUser.name;
-      posts[i]._doc["username"] = responseUser.username;
-      posts[i]._doc["avatar"] = responseUser.avatar;
+      if (responseUser) {
+        posts[i]._doc["name"] = responseUser.name;
+        posts[i]._doc["username"] = responseUser.username;
+        posts[i]._doc["avatar"] = responseUser.avatar;
+      }
     }
     return posts;
   };
@@ -124,6 +126,7 @@ module.exports = (express, passport, AWS) => {
         isComment: true,
         author: decodedToken.id
       });
+      response = await populatePostsWithUserInfo(response);
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);

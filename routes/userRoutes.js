@@ -83,7 +83,6 @@ module.exports = (express, passport, AWS) => {
     }
   });
   const uploadToS3Bucket = async (bucket, image, id) => {
-    console.log(image);
     await s3
       .putObject({
         Bucket: bucket,
@@ -163,7 +162,16 @@ module.exports = (express, passport, AWS) => {
         } else {
           delete req.body.user.password;
         }
-        console.log(req.body);
+
+        if (req.body.user.avatar) {
+          let newAvatarImageUrl = await uploadToS3Bucket(
+            "brogrammers-avatars",
+            req.body.user.avatar,
+            req.body.user._id
+          );
+          console.log(newAvatarImageUrl);
+          req.body.user.avatar = newAvatarImageUrl;
+        }
 
         let response = await User.findByIdAndUpdate(
           req.body.user._id,
@@ -179,6 +187,7 @@ module.exports = (express, passport, AWS) => {
         return sendError(res, "Username already exists");
       }
     } catch (err) {
+      console.log(err);
       sendError(res, err);
     }
   });

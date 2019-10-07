@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { AuthService } from "src/app/core/services/auth.service";
 import { UserService } from "src/app/core/services/user.service";
 import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.css']
+  selector: "app-settings",
+  templateUrl: "./settings.component.html",
+  styleUrls: ["./settings.component.css"]
 })
 export class SettingsComponent implements OnInit {
-  constructor(private authService: AuthService, private userService: UserService, private notificationService: NotificationService) { }
+  constructor(private authService: AuthService, private userService: UserService, private notificationService: NotificationService) {}
   accountSettingsForm = null;
   user;
 
@@ -41,14 +41,14 @@ export class SettingsComponent implements OnInit {
               this.user = res.data;
             }
           });
+        } else {
+          this.notificationService.notify(res.error);
         }
       });
-    }
-    else {
+    } else {
       alert("please fix any errors and fill all required fields");
     }
   }
-
 
   setAvatar(image) {
     this.accountSettingsForm.controls["avatar"].setValue(image);
