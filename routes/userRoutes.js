@@ -51,7 +51,7 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
-  const updateLastLoggedIn = async user => {
+  const updateLastLoggedInIP = async user => {
     return await User.findByIdAndUpdate(
       user._id,
       {
