@@ -1,19 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { AuthService } from "src/app/core/services/auth.service";
 import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-post-comment-item',
-  templateUrl: './post-comment-item.component.html',
-  styleUrls: ['./post-comment-item.component.css']
+  selector: "app-post-comment-item",
+  templateUrl: "./post-comment-item.component.html",
+  styleUrls: ["./post-comment-item.component.css"]
 })
 export class PostCommentItemComponent implements OnInit {
   @Input() comment: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService, private authService: AuthService) { }
+  constructor(private router: Router, private postService: PostService, private authService: AuthService) {}
 
-  author = { username: "ctdamtoft", name: "Christian" };
   showReactions = false;
   userHasReacted = false;
   reactButtonText = "React";
@@ -54,7 +53,6 @@ export class PostCommentItemComponent implements OnInit {
   }
 
   toggleReactions(showReactions) {
-    console.log("mouseover: " + showReactions);
     setTimeout(() => {
       this.showReactions = showReactions;
     }, 500);
@@ -67,7 +65,5 @@ export class PostCommentItemComponent implements OnInit {
     });
   }
 
-  getParent() {
-
-  }
+  getParent() {}
 }

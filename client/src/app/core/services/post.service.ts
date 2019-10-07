@@ -14,10 +14,10 @@ const httpOptions = {
 export class PostService {
   endpoint: string = "/api/posts";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getPosts(): Observable<any> {
-    return this.http.get<any>(this.endpoint);
+    return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false");
   }
 
   getMyComments(): Observable<any> {
@@ -61,7 +61,6 @@ export class PostService {
   }
 
   react(thread: string, reaction: string, oldReaction: string): Observable<any> {
-    console.log(thread, reaction, oldReaction);
     return this.http.put(this.endpoint + "/react", { thread, reaction, oldReaction });
   }
 }

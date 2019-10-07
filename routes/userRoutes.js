@@ -82,6 +82,28 @@ module.exports = (express, passport, AWS) => {
       sendError(res, err);
     }
   });
+  const uploadToS3Bucket = async (bucket, image, id) => {
+    console.log(image);
+    await s3
+      .putObject({
+        Bucket: bucket,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        Body: (buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        )),
+        Key: `${id}.png`,
+        ACL: "public-read"
+      })
+      .promise();
+
+    let signedUrl = await s3.getSignedUrl("getObject", {
+      Bucket: bucket,
+      Key: `${id}.png`
+    });
+    return signedUrl.split("?")[0];
+  };
 
   // Create user
   router.post("/", async (req, res) => {
@@ -95,7 +117,13 @@ module.exports = (express, passport, AWS) => {
           password: await bcrypt.hash(req.body.user.password, 10),
           ips: req.ip
         });
-
+        let avatarImageUrl = await uploadToS3Bucket(
+          "brogrammers-avatars",
+          req.body.user.avatar,
+          newUser._id
+        );
+        console.log(avatarImageUrl);
+        newUser.avatar = avatarImageUrl;
         let responseUser = await newUser.save();
         let token = await jwt.sign({ id: responseUser._id }, "brogrammers", {
           expiresIn: 604800

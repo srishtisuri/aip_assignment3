@@ -46,20 +46,60 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  router.get("/postsByUserTest", async (req, res) => {
+  populatePostsWithUserInfo = async posts => {
+    for (let i = 0; i < posts.length; i++) {
+      let responseUser = await User.findById(posts[i].author);
+      posts[i]._doc["name"] = responseUser.name;
+      posts[i]._doc["username"] = responseUser.username;
+      posts[i]._doc["avatar"] = responseUser.avatar;
+    }
+    return posts;
+  };
+  router.get("/postsWithUser", async (req, res) => {
     try {
-      let responsePosts = await Post.find();
-      responsePosts.map(async post => {
-        let responseUser = await User.findById(post.author);
-        console.log(post.author);
-        return {
-          ...post,
-          name: responseUser.name,
-          username: responseUser.username,
-          avatar: responseUser.avatar
-        };
+      let posts = req.query.isComment
+        ? await Post.find({ isComment: req.query.isComment })
+        : await Post.find();
+
+      posts = await populatePostsWithUserInfo(posts);
+
+      // sort by whatever - largest to smallest
+      let type = req.query.sortBy || "new";
+      if (type == "new" || type == "old") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            let date1 = new Date(
+              posts[i].history[posts[i].history.length - 1].dateModified
+            );
+            let date2 = new Date(
+              posts[i + 1].history[posts[i].history.length - 1].dateModified
+            );
+            // Check to see which way to sort it
+            if (type == "new" ? date1 < date2 : date1 > date2) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (
+              posts[i].reactions[type].length <
+              posts[i + 1].reactions[type].length
+            ) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      }
+      res.json({
+        status: "SUCCESS",
+        data: posts.slice(0, req.query.limit || posts.length)
       });
-      res.json({ status: "SUCCESS", data: responsePosts });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -104,7 +144,8 @@ module.exports = (express, passport, AWS) => {
           })
         );
       }
-
+      // console.log(response);
+      response = await populatePostsWithUserInfo(response);
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
@@ -117,7 +158,8 @@ module.exports = (express, passport, AWS) => {
       let response = await Post.findOne({
         comments: req.params.thread
       });
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -127,7 +169,8 @@ module.exports = (express, passport, AWS) => {
   router.get("/:id", async (req, res) => {
     try {
       let response = await Post.findById(req.params.id);
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -141,7 +184,11 @@ module.exports = (express, passport, AWS) => {
     try {
       let newPost = new Post();
 
-      let awsImageUrl = await uploadToS3Bucket(req.body.image, newPost._id);
+      let awsImageUrl = await uploadToS3Bucket(
+        "brogrammers-images",
+        req.body.image,
+        newPost._id
+      );
 
       newPost.history.push({
         dateModified: new Date().toISOString(),
@@ -172,10 +219,10 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  const uploadToS3Bucket = async (image, id) => {
+  const uploadToS3Bucket = async (bucket, image, id) => {
     await s3
       .putObject({
-        Bucket: "brogrammers-images",
+        Bucket: bucket,
         ContentEncoding: "base64",
         ContentType: "image/jpeg",
         Body: (buf = Buffer.from(
@@ -188,7 +235,7 @@ module.exports = (express, passport, AWS) => {
       .promise();
 
     let signedUrl = await s3.getSignedUrl("getObject", {
-      Bucket: "brogrammers-images",
+      Bucket: bucket,
       Key: `${id}.png`
     });
 
@@ -210,6 +257,7 @@ module.exports = (express, passport, AWS) => {
       let imageURL = "";
       if (req.body.image.search("base64") != -1) {
         imageURL = await uploadToS3Bucket(
+          "brogrammers-images",
           req.body.image,
           req.body.thread.concat("_" + req.body.increment)
         );
@@ -295,7 +343,8 @@ module.exports = (express, passport, AWS) => {
           { new: true }
         );
       }
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -378,30 +427,6 @@ module.exports = (express, passport, AWS) => {
       });
     });
   }
-  // router.get("/postsByUser", async (req, res) => {
-  //   try {
-  //     let response = await Post.find();
-  //     res.json({ status: "SUCCESS", data: response });
-  //   } catch (err) {
-  //     console.log("FAIL: " + err);
-  //     res.json({ status: "FAIL", error: err });
-  //   }
-  // });
-
-  // router.get("/postsByUser/test2", (req, res) => {
-  //   Post.aggregate([
-  //     {
-  //       $lookup: {
-  //         from: "user", // collection name in db
-  //         localField: "_id",
-  //         foreignField: "student",
-  //         as: "worksnapsTimeEntries"
-  //       }
-  //     }
-  //   ]).exec(function(err, students) {
-  //     // students contain WorksnapsTimeEntries
-  //   });
-  // });
 
   return router;
 };

@@ -18,7 +18,7 @@ export class RegisterComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private notificationService: NotificationService
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -43,14 +43,12 @@ export class RegisterComponent implements OnInit {
           this.errors.push(res.error);
         }
       });
-    }
-    else {
+    } else {
       alert("please fix any errors and fill all required fields");
     }
   }
 
   setAvatar(image) {
-    console.log(image);
     this.registerForm.controls["avatar"].setValue(image);
   }
 }

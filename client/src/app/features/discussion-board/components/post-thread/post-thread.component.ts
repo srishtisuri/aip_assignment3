@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { PostService } from "src/app/core/services/post.service";
 import { UserService } from "src/app/core/services/user.service";
 
 @Component({
-  selector: 'app-post-thread',
-  templateUrl: './post-thread.component.html',
-  styleUrls: ['./post-thread.component.css']
+  selector: "app-post-thread",
+  templateUrl: "./post-thread.component.html",
+  styleUrls: ["./post-thread.component.css"]
 })
 export class PostThreadComponent implements OnInit {
-  constructor(private activatedRoute: ActivatedRoute, private postService: PostService, private userService: UserService) { }
+  constructor(private activatedRoute: ActivatedRoute, private postService: PostService, private userService: UserService) {}
   post = null;
   user = null;
   comments = [];
