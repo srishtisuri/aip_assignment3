@@ -74,7 +74,7 @@ module.exports = (express, passport, AWS) => {
               posts[i].history[posts[i].history.length - 1].dateModified
             );
             let date2 = new Date(
-              posts[i + 1].history[posts[i].history.length - 1].dateModified
+              posts[i + 1].history[posts[i + 1].history.length - 1].dateModified
             );
             // Check to see which way to sort it
             if (type == "new" ? date1 < date2 : date1 > date2) {

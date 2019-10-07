@@ -6,10 +6,15 @@
       <mat-card-subtitle>@{{ post.username }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content id="image-container">
-      <img class="image" mat-card-image [src]="[post.image]" style="max-height: 450px" />
+      <img class="image" mat-card-image [src]="[post.image]" />
     </mat-card-content>
     <div class="details">
       <div class="commentTotal" [routerLink]="['/discussion-board', post._id]">comments: {{ post.comments.length }}
+      </div>
+      <div class="post-reactions">
+        <span>❤️{{ post.reactions.heart.length }}</span>️ <span>😂{{ post.reactions.laughing.length }}</span>️
+        <span>😮{{ post.reactions.wow.length }}</span>️ <span>😢{{ post.reactions.sad.length }}</span>️
+        <span>😠{{ post.reactions.angry.length }}</span>️
       </div>
     </div>
 

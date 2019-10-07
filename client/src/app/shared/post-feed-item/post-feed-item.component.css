@@ -1,6 +1,5 @@
 .card {
-  margin-top: 20px;
-  margin-bottom: 20px;
+  margin: 20px 10px;
   border: 1px solid white;
 }
 
@@ -87,4 +86,5 @@
 
 .image {
   width: 100%;
+  max-height: 450px;
 }
