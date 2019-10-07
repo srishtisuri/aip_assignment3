@@ -7,6 +7,7 @@ import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 })
 export class SortWidgetComponent implements OnInit {
   @Input() sortTypes;
+  @Input() sortType;
   @Output() handleSortBy = new EventEmitter();
 
   constructor() {}

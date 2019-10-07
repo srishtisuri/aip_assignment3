@@ -1,4 +1,1 @@
-<app-post-leaderboard-item
-  *ngFor="let post of posts"
-  [post]="post"
-></app-post-leaderboard-item>
+<app-post-leaderboard-item *ngFor="let post of posts; let i = index" [post]="post" [order]="i"></app-post-leaderboard-item>

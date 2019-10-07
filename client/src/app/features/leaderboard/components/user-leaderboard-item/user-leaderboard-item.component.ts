@@ -1,14 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-user-leaderboard-item',
-  templateUrl: './user-leaderboard-item.component.html',
-  styleUrls: ['./user-leaderboard-item.component.css']
+  selector: "app-user-leaderboard-item",
+  templateUrl: "./user-leaderboard-item.component.html",
+  styleUrls: ["./user-leaderboard-item.component.css"]
 })
 export class UserLeaderboardItemComponent implements OnInit {
   @Input() user: any;
+  totalReactions: number;
+  constructor() {}
 
-  constructor() { }
-
-  ngOnInit() { }
+  ngOnInit() {}
 }
