@@ -7,7 +7,7 @@
 
 .user-reactions {
   position: absolute;
-  top: 70px;
+  top: 60px;
   height: 40px;
   right: 0px;
   font-size: 2em;
@@ -20,7 +20,8 @@
 .user-reactions > div {
   display: inline-block;
   width: 32px;
-  height: 36px;
+  height: 32px;
+  text-align: center;
 }
 
 .user-reactions > div.selected {

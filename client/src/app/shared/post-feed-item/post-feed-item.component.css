@@ -34,8 +34,8 @@
 
 .user-reactions {
   position: absolute;
-  margin-left: 120px;
-  top: 530px;
+  margin-top: -74px;
+  margin-left: -30px;
   background-color: white;
   font-size: 2em;
   border-radius: 25px;
@@ -44,7 +44,7 @@
 
 .user-reactions > div {
   display: inline-block;
-  width: 32px;
+  width: 36px;
   height: 36px;
 }
 
@@ -80,9 +80,9 @@
 
 .upload {
   position: absolute;
-  width: 100%;
-  margin-top: 170px;
-  margin-left: 30px;
+  width: 50%;
+  margin-top: -330px;
+  margin-left: -50px;
 }
 
 .image {

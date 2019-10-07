@@ -1,7 +1,7 @@
 <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
-  <div fxFlex="25%" ngClass.gt-sm="layout-tile" fxLayoutAlign="center">
+  <div fxFlex="25%" class="layout-tile" ngClass.lt-sm="layout-tile-small" fxLayoutAlign="center">
     <div fxLayout="column" class="column">
-      <div ngClass.lt-sm="small-widget">
+      <div *ngIf="authService.isLoggedIn" ngClass.lt-sm="small-widget">
         <app-new-post-widget (uploadPost)="uploadPost($event)"></app-new-post-widget>
       </div>
       <div ngClass.lt-sm="small-widget">
