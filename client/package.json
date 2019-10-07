@@ -13,6 +13,7 @@
   "dependencies": {
     "@angular/cli": "*",
     "@angular/compiler-cli": "*",
+    "@angular-devkit/build-angular": "*",
     "@angular/animations": "~8.2.0",
     "@angular/cdk": "~8.1.3",
     "@angular/common": "~8.2.0",
