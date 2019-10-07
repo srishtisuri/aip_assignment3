@@ -11,7 +11,7 @@ import { Router } from "@angular/router";
 export class PostCommentItemComponent implements OnInit {
   @Input() comment: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService, private authService: AuthService) {}
+  constructor(private router: Router, private postService: PostService, public authService: AuthService) {}
 
   showReactions = false;
   userHasReacted = false;
