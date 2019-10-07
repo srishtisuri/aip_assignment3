@@ -51,11 +51,11 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
-  const updateLastLoggedInIP = async user => {
+  const updateLastLoggedInIP = async (user, req) => {
     return await User.findByIdAndUpdate(
       user._id,
       {
-        $set: { lastLoggedIn: new Date().toISOString() }
+        $set: { ips: req.connection.remoteAddress }
       },
       { new: true }
     );
@@ -124,7 +124,7 @@ module.exports = (express, passport, AWS) => {
         let newUser = new User({
           ...req.body.user,
           password: await bcrypt.hash(req.body.user.password, 10),
-          ips: req.ip
+          ips: req.connection.remoteAddress
         });
         let avatarImageUrl = await uploadToS3Bucket(
           "brogrammers-avatars",
@@ -210,7 +210,7 @@ module.exports = (express, passport, AWS) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
-        // updatedUser = await updateLastLoggedInIP(req.user);
+        updatedUser = await updateLastLoggedInIP(req.user, req);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });
