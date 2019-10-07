@@ -60,7 +60,7 @@
 }
 
 .post-reactions {
-  flex: 1 0 30;
+  flex: 1 0 30px;
   text-align: right;
 }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthService } from "../../services/auth.service";
 
 @Component({
@@ -7,10 +7,14 @@ import { AuthService } from "../../services/auth.service";
   styleUrls: ['./sidenav.component.css']
 })
 export class SidenavComponent implements OnInit {
+  @Output() sidenavClose = new EventEmitter();
 
   constructor(public authService: AuthService) { }
 
   ngOnInit() {
   }
 
+  public onSidenavClose = () => {
+    this.sidenavClose.emit();
+  }
 }

@@ -1,7 +1,7 @@
 <app-nav (sidenavToggle)="sidenav.toggle()"></app-nav>
 <mat-sidenav-container fxFlexFill>
   <mat-sidenav #sidenav>
-    <app-sidenav></app-sidenav>
+    <app-sidenav (sidenavClose)="sidenav.close()"></app-sidenav>
   </mat-sidenav>
   <mat-sidenav-content fxFlexFill>
     <div class="main">
