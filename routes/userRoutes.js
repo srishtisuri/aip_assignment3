@@ -51,6 +51,16 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
+  const updateLastLoggedIn = async user => {
+    return await User.findByIdAndUpdate(
+      user._id,
+      {
+        $set: { lastLoggedIn: new Date().toISOString() }
+      },
+      { new: true }
+    );
+  };
+
   const decodeToken = async req => {
     let token = req.headers["authorization"].split(" ")[1];
     return await jwt.verify(token, "brogrammers");
@@ -200,7 +210,7 @@ module.exports = (express, passport, AWS) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
-        updatedUser = await updateLastLoggedInIP(req.user);
+        // updatedUser = await updateLastLoggedInIP(req.user);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });
