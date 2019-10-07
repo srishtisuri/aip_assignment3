@@ -57,6 +57,15 @@ module.exports = (express, passport, AWS) => {
     }
     return posts;
   };
+  getTotal = reactions => {
+    return (
+      reactions["heart"].length +
+      reactions["laughing"].length +
+      reactions["wow"].length +
+      reactions["sad"].length +
+      reactions["angry"].length
+    );
+  };
   router.get("/postsWithUser", async (req, res) => {
     try {
       let posts = req.query.isComment
@@ -65,8 +74,10 @@ module.exports = (express, passport, AWS) => {
 
       posts = await populatePostsWithUserInfo(posts);
 
-      // sort by whatever - largest to smallest
+      // default sorting will be newest to oldest
       let type = req.query.sortBy || "new";
+
+      // switching between new and old
       if (type == "new" || type == "old") {
         for (let j = 0; j < posts.length; j++) {
           for (let i = 0; i < posts.length - 1; i++) {
@@ -74,10 +85,33 @@ module.exports = (express, passport, AWS) => {
               posts[i].history[posts[i].history.length - 1].dateModified
             );
             let date2 = new Date(
-              posts[i + 1].history[posts[i].history.length - 1].dateModified
+              posts[i + 1].history[posts[i + 1].history.length - 1].dateModified
             );
             // Check to see which way to sort it
             if (type == "new" ? date1 < date2 : date1 > date2) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else if (type == "comments") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (posts[i].comments.length < posts[i + 1].comments.length) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else if (type == "popular") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (
+              getTotal(posts[i].reactions) + posts[i].comments.length <
+              getTotal(posts[i + 1].reactions) + posts[i + 1].comments.length
+            ) {
               let temp = posts[i];
               posts[i] = posts[i + 1];
               posts[i + 1] = temp;

@@ -8,14 +8,20 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class DiscussionBoardComponent implements OnInit {
   posts;
+  sortTypes = [
+    { name: "Newest-Oldest", type: "new" },
+    { name: "Oldest-Newest", type: "old" },
+    { name: "Most Popular", type: "popular" },
+    { name: "Most Comments", type: "comments" }
+  ];
   constructor(private postService: PostService) {}
 
   ngOnInit() {
     this.getPosts();
   }
 
-  getPosts() {
-    this.postService.getPosts().subscribe(response => {
+  getPosts(type?) {
+    this.postService.getPosts(type).subscribe(response => {
       this.posts = response.data;
     });
   }
@@ -24,5 +30,9 @@ export class DiscussionBoardComponent implements OnInit {
     this.postService.uploadPost(image).subscribe(res => {
       this.getPosts();
     });
+  }
+
+  handleSortBy(type: string) {
+    this.getPosts(type);
   }
 }

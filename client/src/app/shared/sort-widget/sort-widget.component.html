@@ -3,20 +3,11 @@
     <mat-card-title>Sort By</mat-card-title>
   </div>
   <mat-list>
-    <div style="text-align: center; padding:10px">
-      <a mat-button>Newest-Oldest</a>
-    </div>
-    <mat-divider></mat-divider>
-    <div style="text-align: center; padding:10px">
-      <a mat-button>Oldest-Newest</a>
-    </div>
-    <mat-divider></mat-divider>
-    <div style="text-align: center; padding:10px">
-      <a mat-button>Most Popular</a>
-    </div>
-    <mat-divider></mat-divider>
-    <div style="text-align: center; padding:10px">
-      <a mat-button>Most Comments</a>
+    <div *ngFor="let option of sortTypes">
+      <div style="text-align: center; padding:10px">
+        <a mat-button (click)="handleSortBy.emit(option.type)">{{ option.name }}</a>
+      </div>
+      <mat-divider></mat-divider>
     </div>
   </mat-list>
 </mat-card>

@@ -1,7 +1,7 @@
 <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap class="leaderboard-container">
   <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
     <div fxLayout="column" class="column">
-      <app-sort-widget></app-sort-widget>
+      <app-sort-widget [sortTypes]="sortTypes" (handleSortBy)="handleSortBy($event)"></app-sort-widget>
     </div>
   </div>
   <div fxFlex="75%" class="layout-tile" style="padding: 20px">
