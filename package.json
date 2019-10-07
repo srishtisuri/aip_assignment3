@@ -10,7 +10,7 @@
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others \"npm run client-proxy\" \"npm run server\"",
     "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install && ng build --aot --prod"
+    "heroku-postbuild": "cd client && npm install && ng build --prod && cd .."
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/rishyahluwalia/aip_assignment3#readme",
   "dependencies": {
-    "@angular-devkit/build-angular": "~0.802.0",
     "@angular/cli": "~8.2.0",
     "@angular/compiler-cli": "~8.2.0",
     "aws-sdk": "^2.533.0",
