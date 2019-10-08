@@ -50,7 +50,13 @@
         </div>
       </div>
       <button [disabled]="post.report.moderated" [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
-      <button [disabled]="post.report.moderated" *ngIf="!isMyActivityPage" (click)="report()" mat-button>REPORT</button>
+      <!-- <div *ngIf="!isMyActivityPage"> -->
+      <button [disabled]="post.report.moderated" mat-button [matMenuTriggerFor]="menu" *ngIf="!isMyActivityPage">REPORT</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="report('Inappropriate')">Inappropriate</button>
+        <button mat-menu-item (click)="report('Contains Text')">Contains Text</button>
+      </mat-menu>
+      <!-- </div> -->
       <div style="display: inline-block;">
         <div class="upload" *ngIf="isMyActivityPage && canChange">
           <app-new-post-widget *ngIf="changeClicked" title="Change Post" (uploadPost)="changePost($event)"> </app-new-post-widget>

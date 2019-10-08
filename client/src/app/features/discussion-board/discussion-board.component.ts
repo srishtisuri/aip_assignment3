@@ -9,7 +9,7 @@ import { AuthService } from "src/app/core/services/auth.service";
 })
 export class DiscussionBoardComponent implements OnInit {
   posts;
-  constructor(private postService: PostService, private authService: AuthService) { }
+  constructor(private postService: PostService, public authService: AuthService) {}
 
   ngOnInit() {
     this.getPosts();
