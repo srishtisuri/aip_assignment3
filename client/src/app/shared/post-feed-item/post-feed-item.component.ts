@@ -18,7 +18,7 @@ export class PostFeedItemComponent implements OnInit {
     private postService: PostService,
     public authService: AuthService,
     private notificationService: NotificationService
-  ) {}
+  ) { }
 
   showReactions = false;
   userHasReacted = false;
@@ -116,7 +116,7 @@ export class PostFeedItemComponent implements OnInit {
   remove() {
     if (confirm("Are you sure you want to remove this post?")) {
       this.increment = this.post.history.length;
-      this.postService.changePost(window.location.origin + "/assets/removed_image.png", this.post._id).subscribe(response => {
+      this.postService.changePost("http://aip-brogrammers.herokuapp.com/assets/removed_image.png", this.post._id).subscribe(response => {
         this.post = response.data;
         this.onChanges();
       });
