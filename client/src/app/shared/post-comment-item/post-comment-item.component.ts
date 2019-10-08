@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { AuthService } from "src/app/core/services/auth.service";
 import { Router } from "@angular/router";
+import { NotificationService } from "src/app/core/services/notification.service";
 
 @Component({
   selector: "app-post-comment-item",
@@ -11,7 +12,12 @@ import { Router } from "@angular/router";
 export class PostCommentItemComponent implements OnInit {
   @Input() comment: any;
   @Input() user: any;
-  constructor(private router: Router, private postService: PostService, public authService: AuthService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private router: Router,
+    private postService: PostService,
+    public authService: AuthService
+  ) {}
 
   showReactions = false;
   userHasReacted = false;
@@ -57,7 +63,15 @@ export class PostCommentItemComponent implements OnInit {
       this.showReactions = showReactions;
     }, 500);
   }
-
+  report(reason) {
+    this.postService.report(this.comment._id, reason).subscribe(response => {
+      if (response.data) {
+        this.notificationService.notify("Successfully reported!");
+      } else if (response.error) {
+        this.notificationService.notify(response.error);
+      }
+    });
+  }
   react(reaction) {
     this.postService.react(this.comment._id, reaction, this.currentReaction).subscribe(response => {
       this.comment = response.data;

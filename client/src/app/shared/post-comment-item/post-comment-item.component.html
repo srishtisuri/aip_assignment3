@@ -6,15 +6,19 @@
       <mat-card-subtitle>@{{ comment.username }}</mat-card-subtitle>
     </div>
     <div class="replying-to" *ngIf="parent != null" [routerLink]="['/discussion-board', parent._id]">
-      <div>Replying to:</div><img class="parent-image" [src]="[parent.image]" />
+      <div>Replying to:</div>
+      <img class="parent-image" [src]="[parent.image]" />
     </div>
     <mat-card-content>
-      <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
-        (mouseleave)="toggleReactions(false)">
+      <div
+        class="user-reactions"
+        *ngIf="showReactions && authService.isLoggedIn"
+        (mouseover)="toggleReactions(true)"
+        (mouseleave)="toggleReactions(false)"
+      >
         <div [ngClass]="{ selected: userHasReacted && currentReaction == 'heart' }" (click)="react('heart')">❤️</div>
         ️
-        <div [ngClass]="{ selected: userHasReacted && currentReaction == 'laughing' }" (click)="react('laughing')">😂
-        </div>
+        <div [ngClass]="{ selected: userHasReacted && currentReaction == 'laughing' }" (click)="react('laughing')">😂</div>
         ️
         <div [ngClass]="{ selected: userHasReacted && currentReaction == 'wow' }" (click)="react('wow')">😮</div>
         ️
@@ -27,20 +31,33 @@
         <img [src]="[comment.image]" />
         <div>
           <mat-list class="actions">
-            <a mat-stroked-button class="actionButton" [disabled]="!authService.isLoggedIn"
-              [ngClass]="{ reacted: userHasReacted }" (mouseover)="toggleReactions(true)"
-              (mouseleave)="toggleReactions(false)">{{ reactButtonText }}</a>
+            <a
+              mat-stroked-button
+              class="actionButton"
+              [disabled]="!authService.isLoggedIn"
+              [ngClass]="{ reacted: userHasReacted }"
+              (mouseover)="toggleReactions(true)"
+              (mouseleave)="toggleReactions(false)"
+              >{{ reactButtonText }}</a
+            >
             <a mat-stroked-button class="actionButton" [routerLink]="['/discussion-board', comment._id]">Reply</a>
-            <a mat-stroked-button class="actionButton">Report</a>
+            <a mat-stroked-button class="actionButton" [disabled]="comment.report.moderated" mat-button [matMenuTriggerFor]="menu"
+              >Report</a
+            >
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="report('Inappropriate')">Inappropriate</button>
+              <button mat-menu-item (click)="report('Contains Text')">Contains Text</button>
+            </mat-menu>
           </mat-list>
           <div class="details">
             <div class="replyTotal">replies: {{ comment.comments.length }}</div>
             <div class="post-reactions">
-              <span>❤️{{ comment.reactions.heart.length }}</span>️
-              <span>😂{{ comment.reactions.laughing.length }}</span>️
-              <span>😮{{ comment.reactions.wow.length }}</span>️
-              <span>😢{{ comment.reactions.sad.length }}</span>️
-              <span>😠{{ comment.reactions.angry.length }}</span>️
+              <span>❤️{{ comment.reactions.heart.length }}</span
+              >️ <span>😂{{ comment.reactions.laughing.length }}</span
+              >️ <span>😮{{ comment.reactions.wow.length }}</span
+              >️ <span>😢{{ comment.reactions.sad.length }}</span
+              >️ <span>😠{{ comment.reactions.angry.length }}</span
+              >️
             </div>
           </div>
         </div>
