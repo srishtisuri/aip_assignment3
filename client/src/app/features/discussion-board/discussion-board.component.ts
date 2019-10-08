@@ -1,5 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
+import { HttpClient } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-discussion-board",
@@ -14,15 +16,24 @@ export class DiscussionBoardComponent implements OnInit {
     { name: "Most Popular", type: "popular" },
     { name: "Most Comments", type: "comments" }
   ];
-  constructor(private postService: PostService) {}
+  pager = {};
+  pageOfPosts = [];
+
+  constructor(private postService: PostService, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.getPosts();
+    //this.getPosts("new");
+    this.route.queryParams.subscribe(response => this.getPosts("new", response.page || 1));
   }
 
-  getPosts(type?) {
-    this.postService.getPosts(type).subscribe(response => {
-      this.posts = response.data;
+  getPosts(type?, page?) {
+    this.postService.getPosts(type, page).subscribe(response => {
+      console.log(response);
+      if (response.data) {
+        this.posts = response.data.pageOfPosts;
+        this.pager = response.data.pager;
+        this.pageOfPosts = response.data.pageOfPosts;
+      }
     });
   }
 

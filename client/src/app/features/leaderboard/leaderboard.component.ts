@@ -27,7 +27,7 @@ export class LeaderboardComponent implements OnInit {
         this.posts = response.data;
       });
     } else {
-      this.sortByPosts();
+      // this.sortByPosts();
     }
   }
 

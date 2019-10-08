@@ -31,6 +31,7 @@
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "jsonwebtoken": "^8.5.1",
+    "jw-paginate": "^1.0.4",
     "mongoose": "^5.6.10",
     "nodemon": "^1.19.1",
     "passport": "^0.4.0",

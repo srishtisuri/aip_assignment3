@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const jwt = require("jsonwebtoken");
+const paginate = require("jw-paginate");
 
 module.exports = (express, passport, AWS) => {
   const router = express.Router();
@@ -132,9 +133,29 @@ module.exports = (express, passport, AWS) => {
           }
         }
       }
+
+      // example array of 150 items to be paged
+      //const items = [...posts].map(i => ({ id: i + 1 }));
+
+      // get page from query params or default to first page
+      const page = parseInt(req.query.page) || 1;
+
+      // get pager object for specified page
+      const pageSize = 5;
+      const pager = paginate(posts.length, page, pageSize);
+
+      // get page of items from items array
+      const pageOfPosts = posts.slice(pager.startIndex, pager.endIndex + 1);
+
+      // return pager object and current page of items
+
       res.json({
         status: "SUCCESS",
-        data: posts.slice(0, req.query.limit || posts.length)
+        data: {
+          posts: posts.slice(0, req.query.limit || posts.length),
+          pager,
+          pageOfPosts
+        }
       });
     } catch (err) {
       console.log("FAIL: " + err);

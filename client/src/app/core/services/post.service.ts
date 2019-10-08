@@ -14,12 +14,13 @@ const httpOptions = {
 export class PostService {
   endpoint: string = "/api/posts";
   sortType: string = "";
+  page: number;
 
   constructor(private http: HttpClient) {}
 
-  getPosts(sortType?): Observable<any> {
+  getPosts(sortType?, page?): Observable<any> {
     if (sortType) {
-      return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false&sortBy=" + sortType);
+      return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false&sortBy=" + sortType + "&page=" + page);
     } else {
       return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false");
     }
