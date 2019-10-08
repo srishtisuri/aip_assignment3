@@ -1,10 +1,10 @@
 <mat-nav-list>
-    <a mat-list-item routerLink="/discussion-board">Discussion Board</a>
-    <a mat-list-item routerLink="/leaderboard">Leaderboard</a>
-    <a *ngIf="authService.isLoggedIn" mat-list-item routerLink="/my-activity">My Activity</a>
-    <a mat-list-item *ngIf="authService.isLoggedIn" routerLink="/settings">Settings</a>
-    <a *ngIf="!authService.isLoggedIn" mat-list-item routerLink="/account/login">Login</a>
-    <a *ngIf="!authService.isLoggedIn" mat-list-item routerLink="/account/register">Register</a>
-    <a *ngIf="authService.isLoggedIn" mat-list-item (click)="logout()">Logout</a>
-    <a mat-list-item routerLink="/admin">Admin</a>
+  <a mat-list-item routerLink="/discussion-board" (click)="onSidenavClose()">Discussion Board</a>
+  <a mat-list-item routerLink="/leaderboard" (click)="onSidenavClose()">Leaderboard</a>
+  <a *ngIf="authService.isLoggedIn" mat-list-item routerLink="/my-activity" (click)="onSidenavClose()">My Activity</a>
+  <a mat-list-item *ngIf="authService.isLoggedIn" routerLink="/settings" (click)="onSidenavClose()">Settings</a>
+  <a *ngIf="!authService.isLoggedIn" mat-list-item routerLink="/account/login" (click)="onSidenavClose()">Login</a>
+  <a *ngIf="!authService.isLoggedIn" mat-list-item routerLink="/account/register" (click)="onSidenavClose()">Register</a>
+  <a *ngIf="authService.isLoggedIn" mat-list-item (click)="logout()" (click)="onSidenavClose()">Logout</a>
+  <a *ngIf="userService.isAdmin" mat-list-item routerLink="/admin" (click)="onSidenavClose()">Admin</a>
 </mat-nav-list>

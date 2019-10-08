@@ -51,6 +51,16 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
+  const updateLastLoggedInIP = async (user, req) => {
+    return await User.findByIdAndUpdate(
+      user._id,
+      {
+        $set: { ips: req.connection.remoteAddress }
+      },
+      { new: true }
+    );
+  };
+
   const decodeToken = async req => {
     let token = req.headers["authorization"].split(" ")[1];
     return await jwt.verify(token, "brogrammers");
@@ -114,7 +124,7 @@ module.exports = (express, passport, AWS) => {
         let newUser = new User({
           ...req.body.user,
           password: await bcrypt.hash(req.body.user.password, 10),
-          ips: req.ip
+          ips: req.connection.remoteAddress
         });
         let avatarImageUrl = await uploadToS3Bucket(
           "brogrammers-avatars",
@@ -200,6 +210,7 @@ module.exports = (express, passport, AWS) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
+        updatedUser = await updateLastLoggedInIP(req.user, req);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });
@@ -244,6 +255,33 @@ module.exports = (express, passport, AWS) => {
     } catch (err) {
       sendError(res, err);
     }
+  });
+
+  // DEV DELETE ALl
+  router.get("/flaggedUsers", async (req, res) => {
+    let users = await User.find();
+    let counts = [];
+    users.forEach(user1 => {
+      users.forEach(user2 => {
+        if ((user1.ips = user2.ips)) {
+          console.log("duplicate ips found", user1.ips, user2.ips);
+        }
+      });
+    });
+    res.json("OK");
+  });
+  router.get("/changeRole/:username/:role", async (req, res) => {
+    let user = await User.findOneAndUpdate(
+      { username: req.params.username },
+      { $set: { role: req.params.role } },
+      { returnNewDocument: true }
+    );
+    res.json({ status: "SUCCESS", data: user });
+  });
+
+  router.get("/checkIP", (req, res) => {
+    console.log(req.connection.remoteAddress);
+    res.send(req.connection.remoteAddress);
   });
 
   return router;

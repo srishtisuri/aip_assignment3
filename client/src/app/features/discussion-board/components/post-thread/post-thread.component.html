@@ -1,19 +1,24 @@
-<div *ngIf="post" fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
-    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+<div *ngIf="post" fxLayout="row" fxLayout.lt-sm="column-reverse" fxLayoutWrap>
+    <div fxFlex="25%" fxLayoutAlign="center">
         <div class="sticky" fxLayout="column" class="column">
             <app-new-post-widget title="Add Comment" (uploadPost)="uploadComment($event)">
             </app-new-post-widget>
         </div>
     </div>
-    <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center" class="column">
-        <div style="width:100%;">
+    <div fxFlex="75%" fxLayoutAlign="center">
+        <div fxLayout="column" class="column">
             <app-post-feed-item [post]="post" [user]="user">
             </app-post-feed-item>
+        </div>
+    </div>
+</div>
+<div *ngIf="post" fxLayout="row" fxLayout.lt-sm="column-reverse" fxLayoutWrap>
+    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    </div>
+    <div fxFlex="75%" class="layout-tile" fxLayoutAlign="center">
+        <div fxLayout="column" class="column">
             <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user">
             </app-post-comment-item>
         </div>
-    </div>
-    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column"></div>
     </div>
 </div>

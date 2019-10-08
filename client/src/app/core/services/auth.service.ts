@@ -9,7 +9,7 @@ export class AuthService {
   endpoint: string = "/api/users";
   isLoggedIn;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   login(username, password) {
     return this.http.post<any>(this.endpoint + "/login", { username, password });
@@ -27,22 +27,24 @@ export class AuthService {
     return this.http.get<any>(this.endpoint + "/auth");
   }
 
-  getUser() {
-    return this.http.get<any>(this.endpoint);
-  }
-
+  // getUser() {
+  //   return this.http.get<any>(this.endpoint);
+  // }
 
   // This code is based on an answer by "Krishna Rathore" on Stack Overflow
   // See https://stackoverflow.com/a/52044817
-  passwordValidator = function (control: AbstractControl) {
+  passwordValidator = function(control: AbstractControl) {
     let value: string = control.value;
     let upperCaseCharacters = /[A-Z]+/g;
     let lowerCaseCharacters = /[a-z]+/g;
     let numberCharacters = /[0-9]+/g;
-    if (value && (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false)) {
+    if (
+      value &&
+      (upperCaseCharacters.test(value) === false || lowerCaseCharacters.test(value) === false || numberCharacters.test(value) === false)
+    ) {
       return {
-        passwordStrength: 'Password must contain the following: numbers, lowercase letters, and uppercase letters.'
-      }
+        passwordStrength: "Password must contain the following: numbers, lowercase letters, and uppercase letters."
+      };
     }
-  }
+  };
 }

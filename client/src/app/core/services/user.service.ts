@@ -9,8 +9,9 @@ import { User } from "src/app/shared/models/user.model";
 export class UserService {
   endpoint: string = "/api/users";
   user: User = null;
+  isAdmin = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -26,5 +27,15 @@ export class UserService {
 
   updateUser(details) {
     return this.http.put<any>(this.endpoint, { user: details });
+  }
+
+  checkAdmin() {
+    this.getCurrentUser().subscribe(res => {
+      if (res.data) {
+        if (res.data.role == "admin") {
+          this.isAdmin = true;
+        }
+      }
+    });
   }
 }

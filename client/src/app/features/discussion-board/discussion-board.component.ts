@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute } from "@angular/router";
+import { AuthService } from "src/app/core/services/auth.service";
 
 @Component({
   selector: "app-discussion-board",
@@ -19,7 +20,7 @@ export class DiscussionBoardComponent implements OnInit {
   pager = {};
   pageOfPosts = [];
 
-  constructor(private postService: PostService, private http: HttpClient, private route: ActivatedRoute) {}
+  constructor(private postService: PostService, public authService: AuthService, private http: HttpClient, private route: ActivatedRoute) {}
 
   ngOnInit() {
     //this.getPosts("new");

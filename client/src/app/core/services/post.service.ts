@@ -58,8 +58,8 @@ export class PostService {
     return this.http.delete<any>(this.endpoint + "/" + id);
   }
 
-  changePost(image: string, thread: string, increment: number): Observable<any> {
-    return this.http.put<any>(this.endpoint + "/", { image, thread, increment });
+  changePost(image: string, thread: string, admin?: boolean): Observable<any> {
+    return this.http.put<any>(this.endpoint + "/", { image, thread, admin });
   }
 
   dropPosts(): Observable<any> {
@@ -68,5 +68,8 @@ export class PostService {
 
   react(thread: string, reaction: string, oldReaction: string): Observable<any> {
     return this.http.put(this.endpoint + "/react", { thread, reaction, oldReaction });
+  }
+  report(postId, reason): Observable<any> {
+    return this.http.put(this.endpoint + "/report", { postId, reason });
   }
 }

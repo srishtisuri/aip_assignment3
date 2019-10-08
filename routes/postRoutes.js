@@ -175,14 +175,14 @@ module.exports = (express, passport, AWS) => {
 
   router.get("/myComments", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
     try {
-      let response = await Post.find({
+      let posts = await Post.find({
         isComment: true,
         author: decodedToken.id
       });
-      response = await populatePostsWithUserInfo(response);
-      res.json({ status: "SUCCESS", data: response });
+      posts = await populatePostsWithUserInfo(posts);
+
+      res.json({ status: "SUCCESS", data: posts });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -317,7 +317,7 @@ module.exports = (express, passport, AWS) => {
         imageURL = await uploadToS3Bucket(
           "brogrammers-images",
           req.body.image,
-          req.body.thread.concat("_" + req.body.increment)
+          req.body.thread
         );
       } else {
         imageURL = req.body.image;
@@ -326,7 +326,10 @@ module.exports = (express, passport, AWS) => {
       let response = await Post.findOneAndUpdate(
         { _id: req.body.thread },
         {
-          $set: { image: imageURL },
+          $set: {
+            image: imageURL,
+            "report.moderated": req.body.admin == true ? true : false
+          },
           $push: {
             history: {
               dateModified: new Date().toISOString(),
@@ -336,7 +339,8 @@ module.exports = (express, passport, AWS) => {
         },
         { new: true }
       );
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -409,19 +413,41 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  router.put("/report", async (req, res) => {
+  userAlreadyReported = (userId, reasons) => {
+    let reported = false;
+    reasons.forEach(reason => {
+      if (reason.user == userId) {
+        // console.log("true");
+        reported = true;
+      }
+    });
+    return reported;
+  };
+  router.put("/report", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
     try {
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $set: { "report.status": true },
-          $push: {
-            "report.reasons": req.body.reason
-          }
-        },
-        { new: true }
-      );
-      res.json({ status: "SUCCESS", data: response });
+      let post = await Post.findById(req.body.postId);
+      if (userAlreadyReported(decodedToken.id, post.report.reasons) == true) {
+        res.json({
+          status: "FAIL",
+          error: "You have already reported this image!"
+        });
+      } else {
+        let response = await Post.findOneAndUpdate(
+          { _id: req.body.postId },
+          {
+            $set: { "report.status": true },
+            $push: {
+              "report.reasons": {
+                reason: req.body.reason,
+                user: decodedToken.id
+              }
+            }
+          },
+          { new: true }
+        );
+        res.json({ status: "SUCCESS", data: response });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });

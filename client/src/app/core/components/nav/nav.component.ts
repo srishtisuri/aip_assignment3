@@ -5,6 +5,7 @@ import { map, share } from "rxjs/operators";
 import { AuthService } from "../../services/auth.service";
 import { NotificationService } from "../../services/notification.service";
 import { Router } from "@angular/router";
+import { UserService } from "../../services/user.service";
 
 @Component({
   selector: "app-nav",
@@ -22,13 +23,15 @@ export class NavComponent {
     private breakpointObserver: BreakpointObserver,
     public authService: AuthService,
     private notificationService: NotificationService,
+    public userService: UserService,
     private router: Router
-  ) { }
+  ) {}
 
   logout() {
     this.authService.logout().subscribe(res => {
       if (res.status == "SUCCESS") {
         this.authService.isLoggedIn = false;
+        this.userService.isAdmin = false;
         this.notificationService.notify("You have successfully logged out!");
         this.router.navigate(["/discussion-board"]);
       }
@@ -37,5 +40,5 @@ export class NavComponent {
 
   public onToggleSidenav = () => {
     this.sidenavToggle.emit();
-  }
+  };
 }
