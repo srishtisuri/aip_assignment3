@@ -22,7 +22,7 @@ export class AppComponent {
       await this.authService.checkAuth().subscribe(res => {
         if (res.status == "SUCCESS") {
           this.authService.isLoggedIn = true;
-          this.notificationService.notify("[DEV] JWT Authentication successful!");
+          //this.notificationService.notify("[DEV] JWT Authentication successful!");
         } else {
         }
       });

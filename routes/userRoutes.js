@@ -258,6 +258,18 @@ module.exports = (express, passport, AWS) => {
   });
 
   // DEV DELETE ALl
+  router.get("/flaggedUsers", async (req, res) => {
+    let users = await User.find();
+    let counts = [];
+    users.forEach(user1 => {
+      users.forEach(user2 => {
+        if ((user1.ips = user2.ips)) {
+          console.log("duplicate ips found", user1.ips, user2.ips);
+        }
+      });
+    });
+    res.json("OK");
+  });
   router.get("/changeRole/:username/:role", async (req, res) => {
     let user = await User.findOneAndUpdate(
       { username: req.params.username },
