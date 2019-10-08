@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { AuthService } from "src/app/core/services/auth.service";
 import { UserService } from "src/app/core/services/user.service";
 import { NotificationService } from "src/app/core/services/notification.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-settings",
@@ -10,7 +11,12 @@ import { NotificationService } from "src/app/core/services/notification.service"
   styleUrls: ["./settings.component.css"]
 })
 export class SettingsComponent implements OnInit {
-  constructor(private authService: AuthService, private userService: UserService, private notificationService: NotificationService) {}
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private notificationService: NotificationService,
+    private router: Router
+  ) {}
   accountSettingsForm = null;
   user;
 
@@ -25,6 +31,8 @@ export class SettingsComponent implements OnInit {
           password: new FormControl(undefined, [Validators.minLength(8), this.authService.passwordValidator]),
           avatar: new FormControl(this.user.avatar, Validators.required)
         });
+      } else {
+        this.router.navigate(["/account/login"]);
       }
     });
   }
