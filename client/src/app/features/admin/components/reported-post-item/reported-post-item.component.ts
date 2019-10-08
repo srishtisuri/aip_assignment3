@@ -35,10 +35,13 @@ export class ReportedPostItemComponent implements OnInit {
 
   remove() {
     if (confirm("Are you sure you want to remove this post?")) {
-      this.postService.changePost(window.location.origin + "/assets/removed_image.png", this.post._id, true).subscribe(response => {
-        this.post = response.data;
-        this.notificationService.notify("You have successfully removed this post!");
-      });
+      this.postService
+        .changePost("http://aip-brogrammers.herokuapp.com/assets/removed_image.png", this.post._id, true)
+        .subscribe(response => {
+          this.post = response.data;
+          this.notificationService.notify("You have successfully removed this post!");
+          this.post.report.moderated = true;
+        });
     }
   }
 }

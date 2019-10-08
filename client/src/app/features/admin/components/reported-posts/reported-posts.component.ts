@@ -17,7 +17,7 @@ export class ReportedPostsComponent implements OnInit {
   getPosts() {
     this.postService.getPosts().subscribe(response => {
       if (response.data) {
-        response.data.forEach(post => {
+        response.data.posts.forEach(post => {
           if (post.report.status == true) {
             this.posts.push(post);
           }

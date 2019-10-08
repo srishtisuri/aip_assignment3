@@ -18,7 +18,7 @@ export class PostFeedItemComponent implements OnInit {
     private postService: PostService,
     public authService: AuthService,
     private notificationService: NotificationService
-  ) { }
+  ) {}
 
   showReactions = false;
   userHasReacted = false;
@@ -90,7 +90,6 @@ export class PostFeedItemComponent implements OnInit {
         this.notificationService.notify(response.error);
       }
     });
-    console.log("Reported");
   }
 
   change() {
