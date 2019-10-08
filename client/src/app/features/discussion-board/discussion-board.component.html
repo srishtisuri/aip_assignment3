@@ -13,7 +13,7 @@
     <div fxFlex="67%" fxLayoutAlign="center">
       <div fxLayout="column" class="column">
         <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
-        <div *ngIf="pager.currentPage && pager.pages" class="card-footer pb-0 pt-3" style="text-align: center">
+        <div *ngIf="pager && pager.currentPage && pager.pages" class="card-footer pb-0 pt-3" style="text-align: center">
           <!-- <mat-button-toggle-group *ngIf="pager.pages && pager.pages.length" class="pagination">
                 <mat-button-toggle value="bold">Bold</mat-button-toggle>
                 <mat-button-toggle value="italic">Italic</mat-button-toggle>

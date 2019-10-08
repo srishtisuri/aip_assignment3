@@ -87,4 +87,5 @@
 .image {
   width: 100%;
   max-height: 450px;
+  object-fit: contain;
 }
