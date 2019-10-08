@@ -17,8 +17,8 @@ export class DiscussionBoardComponent implements OnInit {
     { name: "Most Popular", type: "popular" },
     { name: "Most Comments", type: "comments" }
   ];
-  pager = {};
-  pageOfPosts = [];
+  pager: any;
+  pageOfPosts: any;
 
   constructor(private postService: PostService, public authService: AuthService, private http: HttpClient, private route: ActivatedRoute) {}
 
