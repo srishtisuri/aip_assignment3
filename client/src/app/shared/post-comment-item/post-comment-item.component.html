@@ -6,7 +6,7 @@
       <mat-card-subtitle>@{{ comment.username }}</mat-card-subtitle>
     </div>
     <div class="replying-to" *ngIf="parent != null" [routerLink]="['/discussion-board', parent._id]">
-      Replying to: <img class="parent-image" [src]="[parent.image]" />
+      <div>Replying to:</div><img class="parent-image" [src]="[parent.image]" />
     </div>
     <mat-card-content>
       <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
