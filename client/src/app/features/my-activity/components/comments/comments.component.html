@@ -1,13 +1,12 @@
 <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
-    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column" class="column">
-            <app-sort-widget></app-sort-widget>
-        </div>
+  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <!-- <app-sort-widget></app-sort-widget> -->
     </div>
-    <div fxFlex="75%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column" class="column">
-            <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user">
-            </app-post-comment-item>
-        </div>
+  </div>
+  <div fxFlex="75%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user"> </app-post-comment-item>
     </div>
+  </div>
 </div>
