@@ -10,7 +10,7 @@ export class UserLeaderboardComponent implements OnInit {
   users;
   // users; // [ {user:rishy, score: 5} ]
   ngOnInit() {
-    console.log(this.posts);
+    //console.log(this.posts);
     // this.sortByPosts();
   }
 }
