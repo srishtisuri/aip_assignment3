@@ -1,9 +1,11 @@
 <div>
-    <img [src]="[user.profile]" width="90px" height="90px">
+    <img [src]="[user.avatar]" width="90px" height="90px">
     <div class="user-info">
         <div><b>Name:</b> {{user.name}}</div>
-        <div><b>Member Since:</b> {{user.createdDate}}</div>
-        <div><b>Flagged Reason:</b> {{user.reason}}</div>
+        <div><b>Username:</b> {{user.username}}</div>
+        <div><b>Member Since:</b> {{user.dateCreated | date:'medium'}}</div>
+        <div><b>Last Logged In:</b> {{user.lastLoggedIn | date:'medium'}}</div>
+        <div><b>Account Status:</b> {{user.accountStatus}}</div>
         <mat-icon class="icon">delete</mat-icon>
         <mat-icon class="icon">textsms</mat-icon>
         <mat-icon class="icon">remove_circle_outline</mat-icon>

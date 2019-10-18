@@ -1,4 +1,5 @@
-<div>
+<mat-spinner style="margin:30px" *ngIf="loading"></mat-spinner>
+<div *ngIf="!loading">
     <app-reported-post-item *ngFor="let post of posts" [post]="post">
     </app-reported-post-item>
-  </div>
+</div>
