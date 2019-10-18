@@ -14,6 +14,7 @@ export class PostThreadComponent implements OnInit {
   user = null;
   comments = [];
   thread;
+  loading = true;
 
   ngOnInit() {
     this.userService.getCurrentUser().subscribe(res => {
@@ -32,6 +33,7 @@ export class PostThreadComponent implements OnInit {
       if (response.status == "SUCCESS") {
         this.post = response.data;
         this.getComments();
+        this.loading = false;
       }
     });
   }

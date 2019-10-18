@@ -8,6 +8,7 @@ import { AbstractControl } from "@angular/forms";
 export class AuthService {
   endpoint: string = "/api/users";
   isLoggedIn;
+  loading = true;
 
   constructor(private http: HttpClient) {}
 

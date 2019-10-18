@@ -14,11 +14,10 @@ import { UserService } from "../../services/user.service";
 })
 export class NavComponent {
   @Output() public sidenavToggle = new EventEmitter();
-  isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
-    map(result => result.matches),
-    share()
-  );
-
+  // isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
+  //   map(result => result.matches),
+  //   share()
+  // );
   constructor(
     private breakpointObserver: BreakpointObserver,
     public authService: AuthService,

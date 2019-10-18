@@ -11,7 +11,8 @@
   </div>
   <div fxFlex="75%" fxLayout.lt-sm="column-reverse" fxLayoutAlign="center">
     <div fxFlex="67%" fxLayoutAlign="center">
-      <div fxLayout="column" class="column">
+      <mat-spinner style="margin-top: 250px" *ngIf="loading"></mat-spinner>
+      <div *ngIf="!loading" fxLayout="column" class="column">
         <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
         <div *ngIf="pager && pager.currentPage && pager.pages" class="card-footer pb-0 pt-3" style="text-align: center">
           <!-- <mat-button-toggle-group *ngIf="pager.pages && pager.pages.length" class="pagination">
