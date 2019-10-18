@@ -302,8 +302,14 @@ module.exports = (express, passport, AWS) => {
 
   router.delete("/:id", async (req, res) => {
     try {
-      let response = await Post.findByIdAndDelete(req.params.id);
-      res.json({ status: "SUCCESS", data: response });
+      // Concurrency check for delete feature.
+      let postRes = await Post.findById(req.params.id);
+      if (postRes.comments.length == 0) {
+        let response = await Post.findByIdAndDelete(req.params.id);
+        res.json({ status: "SUCCESS", data: response });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -322,25 +328,39 @@ module.exports = (express, passport, AWS) => {
       } else {
         imageURL = req.body.image;
       }
-
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $set: {
-            image: imageURL,
-            "report.moderated": req.body.admin == true ? true : false
-          },
-          $push: {
-            history: {
-              dateModified: new Date().toISOString(),
-              image: imageURL
+      // Concurrency check for change post and admin remove
+      let postRes = await Post.findById(req.body.thread);
+      if (
+        (postRes.comments.length == 0 &&
+          postRes.reactions["heart"].length == 0 &&
+          postRes.reactions["wow"].length == 0 &&
+          postRes.reactions["laughing"].length == 0 &&
+          postRes.reactions["sad"].length == 0 &&
+          postRes.reactions["angry"].length == 0) ||
+        req.body.admin == true ||
+        (postRes.comments.length != 0 && !postRes.image.includes("removed"))
+      ) {
+        let response = await Post.findOneAndUpdate(
+          { _id: req.body.thread },
+          {
+            $set: {
+              image: imageURL,
+              "report.moderated": req.body.admin == true ? true : false
+            },
+            $push: {
+              history: {
+                dateModified: new Date().toISOString(),
+                image: imageURL
+              }
             }
-          }
-        },
-        { new: true }
-      );
-      response = await populatePostsWithUserInfo([response]);
-      res.json({ status: "SUCCESS", data: response[0] });
+          },
+          { new: true }
+        );
+        response = await populatePostsWithUserInfo([response]);
+        res.json({ status: "SUCCESS", data: response[0] });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -349,9 +369,14 @@ module.exports = (express, passport, AWS) => {
 
   router.put("/react", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
+    let action = null;
+    if (req.body.reaction == req.body.oldReaction) action = "unreact";
+    else if (req.body.reaction && req.body.oldReaction == null) action = "react";
+    else if (req.body.reaction && req.body.oldReaction != null) action = "change";
+    // console.log(action);
     try {
       let response = null;
-      if (req.body.reaction) {
+      if (action == "react") {
         let push = null;
         switch (req.body.reaction) {
           case "heart":
@@ -370,15 +395,28 @@ module.exports = (express, passport, AWS) => {
             push = { "reactions.angry": decodedToken.id };
             break;
         }
-        response = await Post.findByIdAndUpdate(
-          req.body.thread,
-          {
-            $push: push
-          },
-          { new: true }
-        );
+        let postRes = await Post.findById(req.body.thread);
+        let valid = true;
+        for (let reaction in postRes.reactions.toObject()) {
+          if (postRes.reactions[reaction].includes(decodedToken.id)) {
+            valid = false;
+            break;
+          }
+        }
+        if (valid) {
+          response = await Post.findByIdAndUpdate(
+            req.body.thread,
+            {
+              $push: push
+            },
+            { new: true }
+          );
+          response.status = "SUCCESS";
+        } else {
+          response = { status: "ERROR" };
+        }
       }
-      if (req.body.oldReaction) {
+      if (action == "unreact") {
         let pull = null;
         switch (req.body.oldReaction) {
           case "heart":
@@ -397,16 +435,115 @@ module.exports = (express, passport, AWS) => {
             pull = { "reactions.angry": decodedToken.id };
             break;
         }
-        response = await Post.findByIdAndUpdate(
-          req.body.thread,
-          {
-            $pull: pull
-          },
-          { new: true }
-        );
+        let postRes = await Post.findById(req.body.thread);
+        let valid = false;
+        for (let reaction in postRes.reactions.toObject()) {
+          if (postRes.reactions[reaction].includes(decodedToken.id)) {
+            valid = true;
+            break;
+          }
+        }
+        if (valid) {
+          response = await Post.findByIdAndUpdate(
+            req.body.thread,
+            {
+              $pull: pull
+            },
+            { new: true }
+          );
+          response.status = "SUCCESS";
+        } else {
+          response = { status: "ERROR" };
+        }
       }
-      response = await populatePostsWithUserInfo([response]);
-      res.json({ status: "SUCCESS", data: response[0] });
+      if (action == "change") {
+        if (req.body.oldReaction) {
+          let pull = null;
+          switch (req.body.oldReaction) {
+            case "heart":
+              pull = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              pull = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              pull = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              pull = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              pull = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = false;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = true;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $pull: pull
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
+        }
+        if (req.body.reaction) {
+          let push = null;
+          switch (req.body.reaction) {
+            case "heart":
+              push = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              push = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              push = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              push = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              push = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = true;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = false;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $push: push
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
+        }
+      }
+      if (response.status == "SUCCESS") {
+        response = await populatePostsWithUserInfo([response]);
+        res.json({ status: "SUCCESS", data: response[0] });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
