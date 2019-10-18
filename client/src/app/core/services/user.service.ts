@@ -37,6 +37,5 @@ export class UserService {
         }
       }
     });
-    return of();
   }
 }
