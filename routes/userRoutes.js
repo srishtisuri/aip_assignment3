@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const publicIp = require("public-ip");
 
 module.exports = (express, passport, AWS) => {
   const router = express.Router();
@@ -51,11 +52,13 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
-  const updateLastLoggedInIP = async (user, req) => {
+  const updateIP = async (id, req) => {
+    console.log("Updating ip....");
+    let ip = await publicIp.v4();
     return await User.findByIdAndUpdate(
-      user._id,
+      id,
       {
-        $set: { ips: req.connection.remoteAddress }
+        $set: { ips: ip }
       },
       { new: true }
     );
@@ -79,7 +82,7 @@ module.exports = (express, passport, AWS) => {
   // Get current user
   router.get("/current", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
+    // await updateIP(decodedToken.id);
     try {
       let response = await User.findById(decodedToken.id);
       if (response) {
@@ -124,7 +127,7 @@ module.exports = (express, passport, AWS) => {
         let newUser = new User({
           ...req.body.user,
           password: await bcrypt.hash(req.body.user.password, 10),
-          ips: req.connection.remoteAddress
+          ips: await publicIp.v4()
         });
         let avatarImageUrl = await uploadToS3Bucket(
           "brogrammers-avatars",
@@ -210,7 +213,7 @@ module.exports = (express, passport, AWS) => {
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
-        updatedUser = await updateLastLoggedInIP(req.user, req);
+        updatedUser = await updateIP(req.user._id, req);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });
@@ -244,7 +247,7 @@ module.exports = (express, passport, AWS) => {
   // Check authentication
   router.get("/auth", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
+    await updateIP(decodedToken.id);
     try {
       let response = await User.findById(decodedToken.id);
       if (response) {
@@ -279,9 +282,13 @@ module.exports = (express, passport, AWS) => {
     res.json({ status: "SUCCESS", data: user });
   });
 
-  router.get("/checkIP", (req, res) => {
-    console.log(req.connection.remoteAddress);
-    res.send(req.connection.remoteAddress);
+  router.get("/checkIP", async (req, res) => {
+    try {
+      let ip = await publicIp.v4();
+      res.json({ ip });
+    } catch (e) {
+      res.json({ e });
+    }
   });
 
   return router;

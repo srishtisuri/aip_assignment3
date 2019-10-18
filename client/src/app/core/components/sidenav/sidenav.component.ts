@@ -16,9 +16,9 @@ export class SidenavComponent implements OnInit {
     public userService: UserService,
     private notificationService: NotificationService,
     private router: Router
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   logout() {
     this.authService.logout().subscribe(res => {
