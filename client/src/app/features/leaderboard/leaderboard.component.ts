@@ -21,9 +21,9 @@ export class LeaderboardComponent implements OnInit {
   }
 
   getPosts(type?) {
-    if (type != "posts" && type != "reactions" && type != "comments") {
+    if (type != "posts" && type != "reactions") {
       this.postService.getPosts(type).subscribe(response => {
-        console.log(response);
+        //console.log(response);
         this.posts = response.data.posts;
       });
     } else {
