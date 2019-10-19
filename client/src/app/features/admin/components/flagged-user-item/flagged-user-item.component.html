@@ -1,4 +1,4 @@
-<div>
+<div style="margin-top:5px">
     <img [src]="[user.avatar]" width="90px" height="90px">
     <div class="user-info">
         <div><b>Name:</b> {{user.name}}</div>
@@ -6,8 +6,8 @@
         <div><b>Member Since:</b> {{user.dateCreated | date:'medium'}}</div>
         <div><b>Last Logged In:</b> {{user.lastLoggedIn | date:'medium'}}</div>
         <div><b>Account Status:</b> {{user.accountStatus}}</div>
-        <mat-icon class="icon">delete</mat-icon>
-        <mat-icon class="icon">textsms</mat-icon>
-        <mat-icon class="icon">remove_circle_outline</mat-icon>
+        <button mat-flat-button color="primary" [disabled]="user.accountStatus !='activated'" (click)="deactivate()">
+            <mat-icon class="icon">delete</mat-icon>Deactivate
+        </button>
     </div>
 </div>
