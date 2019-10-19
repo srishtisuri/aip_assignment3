@@ -10,7 +10,6 @@ import { NotificationService } from "src/app/core/services/notification.service"
   styleUrls: ["./post-feed-item.component.css"]
 })
 export class PostFeedItemComponent implements OnInit {
-
   //Declare input parameters for component
   @Input() post: any;
   @Input() user: any;
@@ -23,7 +22,7 @@ export class PostFeedItemComponent implements OnInit {
     private postService: PostService,
     public authService: AuthService,
     private notificationService: NotificationService
-  ) { }
+  ) {}
 
   showReactions = false;
   userHasReacted = false;
@@ -63,7 +62,7 @@ export class PostFeedItemComponent implements OnInit {
       this.post.reactions["angry"].length == 0;
   }
 
-  //function to check if user has reacted to the comment item, 
+  //function to check if user has reacted to the comment item,
   //and to change the react button and highlighted reaction accordingly
   getUserReaction() {
     this.userHasReacted = false;

@@ -10,7 +10,7 @@ export class PostLeaderboardComponent implements OnInit {
   @Input() posts;
   @Input() loading: boolean;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() { }
+  ngOnInit() {}
 }

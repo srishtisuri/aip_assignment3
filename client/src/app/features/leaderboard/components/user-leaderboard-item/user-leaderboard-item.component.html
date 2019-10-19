@@ -1,13 +1,24 @@
-<table id="table" class="mat-elevation-z1">
+<table id="table" class="mat-elevation-z1" style="text-align:center">
   <tr>
-    <td align="center" style="width: 10%" mat-card-title>1</td>
-    <td align="center" style="width: 15%">
-      <img mat-card-avatar src="{{ user.avatar }}" height="150px" width="150px" style="border-radius: 100px" />
-    </td>
-    <td style="width: 75%">
+    <td style="text-align:center; width: 10%; margin-left: 5%; display: inline-flex" mat-card-title>
       <div>
-        <div mat-card-title>{{ user.username }}</div>
-        <div mat-card-subtitle></div>
+        <h2>{{ order + 1 }}</h2>
+      </div>
+    </td>
+    <td align="center" style="width: 20%">
+      <img mat-card-avatar src="{{ user.avatar }}" style="border-radius: 100px; height: 80px !important; width: 80px !important" />
+    </td>
+    <td style="width: 30%">
+      <div>
+        <div mat-card-title>{{ user.name }}</div>
+        <div mat-card-subtitle>@{{ user.username }}</div>
+      </div>
+    </td>
+    <td style="width: 40%">
+      <div>
+        <div style="padding-bottom: 8px;" mat-card-content>{{ totalReactions }} Total Reactions</div>
+        <div mat-card-content>{{ user.posts.length }} Total Posts</div>
+        <div style="padding-top: 8px;" mat-card-content>{{ this.totalComments() }} Total Comments</div>
       </div>
     </td>
   </tr>

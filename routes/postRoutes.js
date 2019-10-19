@@ -58,6 +58,7 @@ module.exports = (express, passport, AWS) => {
     }
     return posts;
   };
+
   getTotal = reactions => {
     return (
       reactions["heart"].length +
@@ -67,11 +68,17 @@ module.exports = (express, passport, AWS) => {
       reactions["angry"].length
     );
   };
+
   router.get("/postsWithUser", async (req, res) => {
     try {
       let posts = req.query.isComment
-        ? await Post.find({ isComment: req.query.isComment })
-        : await Post.find();
+        ? await Post.find({
+            isComment: req.query.isComment,
+            "report.moderated": false
+          })
+        : await Post.find({
+          "report.moderated": false
+        });
 
       posts = await populatePostsWithUserInfo(posts);
 
@@ -371,8 +378,10 @@ module.exports = (express, passport, AWS) => {
     const decodedToken = await decodeToken(req);
     let action = null;
     if (req.body.reaction == req.body.oldReaction) action = "unreact";
-    else if (req.body.reaction && req.body.oldReaction == null) action = "react";
-    else if (req.body.reaction && req.body.oldReaction != null) action = "change";
+    else if (req.body.reaction && req.body.oldReaction == null)
+      action = "react";
+    else if (req.body.reaction && req.body.oldReaction != null)
+      action = "change";
     // console.log(action);
     try {
       let response = null;

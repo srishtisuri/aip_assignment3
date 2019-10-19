@@ -46,7 +46,7 @@ export class DiscussionBoardComponent implements OnInit {
     });
   }
 
-  handleSortBy(type: string) {
-    this.getPosts(type);
+  handleSortBy(obj: any) {
+    this.getPosts(obj.type);
   }
 }

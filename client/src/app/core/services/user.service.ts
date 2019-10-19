@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable, of } from "rxjs";
+import { Observable, of, Subject } from "rxjs";
+// import { User } from "src/app/shared/models/user.model";
 
 @Injectable({
   providedIn: "root"
@@ -10,7 +11,7 @@ export class UserService {
   user: any = null;
   isAdmin = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint);
@@ -40,6 +41,10 @@ export class UserService {
       }
     });
   };
+
+  getUsersWithPosts(): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/userLeaderboard");
+  }
   getFlaggedUsers():Observable<any>{
     return this.http.get(this.endpoint + "/flaggedUsers");
   }
@@ -47,4 +52,3 @@ export class UserService {
     return this.http.put(this.endpoint +"/deactivate", {userId});
   }
 }
-

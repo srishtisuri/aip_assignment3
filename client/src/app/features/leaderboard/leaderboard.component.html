@@ -1,14 +1,13 @@
 <div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap class="leaderboard-container">
   <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
     <div fxLayout="column" class="column">
-      <app-sort-widget [sortType]="sortType" [sortTypes]="sortTypes" (handleSortBy)="handleSortBy($event)">
-      </app-sort-widget>
+      <app-sort-widget [sortType]="sortType" [sortTypes]="sortTypes" (handleSortBy)="handleSortBy($event)"></app-sort-widget>
     </div>
   </div>
   <div fxFlex="75%" class="layout-tile" style="padding: 20px">
     <mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)">
       <mat-tab label="Users">
-        <app-user-leaderboard [posts]="posts" [loading]="loading"></app-user-leaderboard>
+        <app-user-leaderboard [users]="users" [loading]="loading"></app-user-leaderboard>
       </mat-tab>
       <mat-tab label="Posts">
         <app-post-leaderboard [posts]="posts" [loading]="loading"></app-post-leaderboard>

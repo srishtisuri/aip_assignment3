@@ -6,7 +6,7 @@
     <div *ngFor="let option of sortTypes">
       <mat-divider></mat-divider>
       <div [ngStyle]="{ 'text-align': 'center', padding: '10px', color: sortType === option.type ? '#3F51B5' : 'black' }">
-        <a mat-button (click)="handleSortBy.emit(option.type)">{{ option.name }}</a>
+        <a mat-button (click)="handleSortBy.emit({ type: option.type, length: sortTypes.length })">{{ option.name }}</a>
       </div>
     </div>
   </mat-list>
