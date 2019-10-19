@@ -8,7 +8,9 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class PostLeaderboardComponent implements OnInit {
   @Input() posts;
-  constructor() {}
+  @Input() loading: boolean;
 
-  ngOnInit() {}
+  constructor() { }
+
+  ngOnInit() { }
 }

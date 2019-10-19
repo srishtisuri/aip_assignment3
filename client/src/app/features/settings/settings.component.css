@@ -1,10 +1,10 @@
-.field {
-  padding: 2px 10px;
-}
-
 mat-form-field {
   max-width: 400px;
   width: 90%;
+}
+
+.field {
+  padding: 2px 10px;
 }
 
 .btn {
