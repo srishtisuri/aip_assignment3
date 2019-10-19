@@ -3,3 +3,4 @@ module.exports = {
   secretKey: "+ODB+tClkuLPE5DK8HChiphwkbw4pkvYOPztNmFQ",
   region: "ap-southeast-2"
 };
+// Only hardcoded for local builds.

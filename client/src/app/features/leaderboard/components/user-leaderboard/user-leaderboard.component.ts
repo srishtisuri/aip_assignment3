@@ -8,6 +8,7 @@ import { Component, OnInit, Input } from "@angular/core";
 export class UserLeaderboardComponent implements OnInit {
   @Input() posts;
   @Input() users;
+  @Input() loading: boolean;
 
   ngOnInit() {}
 }

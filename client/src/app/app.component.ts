@@ -25,6 +25,7 @@ export class AppComponent {
           //this.notificationService.notify("[DEV] JWT Authentication successful!");
         } else {
         }
+        this.authService.loading = false;
       });
       this.userService.checkAdmin();
     } catch {

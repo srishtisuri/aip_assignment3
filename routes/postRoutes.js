@@ -371,9 +371,16 @@ module.exports = (express, passport, AWS) => {
 
   router.put("/react", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
+    let action = null;
+    if (req.body.reaction == req.body.oldReaction) action = "unreact";
+    else if (req.body.reaction && req.body.oldReaction == null)
+      action = "react";
+    else if (req.body.reaction && req.body.oldReaction != null)
+      action = "change";
+    // console.log(action);
     try {
       let response = null;
-      if (req.body.reaction) {
+      if (action == "react") {
         let push = null;
         switch (req.body.reaction) {
           case "heart":
@@ -413,7 +420,7 @@ module.exports = (express, passport, AWS) => {
           response = { status: "ERROR" };
         }
       }
-      if (req.body.oldReaction) {
+      if (action == "unreact") {
         let pull = null;
         switch (req.body.oldReaction) {
           case "heart":
@@ -451,6 +458,88 @@ module.exports = (express, passport, AWS) => {
           response.status = "SUCCESS";
         } else {
           response = { status: "ERROR" };
+        }
+      }
+      if (action == "change") {
+        if (req.body.oldReaction) {
+          let pull = null;
+          switch (req.body.oldReaction) {
+            case "heart":
+              pull = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              pull = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              pull = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              pull = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              pull = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = false;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = true;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $pull: pull
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
+        }
+        if (req.body.reaction) {
+          let push = null;
+          switch (req.body.reaction) {
+            case "heart":
+              push = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              push = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              push = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              push = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              push = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = true;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = false;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $push: push
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
         }
       }
       if (response.status == "SUCCESS") {

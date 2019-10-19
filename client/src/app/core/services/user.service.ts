@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, of, Subject } from "rxjs";
-import { User } from "src/app/shared/models/user.model";
+// import { User } from "src/app/shared/models/user.model";
 
 @Injectable({
   providedIn: "root"
 })
 export class UserService {
   endpoint: string = "/api/users";
-  user: User = null;
+  user: any = null;
   isAdmin = false;
 
   constructor(private http: HttpClient) {}
@@ -29,15 +29,18 @@ export class UserService {
     return this.http.put<any>(this.endpoint, { user: details });
   }
 
-  checkAdmin() {
+  checkAdmin = async () => {
     this.getCurrentUser().subscribe(res => {
       if (res.data) {
         if (res.data.role == "admin") {
           this.isAdmin = true;
+          return of({ isAdmin: true });
+        } else {
+          return of({ isAdmin: false });
         }
       }
     });
-  }
+  };
 
   getUsersWithPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint + "/userLeaderboard");

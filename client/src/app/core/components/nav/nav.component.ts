@@ -25,7 +25,7 @@ export class NavComponent {
     private notificationService: NotificationService,
     public userService: UserService,
     private router: Router
-  ) {}
+  ) { }
 
   logout() {
     this.authService.logout().subscribe(res => {

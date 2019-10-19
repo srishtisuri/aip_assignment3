@@ -13,6 +13,7 @@ export class LeaderboardComponent implements OnInit {
   sortTypes;
   sortType;
   users;
+  loading = false;
 
   constructor(private postService: PostService, private userService: UserService) {}
 
@@ -30,6 +31,7 @@ export class LeaderboardComponent implements OnInit {
   }
 
   getPosts(type?) {
+    this.loading = true;
     if (type != "posts" && type != "reactions") {
       this.postService.getPosts(type).subscribe(response => {
         if (response.data.posts.length > 10) {
@@ -37,6 +39,7 @@ export class LeaderboardComponent implements OnInit {
         } else {
           this.posts = response.data.posts.slice(0, response.data.posts.length);
         }
+        this.loading = false;
       });
     }
   }
@@ -73,5 +76,13 @@ export class LeaderboardComponent implements OnInit {
     this.getPosts(type);
   }
 
+  // sortByPosts() {
+  //   let tempUsers = [];
+  //   this.posts.forEach(post => {
+  //     // if (tempUsers.indexOf({ username: post.username, count: 0 }) == -1) {
+  //     tempUsers.push({ username: post.username, count: 0 });
+  //   });
+  //   console.log(tempUsers);
+  // }
   totalReactions() {}
 }

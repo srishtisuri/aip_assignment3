@@ -19,6 +19,7 @@ export class DiscussionBoardComponent implements OnInit {
   ];
   pager: any;
   pageOfPosts: any;
+  loading = true;
 
   constructor(private postService: PostService, public authService: AuthService, private http: HttpClient, private route: ActivatedRoute) {}
 
@@ -34,6 +35,7 @@ export class DiscussionBoardComponent implements OnInit {
         this.posts = response.data.pageOfPosts;
         this.pager = response.data.pager;
         this.pageOfPosts = response.data.pageOfPosts;
+        this.loading = false;
       }
     });
   }

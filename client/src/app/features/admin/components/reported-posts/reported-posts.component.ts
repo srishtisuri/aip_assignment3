@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Input } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 
 @Component({
@@ -8,22 +8,8 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class ReportedPostsComponent implements OnInit {
   constructor(private postService: PostService) {}
-  posts = [];
+  @Input() posts: any;
+  @Input() loading: boolean;
 
-  ngOnInit() {
-    this.getPosts();
-  }
-
-  getPosts() {
-    this.postService.getPosts().subscribe(response => {
-      if (response.data) {
-        response.data.posts.forEach(post => {
-          if (post.report.status == true) {
-            this.posts.push(post);
-          }
-        });
-      }
-      this.posts.reverse();
-    });
-  }
+  ngOnInit() {}
 }

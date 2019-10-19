@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { PostService } from "src/app/core/services/post.service";
 
 @Component({
   selector: "app-post-leaderboard",
@@ -7,6 +8,8 @@ import { Component, OnInit, Input } from "@angular/core";
 })
 export class PostLeaderboardComponent implements OnInit {
   @Input() posts;
+  @Input() loading: boolean;
+
   constructor() {}
 
   ngOnInit() {}

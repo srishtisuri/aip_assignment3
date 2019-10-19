@@ -20,8 +20,12 @@
 
     <mat-card-actions class="card-actions">
       <div style="display: inline-block;">
-        <button [disabled]="!authService.isLoggedIn || post.report.moderated" [ngClass]="{ reacted: userHasReacted }"
-          (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)" mat-button>
+        <button disabled *ngIf="!authService.isLoggedIn" mat-button>
+          REACT
+        </button>
+        <button *ngIf="authService.isLoggedIn" [disabled]="post.report.moderated"
+          [ngClass]="{ reacted: userHasReacted }" (mouseover)="toggleReactions(true)"
+          (mouseleave)="toggleReactions(false)" mat-button>
           {{ reactButtonText }}
         </button>
         <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
