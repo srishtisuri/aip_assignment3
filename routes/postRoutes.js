@@ -72,8 +72,13 @@ module.exports = (express, passport, AWS) => {
   router.get("/postsWithUser", async (req, res) => {
     try {
       let posts = req.query.isComment
-        ? await Post.find({ isComment: req.query.isComment })
-        : await Post.find();
+        ? await Post.find({
+            isComment: req.query.isComment,
+            "report.moderated": false
+          })
+        : await Post.find({
+          "report.moderated": false
+        });
 
       posts = await populatePostsWithUserInfo(posts);
 

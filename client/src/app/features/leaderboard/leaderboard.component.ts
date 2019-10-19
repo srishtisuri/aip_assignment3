@@ -18,15 +18,29 @@ export class LeaderboardComponent implements OnInit {
   constructor(private postService: PostService, private userService: UserService) {}
 
   ngOnInit() {
-    this.getPosts("popular");
     this.getUsersWithPosts();
+    this.getPosts("popular");
+    this.handleSortBy({ type: "popular", length: 7 });
     this.updateSortTypes(0); //start with 0 = users
   }
 
+  tabChanged = (tabChangeEvent: MatTabChangeEvent): void => {
+    // 0 = user, 1 = posts
+    this.updateSortTypes(tabChangeEvent.index);
+    if (tabChangeEvent.index == 0) this.getUsersWithPosts();
+    if (tabChangeEvent.index == 1) {
+      this.getPosts("popular");
+      this.handleSortBy({ type: "popular", length: 7 });
+    }
+  };
+
   getUsersWithPosts() {
+    this.loading = true;
     this.userService.getUsersWithPosts().subscribe(response => {
-      console.log(response);
       this.users = response;
+      //this.sortUsers("posts");
+      this.handleSortBy({ type: "posts", length: 3 });
+      this.loading = false;
     });
   }
 
@@ -66,23 +80,68 @@ export class LeaderboardComponent implements OnInit {
 
   //https://stackoverflow.com/questions/52589504/angular-how-to-catch-mat-tab-changed-event
   //Answer posted by Prashant Damam
-  tabChanged = (tabChangeEvent: MatTabChangeEvent): void => {
-    // 0 = user, 1 = posts
-    this.updateSortTypes(tabChangeEvent.index);
-  };
 
-  handleSortBy(type: string) {
-    this.sortType = type;
-    this.getPosts(type);
+  handleSortBy(obj: any) {
+    this.sortType = obj.type;
+    if (obj.length == 3) {
+      this.sortUsers(obj.type);
+    } else {
+      this.getPosts(obj.type);
+    }
   }
 
-  // sortByPosts() {
-  //   let tempUsers = [];
-  //   this.posts.forEach(post => {
-  //     // if (tempUsers.indexOf({ username: post.username, count: 0 }) == -1) {
-  //     tempUsers.push({ username: post.username, count: 0 });
-  //   });
-  //   console.log(tempUsers);
-  // }
+  //Total number of comments on the posts made by each user
+  totalComments(user: any) {
+    let total = 0;
+    for (let i = 0; i < user.posts.length; i++) {
+      total += user.posts[i].comments.length;
+    }
+    return total;
+  }
+
+  totalReactionsForUser(user: any) {
+    let total = 0;
+    for (let i = 0; i < user.posts.length; i++) {
+      for (let reaction in user.posts[i].reactions) {
+        total += user.posts[i].reactions[reaction].length;
+      }
+    }
+    return total;
+  }
+
+  sortUsers(type: string) {
+    if (type == "posts") {
+      for (let j = 0; j < this.users.length; j++) {
+        for (let i = 0; i < this.users.length - 1; i++) {
+          if (this.users[i].posts.length < this.users[i + 1].posts.length) {
+            let temp = this.users[i];
+            this.users[i] = this.users[i + 1];
+            this.users[i + 1] = temp;
+          }
+        }
+      }
+    } else if (type == "comments") {
+      for (let j = 0; j < this.users.length; j++) {
+        for (let i = 0; i < this.users.length - 1; i++) {
+          if (this.totalComments(this.users[i]) < this.totalComments(this.users[i + 1])) {
+            let temp = this.users[i];
+            this.users[i] = this.users[i + 1];
+            this.users[i + 1] = temp;
+          }
+        }
+      }
+    } else if (type == "reactions") {
+      for (let j = 0; j < this.users.length; j++) {
+        for (let i = 0; i < this.users.length - 1; i++) {
+          if (this.totalReactionsForUser(this.users[i]) < this.totalReactionsForUser(this.users[i + 1])) {
+            let temp = this.users[i];
+            this.users[i] = this.users[i + 1];
+            this.users[i + 1] = temp;
+          }
+        }
+      }
+    }
+  }
+
   totalReactions() {}
 }

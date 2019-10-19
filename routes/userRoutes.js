@@ -318,11 +318,16 @@ module.exports = (express, passport, AWS) => {
     let posts = await Post.find();
 
     posts.forEach(post => {
-      if (!(post.author in users)) {
-        users[post.author] = [];
-        users[post.author].push(post);
-      } else {
-        users[post.author].push(post);
+      if (
+        post.report.status == false &&
+        post.image.includes("remove") == false
+      ) {
+        if (!(post.author in users)) {
+          users[post.author] = [];
+          users[post.author].push(post);
+        } else {
+          users[post.author].push(post);
+        }
       }
     });
 
