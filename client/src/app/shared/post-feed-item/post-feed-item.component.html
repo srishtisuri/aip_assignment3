@@ -1,16 +1,12 @@
 <div>
   <mat-card class="card">
     <mat-card-header>
-      <img mat-card-avatar src="https://material.angular.io/assets/img/examples/shiba1.jpg" />
-      <mat-card-title>Super Shiba</mat-card-title>
-      <mat-card-subtitle>@{{ post.author }}</mat-card-subtitle>
+      <img mat-card-avatar [src]="[post.avatar]" />
+      <mat-card-title>{{ post.name }}</mat-card-title>
+      <mat-card-subtitle>@{{ post.username }}</mat-card-subtitle>
     </mat-card-header>
-    <div class="upload">
-      <app-new-post-widget *ngIf="changeClicked" title="Change Post" (uploadPost)="changePost($event)">
-      </app-new-post-widget>
-    </div>
     <mat-card-content id="image-container">
-      <img mat-card-image [src]="[post.image]" />
+      <img class="image" mat-card-image [src]="[post.image]" />
     </mat-card-content>
     <div class="details">
       <div class="commentTotal" [routerLink]="['/discussion-board', post._id]">comments: {{ post.comments.length }}
@@ -21,30 +17,53 @@
         <span>😠{{ post.reactions.angry.length }}</span>️
       </div>
     </div>
-    <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
-      (mouseleave)="toggleReactions(false)">
-      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'heart' }" (click)="react('heart')">❤️</div>
-      ️
-      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'laughing' }" (click)="react('laughing')">😂
-      </div>
-      ️
-      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'wow' }" (click)="react('wow')">😮</div>
-      ️
-      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'sad' }" (click)="react('sad')">😢</div>
-      ️
-      <div [ngClass]="{ selected: userHasReacted && currentReaction == 'angry' }" (click)="react('angry')">😠</div>
-      ️
-    </div>
+
     <mat-card-actions class="card-actions">
-      <button [disabled]="!authService.isLoggedIn" [ngClass]="{ reacted: userHasReacted }"
-        (mouseover)="toggleReactions(true)" (mouseleave)="toggleReactions(false)" mat-button>
-        {{ reactButtonText }}
-      </button>
-      <button [routerLink]="['/discussion-board', post._id]" mat-button>COMMENT</button>
-      <button *ngIf="!isMyActivityPage" (click)="report()" mat-button>REPORT</button>
-      <button *ngIf="isMyActivityPage" [disabled]="!canChange" (click)="change()" mat-button>CHANGE</button>
-      <button *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
-      <button *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
+      <div style="display: inline-block;">
+        <button disabled *ngIf="!authService.isLoggedIn" mat-button>
+          REACT
+        </button>
+        <button *ngIf="authService.isLoggedIn" [disabled]="post.report.moderated"
+          [ngClass]="{ reacted: userHasReacted }" (mouseover)="toggleReactions(true)"
+          (mouseleave)="toggleReactions(false)" mat-button>
+          {{ reactButtonText }}
+        </button>
+        <div class="user-reactions" *ngIf="showReactions && authService.isLoggedIn" (mouseover)="toggleReactions(true)"
+          (mouseleave)="toggleReactions(false)">
+          <div [ngClass]="{ selected: userHasReacted && currentReaction == 'heart' }" (click)="react('heart')">❤️</div>
+          ️
+          <div [ngClass]="{ selected: userHasReacted && currentReaction == 'laughing' }" (click)="react('laughing')">😂
+          </div>
+          ️
+          <div [ngClass]="{ selected: userHasReacted && currentReaction == 'wow' }" (click)="react('wow')">😮</div>
+          ️
+          <div [ngClass]="{ selected: userHasReacted && currentReaction == 'sad' }" (click)="react('sad')">😢</div>
+          ️
+          <div [ngClass]="{ selected: userHasReacted && currentReaction == 'angry' }" (click)="react('angry')">😠</div>
+          ️
+        </div>
+      </div>
+      <button [disabled]="post.report.moderated" [routerLink]="['/discussion-board', post._id]"
+        mat-button>COMMENT</button>
+      <!-- <div *ngIf="!isMyActivityPage"> -->
+      <button [disabled]="post.report.moderated" mat-button [matMenuTriggerFor]="menu"
+        *ngIf="!isMyActivityPage">REPORT</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="report('Inappropriate')">Inappropriate</button>
+        <button mat-menu-item (click)="report('Contains Text')">Contains Text</button>
+      </mat-menu>
+      <!-- </div> -->
+      <div style="display: inline-block;">
+        <div class="upload" *ngIf="isMyActivityPage && canChange">
+          <app-new-post-widget *ngIf="changeClicked" title="Change Post" (uploadPost)="changePost($event)">
+          </app-new-post-widget>
+        </div>
+        <button [disabled]="post.report.moderated || !canChange" *ngIf="isMyActivityPage" (click)="change()" mat-button>
+          CHANGE
+        </button>
+      </div>
+      <button [disabled]="post.report.moderated" *ngIf="canDelete" (click)="delete()" mat-button>DELETE</button>
+      <button [disabled]="post.report.moderated" *ngIf="canRemove" (click)="remove()" mat-button>REMOVE</button>
     </mat-card-actions>
   </mat-card>
 </div>

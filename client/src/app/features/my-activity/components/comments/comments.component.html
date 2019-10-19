@@ -1,17 +1,11 @@
-<div fxLayout="row" fxLayoutWrap>
-    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column">
-            <app-sort-widget></app-sort-widget>
-        </div>
+<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
+  <div fxFlex="100%" class="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <mat-spinner style="margin:30px auto;" *ngIf="loading"></mat-spinner>
+      <div *ngIf="!loading">
+        <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user">
+        </app-post-comment-item>
+      </div>
     </div>
-    <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column" class="column">
-            <app-post-comment-item *ngFor="let comment of comments" [comment]="comment" [user]="user">
-            </app-post-comment-item>
-        </div>
-    </div>
-    <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-        <div fxLayout="column">
-        </div>
-    </div>
+  </div>
 </div>

@@ -1,4 +1,11 @@
-<app-nav></app-nav>
-<div class="main">
-  <router-outlet></router-outlet>
-</div>
+<app-nav (sidenavToggle)="sidenav.toggle()"></app-nav>
+<mat-sidenav-container fxFlexFill>
+  <mat-sidenav #sidenav>
+    <app-sidenav (sidenavClose)="sidenav.close()"></app-sidenav>
+  </mat-sidenav>
+  <mat-sidenav-content fxFlexFill>
+    <div class="main">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

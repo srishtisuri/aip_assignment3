@@ -1,3 +1,17 @@
 .layout-tile {
-  /* border: 1px solid red; */
+  padding-left: 10px;
+}
+.layout-tile-small {
+  padding: 0;
+}
+
+.column {
+  width: 100%;
+  display: block !important;
+}
+
+.small-widget {
+  width: 45%;
+  display: inline-block;
+  padding: 0 2.5%;
 }

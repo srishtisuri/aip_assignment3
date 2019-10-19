@@ -13,11 +13,17 @@ const httpOptions = {
 })
 export class PostService {
   endpoint: string = "/api/posts";
+  sortType: string = "";
+  page: number;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getPosts(): Observable<any> {
-    return this.http.get<any>(this.endpoint);
+  getPosts(sortType?, page?): Observable<any> {
+    if (sortType) {
+      return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false&sortBy=" + sortType + "&page=" + page);
+    } else {
+      return this.http.get<any>(this.endpoint + "/postsWithUser?isComment=false");
+    }
   }
 
   getMyComments(): Observable<any> {
@@ -52,8 +58,8 @@ export class PostService {
     return this.http.delete<any>(this.endpoint + "/" + id);
   }
 
-  changePost(image: string, thread: string, increment: number): Observable<any> {
-    return this.http.put<any>(this.endpoint + "/", { image, thread, increment });
+  changePost(image: string, thread: string, admin?: boolean): Observable<any> {
+    return this.http.put<any>(this.endpoint + "/", { image, thread, admin });
   }
 
   dropPosts(): Observable<any> {
@@ -61,7 +67,10 @@ export class PostService {
   }
 
   react(thread: string, reaction: string, oldReaction: string): Observable<any> {
-    console.log(thread, reaction, oldReaction);
     return this.http.put(this.endpoint + "/react", { thread, reaction, oldReaction });
   }
+  report(postId, reason): Observable<any> {
+    return this.http.put(this.endpoint + "/report", { postId, reason });
+  }
+
 }

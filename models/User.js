@@ -16,7 +16,7 @@ const userSchema = new Schema({
     required: false,
     default: new Date().toISOString()
   },
-  ips: { type: Array, required: true },
+  ips: { type: String, required: true },
   avatar: { type: String, required: false },
   role: { type: String, required: true, default: "member" },
   accountStatus: { type: String, required: true, default: "activated" }

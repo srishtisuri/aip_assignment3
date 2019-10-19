@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 
 @Component({
-  selector: 'app-sort-widget',
-  templateUrl: './sort-widget.component.html',
-  styleUrls: ['./sort-widget.component.css']
+  selector: "app-sort-widget",
+  templateUrl: "./sort-widget.component.html",
+  styleUrls: ["./sort-widget.component.css"]
 })
 export class SortWidgetComponent implements OnInit {
+  @Input() sortTypes;
+  @Input() sortType;
+  @Output() handleSortBy = new EventEmitter();
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

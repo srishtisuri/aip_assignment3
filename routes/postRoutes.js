@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const jwt = require("jsonwebtoken");
+const paginate = require("jw-paginate");
 
 module.exports = (express, passport, AWS) => {
   const router = express.Router();
@@ -46,20 +47,123 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  router.get("/postsByUserTest", async (req, res) => {
+  populatePostsWithUserInfo = async posts => {
+    for (let i = 0; i < posts.length; i++) {
+      let responseUser = await User.findById(posts[i].author);
+      if (responseUser) {
+        posts[i]._doc["name"] = responseUser.name;
+        posts[i]._doc["username"] = responseUser.username;
+        posts[i]._doc["avatar"] = responseUser.avatar;
+      }
+    }
+    return posts;
+  };
+
+  getTotal = reactions => {
+    return (
+      reactions["heart"].length +
+      reactions["laughing"].length +
+      reactions["wow"].length +
+      reactions["sad"].length +
+      reactions["angry"].length
+    );
+  };
+
+  router.get("/postsWithUser", async (req, res) => {
     try {
-      let responsePosts = await Post.find();
-      responsePosts.map(async post => {
-        let responseUser = await User.findById(post.author);
-        console.log(post.author);
-        return {
-          ...post,
-          name: responseUser.name,
-          username: responseUser.username,
-          avatar: responseUser.avatar
-        };
+      let posts = req.query.isComment
+        ? await Post.find({
+            isComment: req.query.isComment,
+            "report.moderated": false
+          })
+        : await Post.find({
+          "report.moderated": false
+        });
+
+      posts = await populatePostsWithUserInfo(posts);
+
+      // default sorting will be newest to oldest
+      let type = req.query.sortBy || "new";
+
+      // switching between new and old
+      if (type == "new" || type == "old") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            let date1 = new Date(
+              posts[i].history[posts[i].history.length - 1].dateModified
+            );
+            let date2 = new Date(
+              posts[i + 1].history[posts[i + 1].history.length - 1].dateModified
+            );
+            // Check to see which way to sort it
+            if (type == "new" ? date1 < date2 : date1 > date2) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else if (type == "comments") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (posts[i].comments.length < posts[i + 1].comments.length) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else if (type == "popular") {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (
+              getTotal(posts[i].reactions) + posts[i].comments.length <
+              getTotal(posts[i + 1].reactions) + posts[i + 1].comments.length
+            ) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      } else {
+        for (let j = 0; j < posts.length; j++) {
+          for (let i = 0; i < posts.length - 1; i++) {
+            if (
+              posts[i].reactions[type].length <
+              posts[i + 1].reactions[type].length
+            ) {
+              let temp = posts[i];
+              posts[i] = posts[i + 1];
+              posts[i + 1] = temp;
+            }
+          }
+        }
+      }
+
+      // example array of 150 items to be paged
+      //const items = [...posts].map(i => ({ id: i + 1 }));
+
+      // get page from query params or default to first page
+      const page = parseInt(req.query.page) || 1;
+
+      // get pager object for specified page
+      const pageSize = 5;
+      const pager = paginate(posts.length, page, pageSize);
+
+      // get page of items from items array
+      const pageOfPosts = posts.slice(pager.startIndex, pager.endIndex + 1);
+
+      // return pager object and current page of items
+
+      res.json({
+        status: "SUCCESS",
+        data: {
+          posts: posts.slice(0, req.query.limit || posts.length),
+          pager,
+          pageOfPosts
+        }
       });
-      res.json({ status: "SUCCESS", data: responsePosts });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -78,13 +182,14 @@ module.exports = (express, passport, AWS) => {
 
   router.get("/myComments", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
     try {
-      let response = await Post.find({
+      let posts = await Post.find({
         isComment: true,
         author: decodedToken.id
       });
-      res.json({ status: "SUCCESS", data: response });
+      posts = await populatePostsWithUserInfo(posts);
+
+      res.json({ status: "SUCCESS", data: posts });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -104,7 +209,8 @@ module.exports = (express, passport, AWS) => {
           })
         );
       }
-
+      // console.log(response);
+      response = await populatePostsWithUserInfo(response);
       res.json({ status: "SUCCESS", data: response });
     } catch (err) {
       console.log("FAIL: " + err);
@@ -117,7 +223,8 @@ module.exports = (express, passport, AWS) => {
       let response = await Post.findOne({
         comments: req.params.thread
       });
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -127,7 +234,8 @@ module.exports = (express, passport, AWS) => {
   router.get("/:id", async (req, res) => {
     try {
       let response = await Post.findById(req.params.id);
-      res.json({ status: "SUCCESS", data: response });
+      response = await populatePostsWithUserInfo([response]);
+      res.json({ status: "SUCCESS", data: response[0] });
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -141,7 +249,11 @@ module.exports = (express, passport, AWS) => {
     try {
       let newPost = new Post();
 
-      let awsImageUrl = await uploadToS3Bucket(req.body.image, newPost._id);
+      let awsImageUrl = await uploadToS3Bucket(
+        "brogrammers-images",
+        req.body.image,
+        newPost._id
+      );
 
       newPost.history.push({
         dateModified: new Date().toISOString(),
@@ -172,10 +284,10 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
-  const uploadToS3Bucket = async (image, id) => {
+  const uploadToS3Bucket = async (bucket, image, id) => {
     await s3
       .putObject({
-        Bucket: "brogrammers-images",
+        Bucket: bucket,
         ContentEncoding: "base64",
         ContentType: "image/jpeg",
         Body: (buf = Buffer.from(
@@ -188,7 +300,7 @@ module.exports = (express, passport, AWS) => {
       .promise();
 
     let signedUrl = await s3.getSignedUrl("getObject", {
-      Bucket: "brogrammers-images",
+      Bucket: bucket,
       Key: `${id}.png`
     });
 
@@ -197,8 +309,14 @@ module.exports = (express, passport, AWS) => {
 
   router.delete("/:id", async (req, res) => {
     try {
-      let response = await Post.findByIdAndDelete(req.params.id);
-      res.json({ status: "SUCCESS", data: response });
+      // Concurrency check for delete feature.
+      let postRes = await Post.findById(req.params.id);
+      if (postRes.comments.length == 0) {
+        let response = await Post.findByIdAndDelete(req.params.id);
+        res.json({ status: "SUCCESS", data: response });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -210,27 +328,46 @@ module.exports = (express, passport, AWS) => {
       let imageURL = "";
       if (req.body.image.search("base64") != -1) {
         imageURL = await uploadToS3Bucket(
+          "brogrammers-images",
           req.body.image,
-          req.body.thread.concat("_" + req.body.increment)
+          req.body.thread
         );
       } else {
         imageURL = req.body.image;
       }
-
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $set: { image: imageURL },
-          $push: {
-            history: {
-              dateModified: new Date().toISOString(),
-              image: imageURL
+      // Concurrency check for change post and admin remove
+      let postRes = await Post.findById(req.body.thread);
+      if (
+        (postRes.comments.length == 0 &&
+          postRes.reactions["heart"].length == 0 &&
+          postRes.reactions["wow"].length == 0 &&
+          postRes.reactions["laughing"].length == 0 &&
+          postRes.reactions["sad"].length == 0 &&
+          postRes.reactions["angry"].length == 0) ||
+        req.body.admin == true ||
+        (postRes.comments.length != 0 && !postRes.image.includes("removed"))
+      ) {
+        let response = await Post.findOneAndUpdate(
+          { _id: req.body.thread },
+          {
+            $set: {
+              image: imageURL,
+              "report.moderated": req.body.admin == true ? true : false
+            },
+            $push: {
+              history: {
+                dateModified: new Date().toISOString(),
+                image: imageURL
+              }
             }
-          }
-        },
-        { new: true }
-      );
-      res.json({ status: "SUCCESS", data: response });
+          },
+          { new: true }
+        );
+        response = await populatePostsWithUserInfo([response]);
+        res.json({ status: "SUCCESS", data: response[0] });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -239,9 +376,16 @@ module.exports = (express, passport, AWS) => {
 
   router.put("/react", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
+    let action = null;
+    if (req.body.reaction == req.body.oldReaction) action = "unreact";
+    else if (req.body.reaction && req.body.oldReaction == null)
+      action = "react";
+    else if (req.body.reaction && req.body.oldReaction != null)
+      action = "change";
+    // console.log(action);
     try {
       let response = null;
-      if (req.body.reaction) {
+      if (action == "react") {
         let push = null;
         switch (req.body.reaction) {
           case "heart":
@@ -260,15 +404,28 @@ module.exports = (express, passport, AWS) => {
             push = { "reactions.angry": decodedToken.id };
             break;
         }
-        response = await Post.findByIdAndUpdate(
-          req.body.thread,
-          {
-            $push: push
-          },
-          { new: true }
-        );
+        let postRes = await Post.findById(req.body.thread);
+        let valid = true;
+        for (let reaction in postRes.reactions.toObject()) {
+          if (postRes.reactions[reaction].includes(decodedToken.id)) {
+            valid = false;
+            break;
+          }
+        }
+        if (valid) {
+          response = await Post.findByIdAndUpdate(
+            req.body.thread,
+            {
+              $push: push
+            },
+            { new: true }
+          );
+          response.status = "SUCCESS";
+        } else {
+          response = { status: "ERROR" };
+        }
       }
-      if (req.body.oldReaction) {
+      if (action == "unreact") {
         let pull = null;
         switch (req.body.oldReaction) {
           case "heart":
@@ -287,34 +444,156 @@ module.exports = (express, passport, AWS) => {
             pull = { "reactions.angry": decodedToken.id };
             break;
         }
-        response = await Post.findByIdAndUpdate(
-          req.body.thread,
-          {
-            $pull: pull
-          },
-          { new: true }
-        );
+        let postRes = await Post.findById(req.body.thread);
+        let valid = false;
+        for (let reaction in postRes.reactions.toObject()) {
+          if (postRes.reactions[reaction].includes(decodedToken.id)) {
+            valid = true;
+            break;
+          }
+        }
+        if (valid) {
+          response = await Post.findByIdAndUpdate(
+            req.body.thread,
+            {
+              $pull: pull
+            },
+            { new: true }
+          );
+          response.status = "SUCCESS";
+        } else {
+          response = { status: "ERROR" };
+        }
       }
-      res.json({ status: "SUCCESS", data: response });
+      if (action == "change") {
+        if (req.body.oldReaction) {
+          let pull = null;
+          switch (req.body.oldReaction) {
+            case "heart":
+              pull = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              pull = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              pull = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              pull = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              pull = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = false;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = true;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $pull: pull
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
+        }
+        if (req.body.reaction) {
+          let push = null;
+          switch (req.body.reaction) {
+            case "heart":
+              push = { "reactions.heart": decodedToken.id };
+              break;
+            case "laughing":
+              push = { "reactions.laughing": decodedToken.id };
+              break;
+            case "wow":
+              push = { "reactions.wow": decodedToken.id };
+              break;
+            case "sad":
+              push = { "reactions.sad": decodedToken.id };
+              break;
+            case "angry":
+              push = { "reactions.angry": decodedToken.id };
+              break;
+          }
+          let postRes = await Post.findById(req.body.thread);
+          let valid = true;
+          for (let reaction in postRes.reactions.toObject()) {
+            if (postRes.reactions[reaction].includes(decodedToken.id)) {
+              valid = false;
+              break;
+            }
+          }
+          if (valid) {
+            response = await Post.findByIdAndUpdate(
+              req.body.thread,
+              {
+                $push: push
+              },
+              { new: true }
+            );
+            response.status = "SUCCESS";
+          } else {
+            response = { status: "ERROR" };
+          }
+        }
+      }
+      if (response.status == "SUCCESS") {
+        response = await populatePostsWithUserInfo([response]);
+        res.json({ status: "SUCCESS", data: response[0] });
+      } else {
+        res.json({ status: "ERROR" });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
     }
   });
 
-  router.put("/report", async (req, res) => {
+  userAlreadyReported = (userId, reasons) => {
+    let reported = false;
+    reasons.forEach(reason => {
+      if (reason.user == userId) {
+        // console.log("true");
+        reported = true;
+      }
+    });
+    return reported;
+  };
+  router.put("/report", setHeader, checkToken, async (req, res) => {
+    const decodedToken = await decodeToken(req);
     try {
-      let response = await Post.findOneAndUpdate(
-        { _id: req.body.thread },
-        {
-          $set: { "report.status": true },
-          $push: {
-            "report.reasons": req.body.reason
-          }
-        },
-        { new: true }
-      );
-      res.json({ status: "SUCCESS", data: response });
+      let post = await Post.findById(req.body.postId);
+      if (userAlreadyReported(decodedToken.id, post.report.reasons) == true) {
+        res.json({
+          status: "FAIL",
+          error: "You have already reported this image!"
+        });
+      } else {
+        let response = await Post.findOneAndUpdate(
+          { _id: req.body.postId },
+          {
+            $set: { "report.status": true },
+            $push: {
+              "report.reasons": {
+                reason: req.body.reason,
+                user: decodedToken.id
+              }
+            }
+          },
+          { new: true }
+        );
+        res.json({ status: "SUCCESS", data: response });
+      }
     } catch (err) {
       console.log("FAIL: " + err);
       res.json({ status: "FAIL", error: err });
@@ -378,30 +657,6 @@ module.exports = (express, passport, AWS) => {
       });
     });
   }
-  // router.get("/postsByUser", async (req, res) => {
-  //   try {
-  //     let response = await Post.find();
-  //     res.json({ status: "SUCCESS", data: response });
-  //   } catch (err) {
-  //     console.log("FAIL: " + err);
-  //     res.json({ status: "FAIL", error: err });
-  //   }
-  // });
-
-  // router.get("/postsByUser/test2", (req, res) => {
-  //   Post.aggregate([
-  //     {
-  //       $lookup: {
-  //         from: "user", // collection name in db
-  //         localField: "_id",
-  //         foreignField: "student",
-  //         as: "worksnapsTimeEntries"
-  //       }
-  //     }
-  //   ]).exec(function(err, students) {
-  //     // students contain WorksnapsTimeEntries
-  //   });
-  // });
 
   return router;
 };

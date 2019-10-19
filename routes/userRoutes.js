@@ -1,6 +1,8 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const publicIp = require("public-ip");
 
 module.exports = (express, passport, AWS) => {
   const router = express.Router();
@@ -51,6 +53,17 @@ module.exports = (express, passport, AWS) => {
     );
   };
 
+  const updateIP = async (id, req) => {
+    let ip = await publicIp.v4();
+    return await User.findByIdAndUpdate(
+      id,
+      {
+        $set: { ips: ip }
+      },
+      { new: true }
+    );
+  };
+
   const decodeToken = async req => {
     let token = req.headers["authorization"].split(" ")[1];
     return await jwt.verify(token, "brogrammers");
@@ -60,6 +73,9 @@ module.exports = (express, passport, AWS) => {
   router.get("/", async (req, res) => {
     try {
       let response = await User.find();
+      response.forEach(user => {
+        user.password = undefined;
+      });
       sendSuccess(res, response);
     } catch (err) {
       sendError(res, err);
@@ -69,7 +85,7 @@ module.exports = (express, passport, AWS) => {
   // Get current user
   router.get("/current", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
+    // await updateIP(decodedToken.id);
     try {
       let response = await User.findById(decodedToken.id);
       if (response) {
@@ -82,6 +98,27 @@ module.exports = (express, passport, AWS) => {
       sendError(res, err);
     }
   });
+  const uploadToS3Bucket = async (bucket, image, id) => {
+    await s3
+      .putObject({
+        Bucket: bucket,
+        ContentEncoding: "base64",
+        ContentType: "image/jpeg",
+        Body: (buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        )),
+        Key: `${id}.png`,
+        ACL: "public-read"
+      })
+      .promise();
+
+    let signedUrl = await s3.getSignedUrl("getObject", {
+      Bucket: bucket,
+      Key: `${id}.png`
+    });
+    return signedUrl.split("?")[0];
+  };
 
   // Create user
   router.post("/", async (req, res) => {
@@ -93,9 +130,15 @@ module.exports = (express, passport, AWS) => {
         let newUser = new User({
           ...req.body.user,
           password: await bcrypt.hash(req.body.user.password, 10),
-          ips: req.ip
+          ips: await publicIp.v4()
         });
-
+        let avatarImageUrl = await uploadToS3Bucket(
+          "brogrammers-avatars",
+          req.body.user.avatar,
+          newUser._id
+        );
+        console.log(avatarImageUrl);
+        newUser.avatar = avatarImageUrl;
         let responseUser = await newUser.save();
         let token = await jwt.sign({ id: responseUser._id }, "brogrammers", {
           expiresIn: 604800
@@ -123,17 +166,44 @@ module.exports = (express, passport, AWS) => {
   // Update user
   router.put("/", async (req, res) => {
     try {
-      let response = await User.findByIdAndUpdate(
-        req.body._id,
-        {
-          $set: {
-            ...req.body.items
-          }
-        },
-        { new: true }
-      );
-      sendSuccess(res, response);
+      let existingUser = await User.findOne({
+        username: req.body.user.username
+      });
+      if (existingUser == null || existingUser._id == req.body.user._id) {
+        if (req.body.user.password) {
+          req.body.user.password = await bcrypt.hash(
+            req.body.user.password,
+            10
+          );
+        } else {
+          delete req.body.user.password;
+        }
+
+        if (req.body.user.avatar) {
+          let newAvatarImageUrl = await uploadToS3Bucket(
+            "brogrammers-avatars",
+            req.body.user.avatar,
+            req.body.user._id
+          );
+          console.log(newAvatarImageUrl);
+          req.body.user.avatar = newAvatarImageUrl;
+        }
+
+        let response = await User.findByIdAndUpdate(
+          req.body.user._id,
+          {
+            $set: {
+              ...req.body.user
+            }
+          },
+          { new: true }
+        );
+        sendSuccess(res, response);
+      } else {
+        return sendError(res, "Username already exists");
+      }
     } catch (err) {
+      console.log(err);
       sendError(res, err);
     }
   });
@@ -143,9 +213,12 @@ module.exports = (express, passport, AWS) => {
     passport.authenticate("local", (err, user) => {
       if (err) return sendError(res, err);
       if (!user) return sendError(res, "Incorrect username or password");
+      if (user.accountStatus != "activated") return sendError(res, "This account has been deactivated");
+
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
+        updatedUser = await updateIP(req.user._id, req);
         let token = await jwt.sign({ id: updatedUser._id }, "brogrammers", {
           expiresIn: 604800
         });
@@ -179,7 +252,7 @@ module.exports = (express, passport, AWS) => {
   // Check authentication
   router.get("/auth", setHeader, checkToken, async (req, res) => {
     const decodedToken = await decodeToken(req);
-
+    await updateIP(decodedToken.id);
     try {
       let response = await User.findById(decodedToken.id);
       if (response) {
@@ -190,6 +263,84 @@ module.exports = (express, passport, AWS) => {
     } catch (err) {
       sendError(res, err);
     }
+  });
+
+  router.put("/deactivate", async (req,res)=>{
+    let tempUser = await User.findById(req.body.userId);
+    if(tempUser.accountStatus == "activated") {
+      await User.findByIdAndUpdate(req.body.userId, {
+        $set:{
+          "accountStatus": "deactivated"
+        }
+      })
+      res.json({status:"SUCCESS"})
+    } else {
+      res.json({status:"ERROR"})
+    }
+  })
+
+  // DEV DELETE ALl
+  router.get("/flaggedUsers", async (req, res) => {
+    let users = await User.find();
+    
+    let flaggedIps = {}
+    users.forEach(user => {
+      if (!(user.ips in flaggedIps) && user.role != "admin") {
+        flaggedIps[user.ips] = [];
+        flaggedIps[user.ips].push(user);
+      } else {
+        flaggedIps[user.ips].push(user);
+      }
+    });
+
+    res.json({ status: "SUCCESS", data: flaggedIps });
+  });
+
+  router.get("/changeRole/:username/:role", async (req, res) => {
+    let user = await User.findOneAndUpdate(
+      { username: req.params.username },
+      { $set: { role: req.params.role } },
+      { returnNewDocument: true }
+    );
+    res.json({ status: "SUCCESS", data: user });
+  });
+
+  router.get("/checkIP", async (req, res) => {
+    try {
+      let ip = await publicIp.v4();
+      res.json({ ip });
+    } catch (e) {
+      res.json({ e });
+    }
+  });
+
+  router.get("/userLeaderboard", async (req, res) => {
+    let users = {};
+    let posts = await Post.find();
+
+    posts.forEach(post => {
+      if (
+        post.report.status == false &&
+        post.image.includes("remove") == false
+      ) {
+        if (!(post.author in users)) {
+          users[post.author] = [];
+          users[post.author].push(post);
+        } else {
+          users[post.author].push(post);
+        }
+      }
+    });
+
+    let transposedUsers = [];
+    for (let user in users) {
+      let tempUser = await User.findById(user);
+      tempUser = tempUser.toObject();
+      tempUser["posts"] = users[user];
+      transposedUsers.push(tempUser);
+    }
+
+    res.json(transposedUsers);
   });
 
   return router;

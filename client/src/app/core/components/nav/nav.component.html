@@ -1,16 +1,19 @@
 <mat-toolbar color="primary" style="height:10vh">
-  <span>Image Discussion Board</span>
+  <button mat-icon-button (click)="onToggleSidenav()" fxShow="true" fxHide.gt-sm>
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="title" routerLink="/discussion-board">Image Discussion Board</span>
 
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
-  <div class="button-row">
-    <button mat-button routerLink="/discussion-board">Discussion Board</button>
-    <button mat-button routerLink="/leaderboard">Leaderboard</button>
-    <button *ngIf="authService.isLoggedIn" mat-button routerLink="/my-activity">My Activity</button>
-    <button mat-button routerLink="/settings">Settings</button>
-    <button *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/login">Login</button>
-    <button *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/register">Register</button>
-    <button *ngIf="authService.isLoggedIn" mat-button (click)="logout()">Logout</button>
-    <button mat-button routerLink="/admin">Admin</button>
+  <div fxShow="true" fxHide.lt-md class="button-row">
+    <a mat-button routerLink="/discussion-board">Discussion Board</a>
+    <a mat-button routerLink="/leaderboard">Leaderboard</a>
+    <a *ngIf="authService.isLoggedIn" mat-button routerLink="/my-activity">My Activity</a>
+    <a mat-button *ngIf="authService.isLoggedIn" routerLink="/settings">Settings</a>
+    <a *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/login">Login</a>
+    <a *ngIf="!authService.isLoggedIn" mat-button routerLink="/account/register">Register</a>
+    <a *ngIf="authService.isLoggedIn" mat-button (click)="logout()">Logout</a>
+    <a *ngIf="userService.isAdmin" mat-button routerLink="/admin">Admin</a>
   </div>
 </mat-toolbar>

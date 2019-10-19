@@ -1,15 +1,46 @@
-<div fxLayout="row" fxLayoutWrap>
-  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-    <div fxLayout="column">
-      <app-new-post-widget (uploadPost)="uploadPost($event)"></app-new-post-widget>
-      <app-sort-widget></app-sort-widget>
+<div fxLayout="row" fxLayout.lt-sm="column" fxLayoutWrap>
+  <div fxFlex="25%" class="layout-tile" ngClass.lt-sm="layout-tile-small" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
+      <div *ngIf="authService.isLoggedIn" ngClass.lt-sm="small-widget">
+        <app-new-post-widget (uploadPost)="uploadPost($event)"></app-new-post-widget>
+      </div>
+      <div ngClass.lt-sm="small-widget">
+        <app-sort-widget [sortTypes]="sortTypes" (handleSortBy)="handleSortBy($event)"></app-sort-widget>
+      </div>
     </div>
   </div>
-  <div fxFlex="50%" class="layout-tile" fxLayoutAlign="center">
-    <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
+  <div fxFlex="50%" fxLayoutAlign="center">
+    <mat-spinner style="margin-top: 250px" *ngIf="loading"></mat-spinner>
+    <div *ngIf="!loading" fxLayout="column" class="column">
+      <app-post-feed [posts]="posts" (getPosts)="getPosts()"></app-post-feed>
+      <div *ngIf="pager && pager.currentPage && pager.pages" class="card-footer pb-0 pt-3" style="text-align: center">
+        <!-- <mat-button-toggle-group *ngIf="pager.pages && pager.pages.length" class="pagination">
+                <mat-button-toggle value="bold">Bold</mat-button-toggle>
+                <mat-button-toggle value="italic">Italic</mat-button-toggle>
+                <mat-button-toggle value="underline">Underline</mat-button-toggle>
+              </mat-button-toggle-group> -->
+        <mat-button-toggle [ngClass]="{ disabled: pager.currentPage === 1 }" class="page-item first-item">
+          <a routerLink="/discussion-board" [queryParams]="{ page: 1 }" class="page-link">First</a>
+        </mat-button-toggle>
+        <mat-button-toggle [ngClass]="{ disabled: pager.currentPage === 1 }" class="page-item previous-item">
+          <a routerLink="/discussion-board" [queryParams]="{ page: pager.currentPage - 1 }"
+            class="page-link">Previous</a>
+        </mat-button-toggle>
+        <mat-button-toggle *ngFor="let page of pager.pages" [ngClass]="{ active: pager.currentPage === page }"
+          class="page-item number-item">
+          <a routerLink="/discussion-board" [queryParams]="{ page: page }" class="page-link">{{ page }}</a>
+        </mat-button-toggle>
+        <mat-button-toggle [ngClass]="{ disabled: pager.currentPage === pager.totalPages }" class="page-item next-item">
+          <a routerLink="/discussion-board" [queryParams]="{ page: pager.currentPage + 1 }" class="page-link">Next</a>
+        </mat-button-toggle>
+        <mat-button-toggle [ngClass]="{ disabled: pager.currentPage === pager.totalPages }" class="page-item last-item">
+          <a routerLink="/discussion-board" [queryParams]="{ page: pager.totalPages }" class="page-link">Last</a>
+        </mat-button-toggle>
+      </div>
+    </div>
   </div>
-  <div fxFlex="25%" class="layout-tile" fxLayoutAlign="center">
-    <div fxLayout="column">
+  <div fxFlex="25%" ngClass.lt-sm="layout-tile" fxLayoutAlign="center">
+    <div fxLayout="column" class="column">
       <app-leaderboard-widget></app-leaderboard-widget>
     </div>
   </div>

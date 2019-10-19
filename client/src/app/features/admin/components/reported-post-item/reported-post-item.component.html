@@ -1,12 +1,14 @@
 <div>
-    <img [src]="[post.imageUrl]" width="30%">
-    <div class="post-info">
-        <div><b>User:</b> {{post.user}}</div>
-        <div><b>Reason:</b> {{post.reason}}</div>
-        <mat-icon class="icon">outlined_flag</mat-icon>
-        <mat-icon class="icon">mode_edit</mat-icon>
-        <mat-icon class="icon">delete</mat-icon>
-        <mat-icon class="icon">short_text</mat-icon>
-        <mat-icon class="icon">textsms</mat-icon>
-    </div>
+  <img [src]="[post.image]" width="10%" />
+  <div class="post-info">
+    <div><b>User:</b> {{ post.username }}</div>
+    <div><b>Reports:</b> {{ post.report.reasons.length }}</div>
+    <div><b>Most Popular Reason:</b> {{ post.report.reasons[0].reason }}</div>
+    <div><b>Moderated:</b> {{ post.report.moderated }}</div>
+
+    <br />
+    <button mat-flat-button color="primary" [disabled]="post.report.moderated" (click)="remove()">
+      <mat-icon class="icon">delete</mat-icon>Remove
+    </button>
+  </div>
 </div>

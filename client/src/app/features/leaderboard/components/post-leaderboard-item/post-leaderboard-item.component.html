@@ -1,23 +1,26 @@
-<table id="table" class="mat-elevation-z1">
+<table id="table" class="mat-elevation-z1" style="text-align:center">
   <tr>
-    <td align="center" style="width: 10%" mat-card-title>{{ post.id }}</td>
-    <td style="width: 15%">
-      <img
-        mat-card-avatar
-        src="{{ post.profile }}"
-        height="150px"
-        width="150px"
-        style="border-radius: 100px"
-      />
+    <td style="text-align:center; width: 10%; margin-left: 5%; display: inline-flex" mat-card-title>
+      <div>
+        <h2>{{ order + 1 }}</h2>
+      </div>
+    </td>
+    <td style="width: 30%">
+      <img src="{{ post.avatar }}" style="border-radius: 100px; height: 60px !important; width: 60px !important" />
+      <div style="font-size: 16px; padding-top: 5px;" mat-card-title>{{ post.name }}</div>
     </td>
     <td style="width: 30%">
       <div>
-        <div mat-card-title>{{ post.author }}</div>
-        <div mat-card-subtitle>1000 reactions, 140 comments</div>
+        <div style="padding-bottom: 8px;" mat-card-content>{{ totalComments }} Total Comments</div>
+        <div mat-card-content>
+          ️❤️ {{ this.post.reactions["heart"].length }} 😂 {{ this.post.reactions["laughing"].length }} 😮
+          {{ this.post.reactions["wow"].length }} 😢 {{ this.post.reactions["sad"].length }} 😠 {{ this.post.reactions["angry"].length }}
+        </div>
+        <div style="padding-top: 8px;" mat-card-content>{{ totalReactions }} Total Reactions</div>
       </div>
     </td>
-    <td style="width: 35%">
-      <img src="{{ post.imageUrl }}" height="100px" width="100px" />
+    <td style="width: 30%">
+      <img src="{{ post.image }}" height="100px" width="100px" />
     </td>
   </tr>
 </table>

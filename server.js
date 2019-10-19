@@ -1,6 +1,7 @@
 const express = require("express");
+const path = require("path");
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -47,6 +48,16 @@ app.use(passport.session());
 //Routes
 app.use("/api/users", require("./routes/userRoutes")(express, passport, AWS));
 app.use("/api/posts", require("./routes/postRoutes")(express, passport, AWS));
+
+// Express only serves static assets in production
+if (process.env.NODE_ENV === "production") {
+  // Setup static files
+  app.use(express.static(path.join(__dirname, "client/dist/im-board")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname + "/client/dist/im-board/index.html"));
+  });
+}
 
 //Initialise Server
 app.listen(port, () => {

@@ -1,4 +1,4 @@
-<app-user-leaderboard-item
-  *ngFor="let user of users"
-  [user]="user"
-></app-user-leaderboard-item>
+<mat-spinner style="margin:30px auto;" *ngIf="loading"></mat-spinner>
+<div *ngIf="!loading">
+  <app-user-leaderboard-item *ngFor="let user of users; let i = index" [user]="user" [order]="i"></app-user-leaderboard-item>
+</div>

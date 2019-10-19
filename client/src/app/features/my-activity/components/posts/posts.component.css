@@ -1,0 +1,8 @@
+.column {
+  width: 100%;
+  max-width: 600px;
+}
+
+.layout-tile {
+  padding: 0px 10px;
+}
