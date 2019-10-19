@@ -1,6 +1,6 @@
 <mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)">
   <mat-tab label="Flagged Users">
-    <app-flagged-users [users]="users" [loading]="loading" [flaggedIps]="flaggedIps"></app-flagged-users>
+    <app-flagged-users [users]="users" [loading]="loading"></app-flagged-users>
   </mat-tab>
   <mat-tab label="Reported Posts">
     <app-reported-posts [posts]="posts" [loading]="loading"></app-reported-posts>

@@ -213,6 +213,8 @@ module.exports = (express, passport, AWS) => {
     passport.authenticate("local", (err, user) => {
       if (err) return sendError(res, err);
       if (!user) return sendError(res, "Incorrect username or password");
+      if (user.accountStatus != "activated") return sendError(res, "This account has been deactivated");
+
       req.logIn(user, async err => {
         if (err) return sendError(res, err);
         let updatedUser = await updateLastLoggedIn(req.user);
@@ -263,33 +265,37 @@ module.exports = (express, passport, AWS) => {
     }
   });
 
+  router.put("/deactivate", async (req,res)=>{
+    let tempUser = await User.findById(req.body.userId);
+    if(tempUser.accountStatus == "activated") {
+      await User.findByIdAndUpdate(req.body.userId, {
+        $set:{
+          "accountStatus": "deactivated"
+        }
+      })
+      res.json({status:"SUCCESS"})
+    } else {
+      res.json({status:"ERROR"})
+    }
+  })
+
   // DEV DELETE ALl
   router.get("/flaggedUsers", async (req, res) => {
     let users = await User.find();
-    let groupedIps = {};
+    
+    let flaggedIps = {}
     users.forEach(user => {
-      if (!(user.ips in groupedIps)) {
-        groupedIps[user.ips] = [];
-        groupedIps[user.ips].push(user);
+      if (!(user.ips in flaggedIps) && user.role != "admin") {
+        flaggedIps[user.ips] = [];
+        flaggedIps[user.ips].push(user);
       } else {
-        groupedIps[user.ips].push(user);
+        flaggedIps[user.ips].push(user);
       }
     });
-    // console.log(groupedIps);
-    let users2 = await User.aggregate([
-      // { $project: { userId: "$_id" } },
-      // { "addFields": { "user_id": { "$toString": "$_id" }}},
-      {
-        $lookup: {
-          from: "posts",
-          localField: "_id.str",
-          foreignField: "author.str",
-          as: "posts"
-        }
-      }
-    ]);
-    res.json(users2);
+
+    res.json({ status: "SUCCESS", data: flaggedIps });
   });
+
   router.get("/changeRole/:username/:role", async (req, res) => {
     let user = await User.findOneAndUpdate(
       { username: req.params.username },
@@ -306,11 +312,6 @@ module.exports = (express, passport, AWS) => {
     } catch (e) {
       res.json({ e });
     }
-  });
-
-  router.get("/checkIP", (req, res) => {
-    console.log(req.connection.remoteAddress);
-    res.send(req.connection.remoteAddress);
   });
 
   router.get("/userLeaderboard", async (req, res) => {

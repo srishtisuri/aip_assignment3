@@ -10,7 +10,6 @@ export class FlaggedUsersComponent implements OnInit {
   constructor(private userService: UserService) {}
   @Input() users: any;
   @Input() loading: boolean;
-  @Input() flaggedIps: any;
   objectKeys = Object.keys;
 
   ngOnInit() {}

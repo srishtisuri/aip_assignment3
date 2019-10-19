@@ -61,10 +61,13 @@ export class AdminComponent implements OnInit {
 
   getUsers() {
     this.loading = true;
-    this.userService.getUsers().subscribe(response => {
-      this.users = response.data;
+    this.users = [];
+     this.userService.getFlaggedUsers().subscribe(response => {
+       console.log(response);
+       if(response.status=="SUCCESS"){
+         this.users = response.data;
+       }
       this.loading = false;
-      this.getFlaggedIps();
     });
   }
 
@@ -84,14 +87,4 @@ export class AdminComponent implements OnInit {
     });
   }
 
-  getFlaggedIps() {
-    this.users.forEach(user => {
-      if (!(user.ips in this.flaggedIps)) {
-        this.flaggedIps[user.ips] = [];
-        this.flaggedIps[user.ips].push(user);
-      } else {
-        this.flaggedIps[user.ips].push(user);
-      }
-    });
-  }
 }

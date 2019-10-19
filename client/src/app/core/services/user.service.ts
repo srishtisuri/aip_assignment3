@@ -45,4 +45,10 @@ export class UserService {
   getUsersWithPosts(): Observable<any> {
     return this.http.get<any>(this.endpoint + "/userLeaderboard");
   }
+  getFlaggedUsers():Observable<any>{
+    return this.http.get(this.endpoint + "/flaggedUsers");
+  }
+  deactivate(userId):Observable<any> {
+    return this.http.put(this.endpoint +"/deactivate", {userId});
+  }
 }

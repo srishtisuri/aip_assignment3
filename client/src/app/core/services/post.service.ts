@@ -72,4 +72,5 @@ export class PostService {
   report(postId, reason): Observable<any> {
     return this.http.put(this.endpoint + "/report", { postId, reason });
   }
+
 }
