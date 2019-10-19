@@ -9,7 +9,7 @@
     </div>
     <div>
       <div *ngFor="let user of users" style="display:flex;">
-        <img mat-card-avatar [src]="[user.profile]" />
+        <img mat-card-avatar [src]="[user.avatar]" />
         <div style="font-size:18px;margin-left:15px;">
           {{ user.name }}
           <mat-card-subtitle>@{{ user.username }}</mat-card-subtitle>
@@ -32,9 +32,9 @@
       <mat-divider></mat-divider>
     </div>
     <div *ngFor="let post of posts" style="display:flex;">
-      <img mat-card-avatar [src]="[post.imageUrl]" />
+      <img mat-card-avatar [src]="[post.image]" />
       <div style="font-size:18px;margin-left:15px;">
-        {{ post.author }}
+        {{ post.name }}
         <mat-card-subtitle>@{{ post.username }}</mat-card-subtitle>
       </div>
     </div>
