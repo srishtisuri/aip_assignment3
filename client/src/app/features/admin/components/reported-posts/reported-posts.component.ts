@@ -8,11 +8,8 @@ import { PostService } from "src/app/core/services/post.service";
 })
 export class ReportedPostsComponent implements OnInit {
   constructor(private postService: PostService) {}
-  @Input() posts: any
+  @Input() posts: any;
   @Input() loading: boolean;
 
-  ngOnInit() {
-  }
-
-  
+  ngOnInit() {}
 }

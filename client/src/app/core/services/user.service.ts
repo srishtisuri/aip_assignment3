@@ -29,13 +29,16 @@ export class UserService {
     return this.http.put<any>(this.endpoint, { user: details });
   }
 
-  checkAdmin() {
+  checkAdmin = async () => {
     this.getCurrentUser().subscribe(res => {
       if (res.data) {
         if (res.data.role == "admin") {
           this.isAdmin = true;
+          return of({ isAdmin: true });
+        } else {
+          return of({ isAdmin: false });
         }
       }
     });
-  }
+  };
 }

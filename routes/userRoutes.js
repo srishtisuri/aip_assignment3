@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const publicIp = require("public-ip");
@@ -53,7 +54,6 @@ module.exports = (express, passport, AWS) => {
   };
 
   const updateIP = async (id, req) => {
-    console.log("Updating ip....");
     let ip = await publicIp.v4();
     return await User.findByIdAndUpdate(
       id,
@@ -263,15 +263,29 @@ module.exports = (express, passport, AWS) => {
   // DEV DELETE ALl
   router.get("/flaggedUsers", async (req, res) => {
     let users = await User.find();
-    let counts = [];
-    users.forEach(user1 => {
-      users.forEach(user2 => {
-        if ((user1.ips = user2.ips)) {
-          console.log("duplicate ips found", user1.ips, user2.ips);
-        }
-      });
+    let groupedIps = {};
+    users.forEach(user => {
+      if (!(user.ips in groupedIps)) {
+        groupedIps[user.ips] = [];
+        groupedIps[user.ips].push(user);
+      } else {
+        groupedIps[user.ips].push(user);
+      }
     });
-    res.json("OK");
+    // console.log(groupedIps);
+    let users2 = await User.aggregate([
+      // { $project: { userId: "$_id" } },
+      // { "addFields": { "user_id": { "$toString": "$_id" }}},
+      {
+        $lookup: {
+          from: "posts",
+          localField: "_id.str",
+          foreignField: "author.str",
+          as: "posts"
+        }
+      }
+    ]);
+    res.json(users2);
   });
   router.get("/changeRole/:username/:role", async (req, res) => {
     let user = await User.findOneAndUpdate(
