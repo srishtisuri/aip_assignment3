@@ -12,8 +12,9 @@ export class LeaderboardComponent implements OnInit {
   sortTypes;
   sortType;
   users;
+  loading = false;
 
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService) { }
 
   ngOnInit() {
     this.getPosts("popular");
@@ -21,10 +22,11 @@ export class LeaderboardComponent implements OnInit {
   }
 
   getPosts(type?) {
+    this.loading = true;
     if (type != "posts" && type != "reactions") {
       this.postService.getPosts(type).subscribe(response => {
-        //console.log(response);
         this.posts = response.data.posts;
+        this.loading = false;
       });
     } else {
       // this.sortByPosts();
@@ -71,5 +73,5 @@ export class LeaderboardComponent implements OnInit {
   //   });
   //   console.log(tempUsers);
   // }
-  totalReactions() {}
+  totalReactions() { }
 }
