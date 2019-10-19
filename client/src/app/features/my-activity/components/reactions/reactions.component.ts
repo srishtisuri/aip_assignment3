@@ -16,18 +16,23 @@ export class ReactionsComponent implements OnInit {
   constructor(private postService: PostService, private userService: UserService, private authService: AuthService) { }
 
   ngOnInit() {
+    //use api to retrieve logged in user and store locally
     this.userService.getCurrentUser().subscribe(res => {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+
+        //Once user is retrieved and verified, get posts for that user
         this.getPosts();
       }
     });
   }
 
+  //gets all posts and filters them
   getPosts() {
     this.loading = true;
     this.postService.getPosts().subscribe(response => {
+      //filter posts by checking reactions of each post for any reactions made buy the user
       this.posts = response.data.posts.filter(
         post =>
           post.reactions.heart.includes(this.user._id) ||

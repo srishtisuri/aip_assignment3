@@ -16,11 +16,16 @@ export class CommentsComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
+
+    //use api to retrieve logged in user and store locally
     this.userService.getCurrentUser().subscribe(res => {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+
+        //Once user is retrieved and verified, call api to get logged in user's comments
         this.postService.getMyComments().subscribe(response => {
+          //store the returned post comments locally
           this.comments = response.data;
           this.loading = false;
         });

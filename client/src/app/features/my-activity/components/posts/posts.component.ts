@@ -15,15 +15,19 @@ export class PostsComponent implements OnInit {
   loading = false;
 
   ngOnInit() {
+    //use api to retrieve logged in user and store locally
     this.userService.getCurrentUser().subscribe(res => {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
+
+        //Once user is retrieved and verified, get posts for that user
         this.getPosts();
       }
     });
   }
 
+  //gets all posts and filters them by comparing the author and user id
   getPosts() {
     this.loading = true;
     this.postService.getPosts().subscribe(response => {

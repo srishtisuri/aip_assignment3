@@ -9,23 +9,27 @@ import { UserService } from 'src/app/core/services/user.service';
   styleUrls: ["./my-activity.component.css"]
 })
 export class MyActivityComponent implements OnInit {
-  constructor(private authService: AuthService, private router: Router, private userService: UserService) {}
+  constructor(private authService: AuthService, private router: Router, private userService: UserService) { }
+
+  //this component only consists of a tab navigation bar
+  //router outelet is used to display different tabs
 
   ngOnInit() {
     try {
-       this.authService.checkAuth().subscribe(res => {
+      //check user is logged in before displaying
+      //redirect to login page if not
+      this.authService.checkAuth().subscribe(res => {
         if (res.status == "SUCCESS") {
           this.authService.isLoggedIn = true;
-          //this.notificationService.notify("[DEV] JWT Authentication successful!");
         } else {
           this.router.navigate(["/account/login"]);
         }
-        this.authService.loading = false;
+        //this.authService.loading = false;
       });
-      this.userService.checkAdmin();
+      //this.userService.checkAdmin();
     } catch {
       this.authService.isLoggedIn = false;
-      this.userService.isAdmin = false;
+      //this.userService.isAdmin = false;
     }
   }
 }
