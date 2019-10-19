@@ -11,10 +11,7 @@ export class FlaggedUsersComponent implements OnInit {
   @Input() users: any;
   @Input() loading: boolean;
   @Input() flaggedIps: any;
-  objectKeys = Object.keys
+  objectKeys = Object.keys;
 
-  ngOnInit() {
-
-  }
-
+  ngOnInit() {}
 }

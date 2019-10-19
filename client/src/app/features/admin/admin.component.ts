@@ -25,6 +25,7 @@ export class AdminComponent implements OnInit {
 
   ngOnInit() {
     try {
+      // logged in check
       this.authService.checkAuth().subscribe(res => {
         if (res.status == "SUCCESS") {
           this.authService.isLoggedIn = true;
@@ -34,35 +35,37 @@ export class AdminComponent implements OnInit {
         }
         this.authService.loading = false;
       });
-      this.userService.checkAdmin();
-      this.getPosts();
+      // admin check
+      this.userService.getCurrentUser().subscribe(res => {
+        if (res.data) {
+          if (res.data.role == "admin") {
+            this.getUsers();
+          } else {
+            this.router.navigate(["/account/login"]);
+          }
+        }
+      });
     } catch {
       this.authService.isLoggedIn = false;
       this.userService.isAdmin = false;
     }
-    // admin check
-    // if (this.userService.isAdmin) {
-    //   this.getPosts();
-    // } else {
-    //   this.router.navigate(["/account/login"]);
-    // }
   }
 
   //https://stackoverflow.com/questions/52589504/angular-how-to-catch-mat-tab-changed-event
   //Answer posted by Prashant Damam
   tabChanged = (tabChangeEvent: MatTabChangeEvent): void => {
     // 0 = posts, 1 = users
-    if (tabChangeEvent.index == 0) this.getPosts();
-    if(tabChangeEvent.index == 1) this.getUsers();
+    if (tabChangeEvent.index == 0) this.getUsers();
+    if (tabChangeEvent.index == 1) this.getPosts();
   };
 
-  getUsers(){
+  getUsers() {
     this.loading = true;
-    this.userService.getUsers().subscribe(response=>{
-      this.users = response.data
+    this.userService.getUsers().subscribe(response => {
+      this.users = response.data;
       this.loading = false;
       this.getFlaggedIps();
-    })
+    });
   }
 
   getPosts() {
@@ -80,14 +83,14 @@ export class AdminComponent implements OnInit {
       this.loading = false;
     });
   }
-  
+
   getFlaggedIps() {
     this.users.forEach(user => {
       if (!(user.ips in this.flaggedIps)) {
         this.flaggedIps[user.ips] = [];
-        this.flaggedIps[user.ips].push(user)
+        this.flaggedIps[user.ips].push(user);
       } else {
-        this.flaggedIps[user.ips].push(user)
+        this.flaggedIps[user.ips].push(user);
       }
     });
   }
