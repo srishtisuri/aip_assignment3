@@ -11,8 +11,9 @@ import { PostService } from "src/app/core/services/post.service";
 export class ReactionsComponent implements OnInit {
   posts;
   user;
+  loading = false;
 
-  constructor(private postService: PostService, private userService: UserService, private authService: AuthService) {}
+  constructor(private postService: PostService, private userService: UserService, private authService: AuthService) { }
 
   ngOnInit() {
     this.userService.getCurrentUser().subscribe(res => {
@@ -25,6 +26,7 @@ export class ReactionsComponent implements OnInit {
   }
 
   getPosts() {
+    this.loading = true;
     this.postService.getPosts().subscribe(response => {
       this.posts = response.data.posts.filter(
         post =>
@@ -34,6 +36,7 @@ export class ReactionsComponent implements OnInit {
           post.reactions.wow.includes(this.user._id) ||
           post.reactions.angry.includes(this.user._id)
       );
+      this.loading = false;
     });
   }
 }

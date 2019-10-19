@@ -11,16 +11,18 @@ import { PostService } from "src/app/core/services/post.service";
 export class CommentsComponent implements OnInit {
   comments;
   user;
-
+  loading = false;
   constructor(private postService: PostService, private userService: UserService, private authService: AuthService) { }
 
   ngOnInit() {
+    this.loading = true;
     this.userService.getCurrentUser().subscribe(res => {
       if (res.data) {
         this.authService.isLoggedIn = true;
         this.user = res.data;
         this.postService.getMyComments().subscribe(response => {
           this.comments = response.data;
+          this.loading = false;
         });
       }
     });

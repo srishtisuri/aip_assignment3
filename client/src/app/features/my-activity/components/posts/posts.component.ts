@@ -9,9 +9,10 @@ import { AuthService } from "src/app/core/services/auth.service";
   styleUrls: ["./posts.component.css"]
 })
 export class PostsComponent implements OnInit {
-  constructor(private postService: PostService, private userService: UserService, private authService: AuthService) {}
+  constructor(private postService: PostService, private userService: UserService, private authService: AuthService) { }
   posts;
   user;
+  loading = false;
 
   ngOnInit() {
     this.userService.getCurrentUser().subscribe(res => {
@@ -24,10 +25,12 @@ export class PostsComponent implements OnInit {
   }
 
   getPosts() {
+    this.loading = true;
     this.postService.getPosts().subscribe(response => {
       if (response.data) {
         this.posts = response.data.posts.filter(post => post.author == this.user._id);
       }
+      this.loading = false;
     });
   }
 }
