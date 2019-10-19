@@ -7,8 +7,12 @@ import { Component, OnInit, Input } from "@angular/core";
 })
 export class UserLeaderboardItemComponent implements OnInit {
   @Input() user: any;
+  @Input() order: any;
   totalReactions: number;
+
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.user);
+  }
 }

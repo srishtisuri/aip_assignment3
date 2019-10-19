@@ -38,4 +38,8 @@ export class UserService {
       }
     });
   }
+
+  getUsersWithPosts(): Observable<any> {
+    return this.http.get<any>(this.endpoint + "/userLeaderboard");
+  }
 }

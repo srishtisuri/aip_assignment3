@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from "@angular/core";
-import { PostService } from "src/app/core/services/post.service";
 
 @Component({
   selector: "app-post-leaderboard",

@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { PostService } from "src/app/core/services/post.service";
 import { MatTabChangeEvent } from "@angular/material";
+import { UserService } from "src/app/core/services/user.service";
 
 @Component({
   selector: "app-leaderboard",
@@ -13,21 +14,30 @@ export class LeaderboardComponent implements OnInit {
   sortType;
   users;
 
-  constructor(private postService: PostService) {}
+  constructor(private postService: PostService, private userService: UserService) {}
 
   ngOnInit() {
     this.getPosts("popular");
+    this.getUsersWithPosts();
     this.updateSortTypes(0); //start with 0 = users
+  }
+
+  getUsersWithPosts() {
+    this.userService.getUsersWithPosts().subscribe(response => {
+      console.log(response);
+      this.users = response;
+    });
   }
 
   getPosts(type?) {
     if (type != "posts" && type != "reactions") {
       this.postService.getPosts(type).subscribe(response => {
-        //console.log(response);
-        this.posts = response.data.posts;
+        if (response.data.posts.length > 10) {
+          this.posts = response.data.posts.slice(0, 10);
+        } else {
+          this.posts = response.data.posts.slice(0, response.data.posts.length);
+        }
       });
-    } else {
-      // this.sortByPosts();
     }
   }
 
@@ -63,13 +73,5 @@ export class LeaderboardComponent implements OnInit {
     this.getPosts(type);
   }
 
-  // sortByPosts() {
-  //   let tempUsers = [];
-  //   this.posts.forEach(post => {
-  //     // if (tempUsers.indexOf({ username: post.username, count: 0 }) == -1) {
-  //     tempUsers.push({ username: post.username, count: 0 });
-  //   });
-  //   console.log(tempUsers);
-  // }
   totalReactions() {}
 }

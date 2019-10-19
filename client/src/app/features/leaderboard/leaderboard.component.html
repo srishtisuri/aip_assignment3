@@ -7,7 +7,7 @@
   <div fxFlex="75%" class="layout-tile" style="padding: 20px">
     <mat-tab-group #tabGroup (selectedTabChange)="tabChanged($event)">
       <mat-tab label="Users">
-        <app-user-leaderboard [posts]="posts"></app-user-leaderboard>
+        <app-user-leaderboard [users]="users"></app-user-leaderboard>
       </mat-tab>
       <mat-tab label="Posts">
         <app-post-leaderboard [posts]="posts"></app-post-leaderboard>

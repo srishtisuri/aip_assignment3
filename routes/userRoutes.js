@@ -70,6 +70,9 @@ module.exports = (express, passport, AWS) => {
   router.get("/", async (req, res) => {
     try {
       let response = await User.find();
+      response.forEach(user => {
+        user.password = undefined;
+      });
       sendSuccess(res, response);
     } catch (err) {
       sendError(res, err);
@@ -282,6 +285,30 @@ module.exports = (express, passport, AWS) => {
   router.get("/checkIP", (req, res) => {
     console.log(req.connection.remoteAddress);
     res.send(req.connection.remoteAddress);
+  });
+
+  router.get("/userLeaderboard", async (req, res) => {
+    let users = {};
+    let posts = await Post.find();
+
+    posts.forEach(post => {
+      if (!(post.author in users)) {
+        users[post.author] = [];
+        users[post.author].push(post);
+      } else {
+        users[post.author].push(post);
+      }
+    });
+
+    let transposedUsers = [];
+    for (let user in users) {
+      let tempUser = await User.findById(user);
+      tempUser = tempUser.toObject();
+      tempUser["posts"] = users[user];
+      transposedUsers.push(tempUser);
+    }
+
+    res.json(transposedUsers);
   });
 
   return router;

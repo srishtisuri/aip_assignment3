@@ -77,7 +77,13 @@ export class PostFeedItemComponent implements OnInit {
 
   react(reaction) {
     this.postService.react(this.post._id, reaction, this.currentReaction).subscribe(response => {
-      this.post = response.data;
+      console.log(response);
+      if (response.status == "ERROR") {
+        this.notificationService.notify("You cannot do that!");
+      } else {
+        this.post = response.data;
+      }
+      this.getPosts.emit();
       this.onChanges();
     });
   }
@@ -99,6 +105,9 @@ export class PostFeedItemComponent implements OnInit {
 
   changePost(image) {
     this.postService.changePost(image, this.post._id).subscribe(res => {
+      if (res.status != "SUCCESS") {
+        this.notificationService.notify("Post cannot be changed if there are comments or reactions!");
+      }
       this.getPosts.emit();
     });
   }
@@ -106,6 +115,9 @@ export class PostFeedItemComponent implements OnInit {
   delete() {
     if (confirm("Are you sure you want to delete this post?")) {
       this.postService.deletePost(this.post._id).subscribe(response => {
+        if (response.status != "SUCCESS") {
+          this.notificationService.notify("Post cannot be deleted while it has comments!");
+        }
         this.getPosts.emit();
         this.onChanges();
       });
@@ -116,6 +128,9 @@ export class PostFeedItemComponent implements OnInit {
     if (confirm("Are you sure you want to remove this post?")) {
       this.increment = this.post.history.length;
       this.postService.changePost("http://aip-brogrammers.herokuapp.com/assets/removed_image.png", this.post._id).subscribe(response => {
+        if (response.status != "SUCCESS") {
+          this.notificationService.notify("Post has already been removed!");
+        }
         this.post = response.data;
         this.onChanges();
       });
