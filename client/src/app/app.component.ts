@@ -17,6 +17,8 @@ export class AppComponent {
   ngOnInit() {
     this.initialSetup();
   }
+
+  //Check is the user is logged in and check if the user is admin
   initialSetup = async () => {
     try {
       await this.authService.checkAuth().subscribe(res => {
